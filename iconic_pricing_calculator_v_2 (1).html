@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Iconic Signs FL — Pricing Calculator v2</title>
+  <style>
+    :root {
+      --bg: #111111;
+      --panel: #1a1a1a;
+      --panel-2: #222222;
+      --border: #333333;
+      --text: #f2efe9;
+      --muted: #b7b0a6;
+      --accent: #d3a657;
+      --accent-2: #b98c43;
+      --good: #5cb67a;
+      --warn: #e4a646;
+      --bad: #dc6b6b;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.35;
+    }
+
+    .wrap {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: 1.2fr 0.95fr;
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+    }
+
+    .full { grid-column: 1 / -1; }
+
+    h1, h2, h3 { margin: 0 0 12px; }
+    h1 { font-size: 26px; }
+    h2 { font-size: 18px; color: var(--accent); }
+    h3 { font-size: 15px; color: var(--muted); }
+
+    .grid-2, .grid-3, .grid-4 {
+      display: grid;
+      gap: 12px;
+    }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+    label {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    input, select {
+      width: 100%;
+      background: var(--panel-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 14px;
+    }
+
+    .row { margin-bottom: 12px; }
+
+    .pill-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .pill {
+      border: 1px solid var(--border);
+      background: var(--panel-2);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .pill.active {
+      background: var(--accent);
+      color: #17130d;
+      border-color: var(--accent);
+      font-weight: 700;
+    }
+
+    .summary-box {
+      background: #151515;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    .metric {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 7px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      font-size: 14px;
+    }
+
+    .metric:last-child { border-bottom: 0; }
+    .metric strong { color: var(--text); }
+    .muted { color: var(--muted); }
+    .good { color: var(--good); }
+    .warn { color: var(--warn); }
+    .bad { color: var(--bad); }
+
+    .table-wrap { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th, td {
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      text-align: left;
+      padding: 9px 8px;
+      white-space: nowrap;
+    }
+    th { color: var(--accent); }
+
+    .note {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    .section-hidden { display: none; }
+
+    .output-price {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+
+    .small {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    @media (max-width: 1100px) {
+      .wrap { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 760px) {
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Pricing Calculator v2</h1>
+      <div class="row" style="margin-top:14px; padding:12px; border:1px solid var(--border); border-radius:12px; background:#151515;">
+        <label>Batch Quote CSV Upload</label>
+        <input type="file" id="csvFile" accept=".csv" />
+        <div class="note">Columns supported: mode, material, width, height, qty, print, lamination, holes, complexity, utilization, pieces, cleanupHours, routerHours, benchHours, runtimeRate, riskFactor, letterHeight, letterCount, thickness, paint, studs, patternFeet. Use mode values: sqft, density, cutonly, letters.</div>
+      </div>
+      <div class="small">Built around 3 pricing modes: square-foot, per-piece density, and cut-only / time-based.</div>
+
+      <div class="row" style="margin-top:16px;">
+        <label>Pricing Mode</label>
+        <div class="pill-group" id="modeGroup">
+          <button class="pill active" data-mode="sqft">Standard Panel / Sq Ft</button>
+          <button class="pill" data-mode="density">High Density / Per Piece</button>
+          <button class="pill" data-mode="cutonly">Cut Only / Runtime</button>
+          <button class="pill" data-mode="letters">Dimensional Letters</button>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div class="row">
+          <label>Account Tier</label>
+          <select id="accountTier">
+            <option value="standard">Standard Wholesale</option>
+            <option value="legacy">Legacy / Volume</option>
+            <option value="premium">One-Off / GC / Premium</option>
+          </select>
+        </div>
+        <div class="row">
+          <label>Material</label>
+          <select id="material"></select>
+        </div>
+        <div class="row">
+          <label>Complexity</label>
+          <select id="complexity">
+            <option value="1">Simple</option>
+            <option value="1.15" selected>Medium</option>
+            <option value="1.35">Detailed</option>
+            <option value="1.6">Very Detailed</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="sqftSection">
+        <h2>Standard Panel / Sq Ft</h2>
+        <div class="grid-4">
+          <div class="row">
+            <label>Width (in)</label>
+            <input type="number" id="widthIn" value="48" min="0" step="0.01" />
+          </div>
+          <div class="row">
+            <label>Height (in)</label>
+            <input type="number" id="heightIn" value="96" min="0" step="0.01" />
+          </div>
+          <div class="row">
+            <label>Quantity</label>
+            <input type="number" id="qty" value="1" min="1" step="1" />
+          </div>
+          <div class="row">
+            <label>Sheet Utilization %</label>
+            <input type="number" id="utilization" value="85" min="35" max="100" step="1" />
+          </div>
+        </div>
+
+        <div class="grid-4">
+          <div class="row">
+            <label>Print Spec</label>
+            <select id="printSpec">
+              <option value="cmyk">CMYK Only</option>
+              <option value="white">CMYK + White</option>
+              <option value="double">Double Sided</option>
+              <option value="doublewhite">Double Sided + White</option>
+            </select>
+          </div>
+          <div class="row">
+            <label>Lamination</label>
+            <select id="lamination">
+              <option value="none">None</option>
+              <option value="economy">Economy</option>
+              <option value="regular">Regular</option>
+              <option value="premium">Premium</option>
+            </select>
+          </div>
+          <div class="row">
+            <label>Holes</label>
+            <input type="number" id="holes" value="0" min="0" step="1" />
+          </div>
+          <div class="row">
+            <label>Rush</label>
+            <select id="rush">
+              <option value="1">Standard</option>
+              <option value="1.15">48 Hour</option>
+              <option value="1.3">24 Hour</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div id="densitySection" class="section-hidden">
+        <h2>High Density / Per Piece</h2>
+        <div class="grid-4">
+          <div class="row">
+            <label>Sheet Width (in)</label>
+            <input type="number" id="dSheetW" value="48" min="0" step="0.01" />
+          </div>
+          <div class="row">
+            <label>Sheet Height (in)</label>
+            <input type="number" id="dSheetH" value="96" min="0" step="0.01" />
+          </div>
+          <div class="row">
+            <label>Total Pieces</label>
+            <input type="number" id="pieceCount" value="250" min="1" step="1" />
+          </div>
+          <div class="row">
+            <label>Piece Rate Override ($)</label>
+            <input type="number" id="pieceRateOverride" value="0" min="0" step="0.01" />
+          </div>
+        </div>
+        <div class="grid-4">
+          <div class="row">
+            <label>Print Spec</label>
+            <select id="dPrintSpec">
+              <option value="cmyk">CMYK Only</option>
+              <option value="white">CMYK + White</option>
+            </select>
+          </div>
+          <div class="row">
+            <label>Lamination</label>
+            <select id="dLamination">
+              <option value="none">None</option>
+              <option value="economy">Economy</option>
+              <option value="regular">Regular</option>
+              <option value="premium">Premium</option>
+            </select>
+          </div>
+          <div class="row">
+            <label>Weeding / Cleanup Labor (hrs)</label>
+            <input type="number" id="cleanupHours" value="1.25" min="0" step="0.25" />
+          </div>
+          <div class="row">
+            <label>Rush</label>
+            <select id="dRush">
+              <option value="1">Standard</option>
+              <option value="1.15">48 Hour</option>
+              <option value="1.3">24 Hour</option>
+            </select>
+          </div>
+        </div>
+        <div class="note">Default density logic is intentionally conservative. It aims for the market-realistic range you discussed rather than theoretical maximum pricing.</div>
+      </div>
+
+      <div id="cutOnlySection" class="section-hidden">
+        <h2>Cut Only / Runtime</h2>
+        <div class="grid-4">
+          <div class="row">
+            <label>Sheet Width (in)</label>
+            <input type="number" id="cSheetW" value="48" min="0" step="0.01" />
+          </div>
+          <div class="row">
+            <label>Sheet Height (in)</label>
+            <input type="number" id="cSheetH" value="96" min="0" step="0.01" />
+          </div>
+          <div class="row">
+            <label>Number of Sheets</label>
+            <input type="number" id="cSheets" value="1" min="1" step="1" />
+          </div>
+          <div class="row">
+            <label>Total Pieces / Cutouts</label>
+            <input type="number" id="cPieces" value="10" min="1" step="1" />
+          </div>
+        </div>
+        <div class="grid-4">
+          <div class="row">
+            <label>Estimated Router Hours</label>
+            <input type="number" id="routerHours" value="0.5" min="0" step="0.25" />
+          </div>
+          <div class="row">
+            <label>Bench / Cleanup Hours</label>
+            <input type="number" id="benchHours" value="0.25" min="0" step="0.25" />
+          </div>
+          <div class="row">
+            <label>Runtime Rate $/hr</label>
+            <input type="number" id="runtimeRate" value="110" min="0" step="1" />
+          </div>
+          <div class="row">
+            <label>Risk / Client Material Factor</label>
+            <select id="riskFactor">
+              <option value="1">Low</option>
+              <option value="1.1" selected>Normal</option>
+              <option value="1.25">Higher Risk</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div id="lettersSection" class="section-hidden">
+        <h2>Dimensional Letters</h2>
+        <div class="grid-4">
+          <div class="row">
+            <label>Letter Height (in)</label>
+            <input type="number" id="letterHeight" value="8" min="1" step="0.1" />
+          </div>
+          <div class="row">
+            <label>Letter Count</label>
+            <input type="number" id="letterCount" value="10" min="1" step="1" />
+          </div>
+          <div class="row">
+            <label>Thickness</label>
+            <select id="letterThickness"></select>
+          </div>
+          <div class="row">
+            <label>Pattern Length (ft)</label>
+            <input type="number" id="patternFeet" value="6" min="0" step="0.5" />
+          </div>
+        </div>
+        <div class="grid-4">
+          <div class="row">
+            <label>Paint</label>
+            <select id="paintOpt">
+              <option value="0">No</option>
+              <option value="0.4">Yes (+40%)</option>
+            </select>
+          </div>
+          <div class="row">
+            <label>Stud Mounts</label>
+            <select id="studOpt">
+              <option value="0">No</option>
+              <option value="0.2">Yes (+20%)</option>
+            </select>
+          </div>
+          <div class="row">
+            <label>Paint Setup Fee</label>
+            <input type="number" id="paintSetup" value="75" min="0" step="1" />
+          </div>
+          <div class="row">
+            <label>Pattern Rate $/ft</label>
+            <input type="number" id="patternRate" value="4" min="0" step="0.25" />
+          </div>
+        </div>
+        <div class="note">Small-letter penalty is automatic: +15% for 4–6 in, +35% below 4 in.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Quote Output</h2>
+      <div class="summary-box">
+        <div class="output-price" id="sellPrice">$0.00</div>
+        <div class="small" id="priceModeLabel">Standard panel quote</div>
+      </div>
+
+      <div class="summary-box">
+        <div class="metric"><span>Estimated Cost</span><strong id="costVal">$0.00</strong></div>
+        <div class="metric"><span>Gross Profit</span><strong id="profitVal">$0.00</strong></div>
+        <div class="metric"><span>Gross Margin</span><strong id="marginVal">0.0%</strong></div>
+        <div class="metric"><span>Sell / Sq Ft</span><strong id="sellSqftVal">$0.00</strong></div>
+        <div class="metric"><span>Sell / Unit</span><strong id="sellUnitVal">$0.00</strong></div>
+      </div>
+
+      <div class="summary-box">
+        <div class="metric"><span>Material</span><strong id="breakMaterial">$0.00</strong></div>
+        <div class="metric"><span>Ink</span><strong id="breakInk">$0.00</strong></div>
+        <div class="metric"><span>Lamination</span><strong id="breakLam">$0.00</strong></div>
+        <div class="metric"><span>Machine / Labor</span><strong id="breakLabor">$0.00</strong></div>
+        <div class="metric"><span>Other Adders</span><strong id="breakOther">$0.00</strong></div>
+      </div>
+
+      <div class="summary-box">
+        <div class="metric"><span>Target Margin by Tier</span><strong id="tierTarget">0%</strong></div>
+        <div class="metric"><span>Mode Notes</span><strong id="modeNote">—</strong></div>
+      </div>
+    </div>
+
+    <div class="card full">
+      <h2>Batch Quote Results</h2>
+      <div class="summary-box">
+        <div class="metric"><span>Imported Rows</span><strong id="batchRows">0</strong></div>
+        <div class="metric"><span>Batch Sell Total</span><strong id="batchSell">$0.00</strong></div>
+        <div class="metric"><span>Batch Cost Total</span><strong id="batchCost">$0.00</strong></div>
+        <div class="metric"><span>Batch Profit Total</span><strong id="batchProfit">$0.00</strong></div>
+      </div>
+      <div class="table-wrap" style="margin-bottom:20px;">
+        <table>
+          <thead>
+            <tr>
+              <th>Row</th>
+              <th>Mode</th>
+              <th>Description</th>
+              <th>Sell</th>
+              <th>Cost</th>
+              <th>Profit</th>
+              <th>Margin</th>
+            </tr>
+          </thead>
+          <tbody id="batchTableBody">
+            <tr><td colspan="7" class="muted">No CSV loaded.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card full">
+      <h2>Reference Rates Embedded in This Tool</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Embedded Logic</th>
+              <th>Use Case</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Standard ACM / rigid panels</td>
+              <td>Market-aligned wholesale, generally around $4.00–$5.50/sq ft depending on options</td>
+              <td>Typical print / cut signage</td>
+            </tr>
+            <tr>
+              <td>High-density parts</td>
+              <td>Defaults toward roughly $300–$450 sheet value on 200–250 pc jobs unless complexity pushes higher</td>
+              <td>Room IDs, plates, many small parts</td>
+            </tr>
+            <tr>
+              <td>Cut only</td>
+              <td>Runtime-driven, roughly $55–$65 simple sheet equivalents and $150+ dense equivalents</td>
+              <td>Client-supplied printed sheets</td>
+            </tr>
+            <tr>
+              <td>White ink</td>
+              <td>Cost model roughly $0.18/sq ft, charge adder higher to cover slower throughput</td>
+              <td>White underlay / flood white</td>
+            </tr>
+            <tr>
+              <td>Dimensional letters</td>
+              <td>Per-inch pricing with small-letter penalty and optional paint / studs / pattern</td>
+              <td>PVC, acrylic, HDU letters</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const materials = {
+      acm_3mm: {
+        name: 'MaxMetal 3mm (.125)',
+        type: 'panel',
+        sheetCost: 63.24,
+        baseSqftSell: { legacy: 3.75, standard: 4.35, premium: 5.05 },
+        cutCostSqft: 0.55
+      },
+      acm_6mm: {
+        name: 'MaxMetal 6mm',
+        type: 'panel',
+        sheetCost: 98.58,
+        baseSqftSell: { legacy: 5.5, standard: 6.5, premium: 7.75 },
+        cutCostSqft: 0.75
+      },
+      alum_063: {
+        name: '.063 Aluminum (Painted)',
+        type: 'panel',
+        sheetCost: 192.14,
+        baseSqftSell: { legacy: 26, standard: 30, premium: 35 },
+        cutCostSqft: 1.9
+      },
+      alum_063_raw: {
+        name: '.063 Aluminum (Raw)',
+        type: 'panel',
+        sheetCost: 135.28,
+        baseSqftSell: { legacy: 22, standard: 25, premium: 29 },
+        cutCostSqft: 1.7
+      },
+      mdo_half: {
+        name: 'MDO 1/2" Pre-Finished',
+        type: 'panel',
+        sheetCost: 150,
+        baseSqftSell: { legacy: 7.75, standard: 8.75, premium: 10 },
+        cutCostSqft: 0.45
+      },
+      pvc_half: {
+        name: 'PVC 1/2"',
+        type: 'panel',
+        sheetCost: 88,
+        baseSqftSell: { legacy: 7.5, standard: 8.75, premium: 10.5 },
+        cutCostSqft: 0.7
+      },
+      acrylic_quarter: {
+        name: 'Acrylic 1/4"',
+        type: 'panel',
+        sheetCost: 120,
+        baseSqftSell: { legacy: 11, standard: 13, premium: 15 },
+        cutCostSqft: 1.1
+      },
+      acrylic_half: {
+        name: 'Acrylic 1/2"',
+        type: 'panel',
+        sheetCost: 205,
+        baseSqftSell: { legacy: 18, standard: 21, premium: 24 },
+        cutCostSqft: 1.5
+      },
+      hdu_1: {
+        name: 'HDU 1"',
+        type: 'panel',
+        sheetCost: 190,
+        baseSqftSell: { legacy: 20, standard: 24, premium: 28 },
+        cutCostSqft: 1.5
+      }
+    };
+
+    const letterRates = {
+      pvc_quarter: { label: 'PVC 1/4"', basePerInch: 0.8 },
+      pvc_half: { label: 'PVC 1/2"', basePerInch: 1.2 },
+      pvc_3q: { label: 'PVC 3/4"', basePerInch: 1.75 },
+      acr_quarter: { label: 'Acrylic 1/4"', basePerInch: 1.5 },
+      acr_half: { label: 'Acrylic 1/2"', basePerInch: 2.5 },
+      hdu_1: { label: 'HDU 1"', basePerInch: 2.75 },
+      hdu_15: { label: 'HDU 1.5"', basePerInch: 3.75 },
+      hdu_2: { label: 'HDU 2"', basePerInch: 4.75 }
+    };
+
+    const lamRates = {
+      none: { cost: 0, charge: 0 },
+      economy: { cost: 0.2, charge: 0.85 },
+      regular: { cost: 0.5, charge: 1.5 },
+      premium: { cost: 0.8, charge: 2.25 }
+    };
+
+    const printRates = {
+      cmyk: { inkCost: 0.13, charge: 0.85, speedFactor: 1 },
+      white: { inkCost: 0.28, charge: 2.0, speedFactor: 1.2 },
+      double: { inkCost: 0.26, charge: 1.5, speedFactor: 1.35 },
+      doublewhite: { inkCost: 0.5, charge: 3.0, speedFactor: 1.6 }
+    };
+
+    const modeGroup = document.getElementById('modeGroup');
+    const materialSelect = document.getElementById('material');
+    const letterThickness = document.getElementById('letterThickness');
+
+    const fmt = n => `$${(isFinite(n) ? n : 0).toFixed(2)}`;
+    const pct = n => `${(isFinite(n) ? n : 0).toFixed(1)}%`;
+
+    function populateMaterials() {
+      materialSelect.innerHTML = Object.entries(materials)
+        .map(([key, mat]) => `<option value="${key}">${mat.name}</option>`)
+        .join('');
+
+      letterThickness.innerHTML = Object.entries(letterRates)
+        .map(([key, cfg]) => `<option value="${key}">${cfg.label}</option>`)
+        .join('');
+
+      materialSelect.value = 'acm_3mm';
+      letterThickness.value = 'acr_half';
+    }
+
+    function getMode() {
+      return modeGroup.querySelector('.pill.active').dataset.mode;
+    }
+
+    function setMode(mode) {
+      modeGroup.querySelectorAll('.pill').forEach(btn => btn.classList.toggle('active', btn.dataset.mode === mode));
+      document.getElementById('sqftSection').classList.toggle('section-hidden', mode !== 'sqft');
+      document.getElementById('densitySection').classList.toggle('section-hidden', mode !== 'density');
+      document.getElementById('cutOnlySection').classList.toggle('section-hidden', mode !== 'cutonly');
+      document.getElementById('lettersSection').classList.toggle('section-hidden', mode !== 'letters');
+
+      if (mode === 'letters') {
+        materialSelect.value = 'acrylic_half';
+      }
+      calc();
+    }
+
+    function val(id) {
+      return parseFloat(document.getElementById(id).value || 0);
+    }
+
+    function currentTier() {
+      return document.getElementById('accountTier').value;
+    }
+
+    function setOutputs(r) {
+      const sell = r.sell || 0;
+      const cost = r.cost || 0;
+      const profit = sell - cost;
+      const margin = sell > 0 ? (profit / sell) * 100 : 0;
+
+      document.getElementById('sellPrice').textContent = fmt(sell);
+      document.getElementById('priceModeLabel').textContent = r.label || '';
+      document.getElementById('costVal').textContent = fmt(cost);
+      document.getElementById('profitVal').textContent = fmt(profit);
+      document.getElementById('marginVal').textContent = pct(margin);
+      document.getElementById('sellSqftVal').textContent = fmt(r.sellPerSqft || 0);
+      document.getElementById('sellUnitVal').textContent = fmt(r.sellPerUnit || 0);
+
+      document.getElementById('breakMaterial').textContent = fmt(r.breakdown?.material || 0);
+      document.getElementById('breakInk').textContent = fmt(r.breakdown?.ink || 0);
+      document.getElementById('breakLam').textContent = fmt(r.breakdown?.lam || 0);
+      document.getElementById('breakLabor').textContent = fmt(r.breakdown?.labor || 0);
+      document.getElementById('breakOther').textContent = fmt(r.breakdown?.other || 0);
+
+      document.getElementById('tierTarget').textContent = r.target || '—';
+      document.getElementById('modeNote').textContent = r.note || '—';
+    }
+
+    function calcSqft() {
+      const tier = currentTier();
+      const mat = materials[materialSelect.value];
+      const w = val('widthIn');
+      const h = val('heightIn');
+      const qty = val('qty');
+      const utilPct = Math.max(35, Math.min(100, val('utilization')));
+      const printSpec = printRates[document.getElementById('printSpec').value];
+      const lam = lamRates[document.getElementById('lamination').value];
+      const holes = val('holes');
+      const rush = val('rush');
+      const complexity = parseFloat(document.getElementById('complexity').value);
+
+      const sqftEach = (w * h) / 144;
+      const totalSqft = sqftEach * qty;
+      const sheetSqft = 32;
+      const effSheetCost = mat.sheetCost / (utilPct / 100);
+      const materialCostSqft = effSheetCost / sheetSqft;
+
+      const material = materialCostSqft * totalSqft;
+      const ink = printSpec.inkCost * totalSqft;
+      const lamCost = lam.cost * totalSqft;
+      const labor = (mat.cutCostSqft + (0.35 * printSpec.speedFactor)) * complexity * totalSqft;
+      const other = holes * 0.2;
+      const cost = material + ink + lamCost + labor + other;
+
+      let sellSqft = mat.baseSqftSell[tier] + printSpec.charge + lam.charge;
+      sellSqft *= complexity;
+
+      let sell = (sellSqft * totalSqft) + (holes * 0.5);
+      sell *= rush;
+
+      return {
+        label: 'Standard panel quote',
+        sell,
+        cost,
+        sellPerSqft: totalSqft > 0 ? sell / totalSqft : 0,
+        sellPerUnit: qty > 0 ? sell / qty : 0,
+        breakdown: { material, ink, lam: lamCost, labor, other },
+        target: tier === 'legacy' ? '30–40%' : tier === 'standard' ? '30–45%' : '40–55%',
+        note: 'Best for print/cut panels. Material cost is adjusted by sheet utilization. Base pricing assumes ~30% margin; increase for complexity, rush, or risk.'
+      };
+    }
+
+    function calcDensity() {
+      const tier = currentTier();
+      const mat = materials[materialSelect.value];
+      const sw = val('dSheetW');
+      const sh = val('dSheetH');
+      const pieces = val('pieceCount');
+      const override = val('pieceRateOverride');
+      const cleanupHours = val('cleanupHours');
+      const printSpec = printRates[document.getElementById('dPrintSpec').value];
+      const lam = lamRates[document.getElementById('dLamination').value];
+      const rush = val('dRush');
+      const complexity = parseFloat(document.getElementById('complexity').value);
+
+      const totalSqft = (sw * sh) / 144;
+      const material = mat.sheetCost;
+      const ink = printSpec.inkCost * totalSqft;
+      const lamCost = lam.cost * totalSqft;
+      const labor = (75 + (pieces * 0.28)) * complexity + (cleanupHours * 50);
+      const other = 0;
+      const cost = material + ink + lamCost + labor + other;
+
+      let pieceRate;
+      if (override > 0) {
+        pieceRate = override;
+      } else {
+        const tierAdjust = tier === 'legacy' ? 0.92 : tier === 'premium' ? 1.12 : 1;
+        pieceRate = (0.95 + (pieces >= 200 ? 0.3 : 0.45) + ((complexity - 1) * 0.9) + lam.charge * 0.1 + printSpec.charge * 0.14) * tierAdjust;
+      }
+
+      let sell = pieces * pieceRate;
+      const floorBySheet = tier === 'legacy' ? 285 : tier === 'premium' ? 425 : 335;
+      sell = Math.max(sell, floorBySheet);
+      sell *= rush;
+
+      return {
+        label: 'High-density parts quote',
+        sell,
+        cost,
+        sellPerSqft: totalSqft > 0 ? sell / totalSqft : 0,
+        sellPerUnit: pieces > 0 ? sell / pieces : 0,
+        breakdown: { material, ink, lam: lamCost, labor, other },
+        target: tier === 'legacy' ? '30–40%' : tier === 'standard' ? '30–45%' : '40–55%',
+        note: 'Geared toward market-realistic dense-sheet pricing. Base assumes ~30% margin; increase for high piece counts, detail, or labor-heavy cleanup.'
+      };
+    }
+
+    function calcCutOnly() {
+      const tier = currentTier();
+      const sheets = val('cSheets');
+      const pieces = val('cPieces');
+      const routerHours = val('routerHours');
+      const benchHours = val('benchHours');
+      const rate = Math.max(50, val('runtimeRate'));
+      const risk = val('riskFactor');
+      const complexity = parseFloat(document.getElementById('complexity').value);
+
+      const labor = (routerHours + benchHours) * rate * complexity;
+      const other = 20 * sheets;
+      const cost = labor + other;
+      let sell = cost * risk * (tier === 'legacy' ? 1.2 : tier === 'premium' ? 1.55 : 1.35);
+
+      const simpleFloor = 55 * sheets;
+      const denseFloor = pieces >= 100 ? 150 * sheets : simpleFloor;
+      sell = Math.max(sell, denseFloor);
+
+      return {
+        label: 'Cut-only quote',
+        sell,
+        cost,
+        sellPerSqft: 0,
+        sellPerUnit: pieces > 0 ? sell / pieces : 0,
+        breakdown: { material: 0, ink: 0, lam: 0, labor, other },
+        target: tier === 'legacy' ? '25–35%' : tier === 'standard' ? '30–45%' : '35–50%',
+        note: 'Use for client-supplied printed sheets. Pricing is runtime + risk driven. Maintain $50/hr minimum; increase for risk or tight deadlines.'
+      };
+    }
+
+    function calcLetters() {
+      const tier = currentTier();
+      const cfg = letterRates[document.getElementById('letterThickness').value];
+      const height = val('letterHeight');
+      const count = val('letterCount');
+      const paintPct = val('paintOpt');
+      const studPct = val('studOpt');
+      const paintSetup = val('paintSetup');
+      const patternFeet = val('patternFeet');
+      const patternRate = val('patternRate');
+
+      let sizeMultiplier = 1;
+      if (height < 4) sizeMultiplier = 1.35;
+      else if (height < 6) sizeMultiplier = 1.15;
+
+      const tierAdjust = tier === 'legacy' ? 0.95 : tier === 'premium' ? 1.12 : 1;
+      const baseEach = cfg.basePerInch * height * sizeMultiplier * tierAdjust;
+      const paintEach = baseEach * paintPct;
+      const studEach = baseEach * studPct;
+      const unitSell = baseEach + paintEach + studEach;
+      const patternCharge = Math.max(25, patternFeet * patternRate);
+      const sell = (unitSell * count) + (paintPct > 0 ? paintSetup : 0) + patternCharge;
+
+      const costEach = (cfg.basePerInch * 0.42) * height * sizeMultiplier;
+      const cost = (costEach * count) + (paintPct > 0 ? 28 : 0) + Math.max(10, patternFeet * 1.1);
+
+      return {
+        label: 'Dimensional letters quote',
+        sell,
+        cost,
+        sellPerSqft: 0,
+        sellPerUnit: count > 0 ? sell / count : 0,
+        breakdown: {
+          material: cost * 0.42,
+          ink: 0,
+          lam: 0,
+          labor: cost * 0.45,
+          other: cost * 0.13
+        },
+        target: tier === 'legacy' ? '30–40%' : tier === 'standard' ? '35–50%' : '40–60%',
+        note: 'Per-inch pricing with automatic penalty for small letters below 6 in. Base assumes ~30–40% margin; increase for paint, studs, or complexity.'
+      };
+    }
+
+    function calc() {
+      const mode = getMode();
+      if (mode === 'sqft') return setOutputs(calcSqft());
+      if (mode === 'density') return setOutputs(calcDensity());
+      if (mode === 'cutonly') return setOutputs(calcCutOnly());
+      if (mode === 'letters') return setOutputs(calcLetters());
+    }
+
+    function csvToRows(text) {
+      const lines = text.replace(//g, '').split('
+').filter(Boolean);
+      if (!lines.length) return [];
+      const parseLine = (line) => {
+        const out = [];
+        let cur = '';
+        let inQuotes = false;
+        for (let i = 0; i < line.length; i++) {
+          const ch = line[i];
+          if (ch === '"') {
+            if (inQuotes && line[i + 1] === '"') {
+              cur += '"';
+              i++;
+            } else {
+              inQuotes = !inQuotes;
+            }
+          } else if (ch === ',' && !inQuotes) {
+            out.push(cur.trim());
+            cur = '';
+          } else {
+            cur += ch;
+          }
+        }
+        out.push(cur.trim());
+        return out;
+      };
+      const headers = parseLine(lines[0]).map(h => h.trim());
+      return lines.slice(1).map(line => {
+        const vals = parseLine(line);
+        const obj = {};
+        headers.forEach((h, i) => obj[h] = vals[i] ?? '');
+        return obj;
+      });
+    }
+
+    function num(v, fallback = 0) {
+      const n = parseFloat(v);
+      return isFinite(n) ? n : fallback;
+    }
+
+    function calcSqftFromRow(row, tier) {
+      const mat = materials[row.material] || materials.acm_3mm;
+      const w = num(row.width, 48);
+      const h = num(row.height, 96);
+      const qty = num(row.qty, 1);
+      const utilPct = Math.max(35, Math.min(100, num(row.utilization, 85)));
+      const printSpec = printRates[row.print || 'cmyk'] || printRates.cmyk;
+      const lam = lamRates[row.lamination || 'none'] || lamRates.none;
+      const holes = num(row.holes, 0);
+      const complexity = num(row.complexity, 1.15);
+      const rush = num(row.rush, 1);
+
+      const sqftEach = (w * h) / 144;
+      const totalSqft = sqftEach * qty;
+      const effSheetCost = mat.sheetCost / (utilPct / 100);
+      const material = (effSheetCost / 32) * totalSqft;
+      const ink = printSpec.inkCost * totalSqft;
+      const lamCost = lam.cost * totalSqft;
+      const labor = (mat.cutCostSqft + (0.35 * printSpec.speedFactor)) * complexity * totalSqft;
+      const other = holes * 0.2;
+      const cost = material + ink + lamCost + labor + other;
+
+      let sellSqft = mat.baseSqftSell[tier] + printSpec.charge + lam.charge;
+      sellSqft *= complexity;
+      let sell = ((sellSqft * totalSqft) + (holes * 0.5)) * rush;
+      return {
+        mode: 'sqft',
+        description: `${mat.name} ${w}x${h} x ${qty}`,
+        sell,
+        cost
+      };
+    }
+
+    function calcDensityFromRow(row, tier) {
+      const mat = materials[row.material] || materials.acm_3mm;
+      const sw = num(row.width, 48);
+      const sh = num(row.height, 96);
+      const pieces = num(row.pieces || row.qty, 250);
+      const cleanupHours = num(row.cleanupHours, 1.25);
+      const printSpec = printRates[row.print || 'cmyk'] || printRates.cmyk;
+      const lam = lamRates[row.lamination || 'none'] || lamRates.none;
+      const complexity = num(row.complexity, 1.15);
+      const rush = num(row.rush, 1);
+      const override = num(row.pieceRateOverride, 0);
+
+      const totalSqft = (sw * sh) / 144;
+      const material = mat.sheetCost;
+      const ink = printSpec.inkCost * totalSqft;
+      const lamCost = lam.cost * totalSqft;
+      const labor = (75 + (pieces * 0.28)) * complexity + (cleanupHours * 50);
+      const cost = material + ink + lamCost + labor;
+
+      let pieceRate;
+      if (override > 0) {
+        pieceRate = override;
+      } else {
+        const tierAdjust = tier === 'legacy' ? 0.92 : tier === 'premium' ? 1.12 : 1;
+        pieceRate = (0.95 + (pieces >= 200 ? 0.3 : 0.45) + ((complexity - 1) * 0.9) + lam.charge * 0.1 + printSpec.charge * 0.14) * tierAdjust;
+      }
+      let sell = Math.max(pieces * pieceRate, tier === 'legacy' ? 285 : tier === 'premium' ? 425 : 335) * rush;
+      return {
+        mode: 'density',
+        description: `${mat.name} dense sheet ${pieces} pcs`,
+        sell,
+        cost
+      };
+    }
+
+    function calcCutOnlyFromRow(row, tier) {
+      const sheets = num(row.qty, 1);
+      const pieces = num(row.pieces, 10);
+      const routerHours = num(row.routerHours, 0.5);
+      const benchHours = num(row.benchHours, 0.25);
+      const rate = Math.max(50, num(row.runtimeRate, 50));
+      const risk = num(row.riskFactor, 1.1);
+      const complexity = num(row.complexity, 1.15);
+
+      const labor = (routerHours + benchHours) * rate * complexity;
+      const other = 20 * sheets;
+      const cost = labor + other;
+      let sell = cost * risk * (tier === 'legacy' ? 1.2 : tier === 'premium' ? 1.55 : 1.35);
+      sell = Math.max(sell, pieces >= 100 ? 150 * sheets : 55 * sheets);
+      return {
+        mode: 'cutonly',
+        description: `Cut only ${sheets} sheet(s), ${pieces} pcs`,
+        sell,
+        cost
+      };
+    }
+
+    function calcLettersFromRow(row, tier) {
+      const cfg = letterRates[row.thickness] || letterRates.acr_half;
+      const height = num(row.letterHeight, 8);
+      const count = num(row.letterCount || row.qty, 10);
+      const paintPct = num(row.paint, 0);
+      const studPct = num(row.studs, 0);
+      const patternFeet = num(row.patternFeet, 6);
+      const patternRate = num(row.patternRate, 4);
+      const paintSetup = num(row.paintSetup, 75);
+
+      let sizeMultiplier = 1;
+      if (height < 4) sizeMultiplier = 1.35;
+      else if (height < 6) sizeMultiplier = 1.15;
+
+      const tierAdjust = tier === 'legacy' ? 0.95 : tier === 'premium' ? 1.12 : 1;
+      const baseEach = cfg.basePerInch * height * sizeMultiplier * tierAdjust;
+      const unitSell = baseEach + (baseEach * paintPct) + (baseEach * studPct);
+      const patternCharge = Math.max(25, patternFeet * patternRate);
+      const sell = (unitSell * count) + (paintPct > 0 ? paintSetup : 0) + patternCharge;
+
+      const costEach = (cfg.basePerInch * 0.42) * height * sizeMultiplier;
+      const cost = (costEach * count) + (paintPct > 0 ? 28 : 0) + Math.max(10, patternFeet * 1.1);
+      return {
+        mode: 'letters',
+        description: `${cfg.label} ${height}" x ${count}`,
+        sell,
+        cost
+      };
+    }
+
+    function renderBatch(rows) {
+      const tbody = document.getElementById('batchTableBody');
+      const rowCountEl = document.getElementById('batchRows');
+      const sellEl = document.getElementById('batchSell');
+      const costEl = document.getElementById('batchCost');
+      const profitEl = document.getElementById('batchProfit');
+
+      if (!rows.length) {
+        tbody.innerHTML = '<tr><td colspan="7" class="muted">No CSV loaded.</td></tr>';
+        rowCountEl.textContent = '0';
+        sellEl.textContent = '$0.00';
+        costEl.textContent = '$0.00';
+        profitEl.textContent = '$0.00';
+        return;
+      }
+
+      let totalSell = 0;
+      let totalCost = 0;
+      tbody.innerHTML = rows.map((r, idx) => {
+        const profit = r.sell - r.cost;
+        const margin = r.sell > 0 ? (profit / r.sell) * 100 : 0;
+        totalSell += r.sell;
+        totalCost += r.cost;
+        return `<tr>
+          <td>${idx + 1}</td>
+          <td>${r.mode}</td>
+          <td>${r.description}</td>
+          <td>${fmt(r.sell)}</td>
+          <td>${fmt(r.cost)}</td>
+          <td>${fmt(profit)}</td>
+          <td>${margin.toFixed(1)}%</td>
+        </tr>`;
+      }).join('');
+
+      rowCountEl.textContent = String(rows.length);
+      sellEl.textContent = fmt(totalSell);
+      costEl.textContent = fmt(totalCost);
+      profitEl.textContent = fmt(totalSell - totalCost);
+    }
+
+    function processCsv(text) {
+      const tier = currentTier();
+      const rows = csvToRows(text);
+      const results = [];
+      rows.forEach(row => {
+        const mode = (row.mode || 'sqft').toLowerCase();
+        if (mode === 'sqft') results.push(calcSqftFromRow(row, tier));
+        else if (mode === 'density') results.push(calcDensityFromRow(row, tier));
+        else if (mode === 'cutonly') results.push(calcCutOnlyFromRow(row, tier));
+        else if (mode === 'letters') results.push(calcLettersFromRow(row, tier));
+      });
+      renderBatch(results);
+    }
+
+    modeGroup.addEventListener('click', e => {
+      if (!e.target.classList.contains('pill')) return;
+      setMode(e.target.dataset.mode);
+    });
+
+    document.querySelectorAll('input, select').forEach(el => el.addEventListener('input', calc));
+
+    document.getElementById('csvFile').addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => processCsv(String(reader.result || ''));
+      reader.readAsText(file);
+    });
+
+    populateMaterials();
+    calc();
+  </script>
+</body>
+</html>
