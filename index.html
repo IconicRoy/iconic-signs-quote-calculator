@@ -1,139 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Iconic Signs Quote Calculator</title>
+<style>
+body {
+  background: #111;
+  color: #eee;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+}
+h1 {
+  margin-top: 0;
+}
+input, select {
+  width: 100%;
+  padding: 10px;
+  margin: 6px 0 14px 0;
+  background: #222;
+  border: 1px solid #444;
+  color: #fff;
+  box-sizing: border-box;
+}
+button {
+  padding: 14px 22px;
+  background: #d4a853;
+  border: none;
+  color: #111;
+  cursor: pointer;
+  font-size: 16px;
+  margin-right: 10px;
+}
+button:hover {
+  opacity: 0.9;
+}
+.toggle {
+  margin-bottom: 20px;
+}
+.hidden {
+  display: none;
+}
+.result {
+  margin-top: 24px;
+  background: #1d1d1d;
+  padding: 16px;
+  border: 1px solid #333;
+  white-space: normal;
+  line-height: 1.5;
+}
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+@media (max-width: 800px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+<body>
+
+<h1>Iconic Signs Quote Calculator</h1>
+
+<div class="toggle">
+  <button type="button" onclick="setMode('simple')">Simple</button>
+  <button type="button" onclick="setMode('advanced')">Advanced</button>
+</div>
+
+<label>Description</label>
+<input id="desc" type="text" value="parking signs">
+
+<div class="grid">
+  <div>
+    <label>Qty</label>
+    <input id="qty" type="number" value="8" step="1" min="1">
+  </div>
+  <div>
+    <label>Width (in)</label>
+    <input id="w" type="number" value="23.5" step="0.01" min="0">
+  </div>
+</div>
+
+<div class="grid">
+  <div>
+    <label>Height (in)</label>
+    <input id="h" type="number" value="23.5" step="0.01" min="0">
+  </div>
+  <div id="simple">
+    <label>Sell Price ($/ft²)</label>
+    <input id="rate" type="number" value="14" step="0.01" min="0">
+  </div>
+</div>
+
+<div id="advanced">
+  <div class="grid">
+    <div>
+      <label>Sheet Width</label>
+      <input id="sheetW" type="number" value="48" step="0.01" min="0">
+    </div>
+    <div>
+      <label>Sheet Height</label>
+      <input id="sheetH" type="number" value="96" step="0.01" min="0">
+    </div>
+  </div>
+
+  <div class="grid">
+    <div>
+      <label>Material Cost</label>
+      <input id="sheetCost" type="number" value="63.24" step="0.01" min="0">
+    </div>
+    <div>
+      <label>Print Margin %</label>
+      <input id="margin" type="number" value="30" step="0.01" min="0">
+    </div>
+  </div>
+
+  <div class="grid">
+    <div>
+      <label>Gap</label>
+      <input id="gap" type="number" value="0" step="0.01" min="0">
+    </div>
+    <div>
+      <label>Edge Margin</label>
+      <input id="edge" type="number" value="0" step="0.01" min="0">
+    </div>
+  </div>
+
+  <div class="grid">
+    <div>
+      <label>Minimum Job</label>
+      <input id="minJob" type="number" value="0" step="0.01" min="0">
+    </div>
+    <div>
+      <label>Sell Floor ($/ft²)</label>
+      <input id="sqftFloor" type="number" value="14" step="0.01" min="0">
+    </div>
+  </div>
+
+  <div class="grid">
+    <div>
+      <label>Labor Minutes</label>
+      <input id="laborMin" type="number" value="0" step="0.01" min="0">
+    </div>
+    <div>
+      <label>Labor Rate ($/hr)</label>
+      <input id="laborRate" type="number" value="50" step="0.01" min="0">
+    </div>
+  </div>
+</div>
+
+<button type="button" onclick="calc()">Calculate</button>
+
+<div class="result" id="out">Enter values and click Calculate.</div>
+
 <script>
 let mode = "simple";
 
-function setMode(m){
+function setMode(m) {
   mode = m;
   document.getElementById("advanced").classList.toggle("hidden", m !== "advanced");
   document.getElementById("simple").classList.toggle("hidden", m !== "simple");
 }
 
 function calc() {
-  let qty = parseFloat(qtyEl().value) || 0;
-  let w = parseFloat(wEl().value) || 0;
-  let h = parseFloat(hEl().value) || 0;
+  const desc = document.getElementById("desc").value || "";
+  const qty = parseFloat(document.getElementById("qty").value) || 0;
+  const w = parseFloat(document.getElementById("w").value) || 0;
+  const h = parseFloat(document.getElementById("h").value) || 0;
 
   if (qty <= 0 || w <= 0 || h <= 0) {
-    out().innerHTML = "Enter valid quantity, width, and height.";
+    document.getElementById("out").innerHTML = "Enter valid quantity, width, and height.";
     return;
   }
 
-  let sqftEach = (w * h) / 144;
-  let totalSqft = sqftEach * qty;
+  const sqftEach = (w * h) / 144;
+  const totalSqft = sqftEach * qty;
 
   if (mode === "simple") {
-    let rate = parseFloat(rateEl().value) || 0;
-    let sell = totalSqft * rate;
+    const rate = parseFloat(document.getElementById("rate").value) || 0;
+    const sell = totalSqft * rate;
 
-    out().innerHTML = `
-SqFt Each: ${sqftEach.toFixed(2)}<br>
-Total SqFt: ${totalSqft.toFixed(2)}<br>
-Sell: $${sell.toFixed(2)}
-`;
+    document.getElementById("out").innerHTML = `
+      <strong>Description:</strong> ${escapeHtml(desc)}<br>
+      <strong>Qty:</strong> ${qty}<br>
+      <strong>Finished Size:</strong> ${w.toFixed(2)}" × ${h.toFixed(2)}"<br>
+      <strong>SqFt Each:</strong> ${sqftEach.toFixed(2)}<br>
+      <strong>Total SqFt:</strong> ${totalSqft.toFixed(2)}<br><br>
+      <strong>Sell:</strong> $${sell.toFixed(2)}
+    `;
     return;
   }
 
-  // ADVANCED MODE
-  let sheetW = parseFloat(sheetWEl().value) || 0;
-  let sheetH = parseFloat(sheetHEl().value) || 0;
-  let sheetCost = parseFloat(sheetCostEl().value) || 0;
-  let margin = (parseFloat(marginEl().value) || 0) / 100;
-  let gap = parseFloat(gapEl().value) || 0;
-  let edge = parseFloat(edgeEl().value) || 0;
-  let minJob = parseFloat(minJobEl().value) || 0;
+  const sheetW = parseFloat(document.getElementById("sheetW").value) || 0;
+  const sheetH = parseFloat(document.getElementById("sheetH").value) || 0;
+  const sheetCost = parseFloat(document.getElementById("sheetCost").value) || 0;
+  const margin = (parseFloat(document.getElementById("margin").value) || 0) / 100;
+  const gap = parseFloat(document.getElementById("gap").value) || 0;
+  const edge = parseFloat(document.getElementById("edge").value) || 0;
+  const minJob = parseFloat(document.getElementById("minJob").value) || 0;
+  const sqftFloor = parseFloat(document.getElementById("sqftFloor").value) || 0;
+  const laborMin = parseFloat(document.getElementById("laborMin").value) || 0;
+  const laborRate = parseFloat(document.getElementById("laborRate").value) || 0;
 
-  if (sheetW <= 0 || sheetH <= 0 || sheetCost < 0) {
-    out().innerHTML = "Enter valid sheet size and material cost.";
+  if (sheetW <= 0 || sheetH <= 0) {
+    document.getElementById("out").innerHTML = "Enter valid sheet width and sheet height.";
     return;
   }
 
-  // usable sheet after edge margins
-  let usableW = sheetW - edge * 2;
-  let usableH = sheetH - edge * 2;
+  const usableW = sheetW - edge * 2;
+  const usableH = sheetH - edge * 2;
 
   if (usableW <= 0 || usableH <= 0) {
-    out().innerHTML = "Edge margin is too large for the selected sheet.";
+    document.getElementById("out").innerHTML = "Edge margin is too large for the selected sheet.";
     return;
   }
 
-  // correct shared-gap nesting:
-  // n * part + (n - 1) * gap <= usable
-  // n <= (usable + gap) / (part + gap)
-  let fitX_a = Math.floor((usableW + gap) / (w + gap));
-  let fitY_a = Math.floor((usableH + gap) / (h + gap));
-  let perSheet_a = fitX_a * fitY_a;
+  const fitXStandard = Math.floor((usableW + gap) / (w + gap));
+  const fitYStandard = Math.floor((usableH + gap) / (h + gap));
+  const perSheetStandard = fitXStandard * fitYStandard;
 
-  // also test rotated orientation
-  let fitX_b = Math.floor((usableW + gap) / (h + gap));
-  let fitY_b = Math.floor((usableH + gap) / (w + gap));
-  let perSheet_b = fitX_b * fitY_b;
+  const fitXRotated = Math.floor((usableW + gap) / (h + gap));
+  const fitYRotated = Math.floor((usableH + gap) / (w + gap));
+  const perSheetRotated = fitXRotated * fitYRotated;
 
   let rotated = false;
-  let fitX, fitY, perSheet, partW, partH;
+  let fitX = fitXStandard;
+  let fitY = fitYStandard;
+  let perSheet = perSheetStandard;
 
-  if (perSheet_b > perSheet_a) {
+  if (perSheetRotated > perSheetStandard) {
     rotated = true;
-    fitX = fitX_b;
-    fitY = fitY_b;
-    perSheet = perSheet_b;
-    partW = h;
-    partH = w;
-  } else {
-    fitX = fitX_a;
-    fitY = fitY_a;
-    perSheet = perSheet_a;
-    partW = w;
-    partH = h;
+    fitX = fitXRotated;
+    fitY = fitYRotated;
+    perSheet = perSheetRotated;
   }
 
   if (perSheet <= 0) {
-    out().innerHTML = "Does not fit sheet.";
+    document.getElementById("out").innerHTML = "Does not fit sheet.";
     return;
   }
 
-  let sheets = Math.ceil(qty / perSheet);
-  let materialCost = sheets * sheetCost;
+  const sheetsNeeded = Math.ceil(qty / perSheet);
+  const materialCost = sheetsNeeded * sheetCost;
+  const laborCost = (laborMin / 60) * laborRate;
+  const cost = materialCost + laborCost;
 
-  // very basic cost model for now
-  let cost = materialCost;
+  const sellFromMargin = cost * (1 + margin);
+  const sellFromSqFt = totalSqft * sqftFloor;
+  const sell = Math.max(sellFromMargin, sellFromSqFt, minJob);
 
-  // pricing floor logic
-  let sellFromMargin = cost * (1 + margin);
-  let sellFromSqFt = totalSqft * 14;
-  let sell = Math.max(sellFromMargin, sellFromSqFt, minJob);
+  document.getElementById("out").innerHTML = `
+    <strong>Description:</strong> ${escapeHtml(desc)}<br>
+    <strong>Qty:</strong> ${qty}<br>
+    <strong>Finished Size:</strong> ${w.toFixed(2)}" × ${h.toFixed(2)}"<br>
+    <strong>SqFt Each:</strong> ${sqftEach.toFixed(2)}<br>
+    <strong>Total SqFt:</strong> ${totalSqft.toFixed(2)}<br><br>
 
-  out().innerHTML = `
-Description: ${descEl().value}<br>
-Qty: ${qty}<br>
-Finished Size: ${w.toFixed(2)}" × ${h.toFixed(2)}"<br>
-SqFt Each: ${sqftEach.toFixed(2)}<br>
-Total SqFt: ${totalSqft.toFixed(2)}<br><br>
+    <strong>Sheet Size:</strong> ${sheetW.toFixed(2)}" × ${sheetH.toFixed(2)}"<br>
+    <strong>Usable Sheet:</strong> ${usableW.toFixed(2)}" × ${usableH.toFixed(2)}"<br>
+    <strong>Gap:</strong> ${gap.toFixed(2)}"<br>
+    <strong>Edge Margin:</strong> ${edge.toFixed(2)}"<br>
+    <strong>Best Orientation:</strong> ${rotated ? "Rotated" : "Standard"}<br>
+    <strong>Layout:</strong> ${fitX} across × ${fitY} down<br>
+    <strong>Per Sheet:</strong> ${perSheet}<br>
+    <strong>Sheets Needed:</strong> ${sheetsNeeded}<br><br>
 
-Sheet Size: ${sheetW.toFixed(2)}" × ${sheetH.toFixed(2)}" (${((sheetW * sheetH) / 144).toFixed(2)} sq ft)<br>
-Edge Margin: ${edge.toFixed(2)}"<br>
-Usable Sheet Area: ${usableW.toFixed(2)}" × ${usableH.toFixed(2)}"<br>
-Part Gap: ${gap.toFixed(2)}"<br>
-Best Orientation: ${rotated ? "Rotated" : "Standard"}<br>
-Layout: ${fitX} across × ${fitY} down<br>
-Per Sheet: ${perSheet}<br>
-Sheets Needed: ${sheets}<br><br>
-
-Material Cost: $${materialCost.toFixed(2)}<br>
-Cost: $${cost.toFixed(2)}<br>
-Sell: $${sell.toFixed(2)}
-`;
+    <strong>Material Cost:</strong> $${materialCost.toFixed(2)}<br>
+    <strong>Labor Cost:</strong> $${laborCost.toFixed(2)}<br>
+    <strong>Total Cost:</strong> $${cost.toFixed(2)}<br>
+    <strong>Sell from Margin:</strong> $${sellFromMargin.toFixed(2)}<br>
+    <strong>Sell from SqFt Floor:</strong> $${sellFromSqFt.toFixed(2)}<br>
+    <strong>Final Sell:</strong> $${sell.toFixed(2)}
+  `;
 }
 
-const descEl = () => document.getElementById("desc");
-const qtyEl = () => document.getElementById("qty");
-const wEl = () => document.getElementById("w");
-const hEl = () => document.getElementById("h");
-const rateEl = () => document.getElementById("rate");
-const sheetWEl = () => document.getElementById("sheetW");
-const sheetHEl = () => document.getElementById("sheetH");
-const sheetCostEl = () => document.getElementById("sheetCost");
-const marginEl = () => document.getElementById("margin");
-const gapEl = () => document.getElementById("gap");
-const edgeEl = () => document.getElementById("edge");
-const minJobEl = () => document.getElementById("minJob");
-const out = () => document.getElementById("out");
+function escapeHtml(str) {
+  return String(str)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+setMode("simple");
 </script>
+
+</body>
+</html>
