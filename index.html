@@ -1,77 +1,446 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Iconic Signs Calculator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Iconic Signs FL — Quote Calculator V5</title>
 <style>
-body { background:#111; color:#eee; font-family:Arial; }
-input, select { padding:6px; margin:4px; }
-button { padding:10px; background:#d4a853; border:none; cursor:pointer; }
+  :root{
+    --bg:#0f0f0f; --surface:#181818; --surface2:#222; --border:#2e2e2e;
+    --accent:#d4a853; --accent2:#b8935f; --text:#e8e4dc; --muted:#7a7570;
+    --success:#4caf7d; --warning:#e8a030; --danger:#e05252; --info:#5b9bd5;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: Inter, system-ui, Arial, sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 var(--sans)}
+  header{border-bottom:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .logo{font:13px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+  .logo span{color:var(--muted)}
+  .hdr-right{display:flex;gap:10px;align-items:center}
+  .badge, .toggle-btn{font:11px var(--mono);padding:6px 10px;border:1px solid var(--border);border-radius:3px;background:transparent;color:var(--muted)}
+  .toggle-btn{cursor:pointer}
+  .toggle-btn:hover{border-color:var(--accent);color:var(--accent)}
+  .shell{display:grid;grid-template-columns:240px 1fr 340px;min-height:calc(100vh - 62px)}
+  nav{border-right:1px solid var(--border);padding:24px 0}
+  .nav-label{font:10px var(--mono);color:var(--muted);letter-spacing:.12em;text-transform:uppercase;padding:0 20px 10px}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;cursor:pointer;border-left:2px solid transparent;color:var(--muted);font-size:13px;user-select:none}
+  .nav-item:hover{background:var(--surface);color:var(--text)}
+  .nav-item.active{border-left-color:var(--accent);background:var(--surface);color:var(--text)}
+  .nav-dot{width:6px;height:6px;border-radius:50%;background:var(--border)}
+  .nav-item.active .nav-dot{background:var(--accent)}
+  .nav-pill{margin-left:auto;font:9px var(--mono);padding:2px 6px;border-radius:2px;background:var(--surface2);color:var(--muted)}
+  .nav-pill.ready{background:#1a2e1f;color:var(--success)}
+  main{padding:26px 28px;overflow-y:auto}
+  .panel{display:none}
+  .panel.active{display:block}
+  .panel-header{margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+  .panel-header h2{margin:0 0 5px;font:14px var(--mono);color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
+  .panel-header p{margin:0;color:var(--muted);font-size:13px}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+  .field-row.three{grid-template-columns:1fr 1fr 1fr}
+  .field-row.four{grid-template-columns:1fr 1fr 1fr 1fr}
+  label{display:block;font:10px var(--mono);color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px}
+  label .hint{font-size:9px;color:#555;text-transform:none;letter-spacing:0;margin-left:4px}
+  input[type="text"],input[type="number"],select{
+    width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);
+    padding:9px 10px;border-radius:3px;font:13px var(--mono);outline:none
+  }
+  input:focus,select:focus{border-color:var(--accent)}
+  .input-unit{position:relative}
+  .input-unit input{padding-right:38px}
+  .unit-label{position:absolute;right:10px;top:50%;transform:translateY(-50%);font:10px var(--mono);color:var(--muted);pointer-events:none}
+  .section-div{font:10px var(--mono);color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin:20px 0 12px;display:flex;align-items:center;gap:10px}
+  .section-div::after{content:'';height:1px;background:var(--border);flex:1}
+  .flag{font:12px var(--mono);padding:8px 10px;border-radius:3px;margin:6px 0}
+  .flag.ok{background:#0f2a1a;border:1px solid #1a4a2a;color:var(--success)}
+  .flag.warn{background:#2a1f0a;border:1px solid #4a3510;color:var(--warning)}
+  .flag.error{background:#2a0f0f;border:1px solid #4a1a1a;color:var(--danger)}
+  .flag.info{background:#0f1f2a;border:1px solid #1a3a4a;color:var(--info)}
+  .btn-row{display:flex;gap:10px;margin-top:14px}
+  .calc-btn{background:var(--accent);color:#111;border:0;padding:11px 22px;border-radius:3px;cursor:pointer;font:11px var(--mono);letter-spacing:.1em;text-transform:uppercase}
+  .calc-btn:hover{background:var(--accent2)}
+  .breakdown{display:none;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:14px;margin-top:16px}
+  .breakdown.show{display:block}
+  .breakdown-title{font:10px var(--mono);color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+  .bk-row{display:flex;justify-content:space-between;gap:14px;padding:4px 0;border-bottom:1px solid var(--border);font-size:12px}
+  .bk-row:last-child{border-bottom:0}
+  .bk-row .k{color:var(--muted)}
+  .bk-row .v{font-family:var(--mono);white-space:nowrap}
+  .bk-row.highlight .v{color:var(--accent);font-size:13px}
+  .bk-row.margin-row .v{color:var(--success)}
+  aside{border-left:1px solid var(--border);background:var(--surface);display:flex;flex-direction:column}
+  .aside-header{padding:16px 18px;border-bottom:1px solid var(--border);font:11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+  .clear-btn,.small-btn{background:none;border:1px solid var(--border);color:var(--muted);font:10px var(--mono);padding:4px 8px;border-radius:2px;cursor:pointer}
+  .clear-btn:hover,.small-btn:hover{border-color:var(--accent);color:var(--accent)}
+  .aside-body{flex:1;padding:14px 18px;overflow-y:auto}
+  .empty-state{margin-top:60px;text-align:center;color:var(--muted);font:12px var(--mono);line-height:2}
+  .line-item{position:relative;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:12px 14px;margin-bottom:10px}
+  .remove-btn{position:absolute;right:8px;top:8px;background:none;border:none;color:#555;font-size:16px;cursor:pointer}
+  .remove-btn:hover{color:var(--danger)}
+  .li-title{font:10px var(--mono);letter-spacing:.08em;color:var(--muted);margin-bottom:4px}
+  .li-desc{font-size:13px;font-weight:600;margin-bottom:7px}
+  .li-row{display:flex;justify-content:space-between;padding:2px 0;font-size:12px}
+  .li-row .k{color:var(--muted)}
+  .li-row .v{font-family:var(--mono)}
+  .li-row .price{color:var(--success);font-weight:700}
+  .li-row .cost{color:var(--warning)}
+  .totals{border-top:1px solid var(--border);padding:14px 18px}
+  .total-row{display:flex;justify-content:space-between;padding:3px 0;font-size:13px}
+  .total-row .k{color:var(--muted)}
+  .total-row .v{font-family:var(--mono)}
+  .total-row.grand{border-top:1px solid var(--border);margin-top:8px;padding-top:10px}
+  .total-row.grand .k{font:11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--text)}
+  .total-row.grand .v{font-size:20px;color:var(--success)}
+  .margin-bar{margin-top:10px;height:4px;background:var(--surface2);overflow:hidden;border-radius:2px}
+  .margin-fill{height:100%;background:var(--success);width:0}
+  .margin-label{display:flex;justify-content:space-between;margin-top:4px;font:10px var(--mono);color:var(--muted)}
+  .print-area{padding:14px 18px;border-top:1px solid var(--border)}
+  .print-btn{width:100%;padding:10px;border:1px solid var(--accent);color:var(--accent);background:none;border-radius:3px;cursor:pointer;font:11px var(--mono);letter-spacing:.1em;text-transform:uppercase}
+  .print-btn:hover{background:var(--accent);color:#111}
+  .settings-note{font:12px var(--mono);line-height:1.7;color:var(--muted);background:var(--surface2);padding:10px 12px;border:1px solid var(--border);border-radius:3px;margin-bottom:14px}
+  .mode-toggle{display:flex;gap:10px;margin-bottom:12px}
+  .mode-btn{padding:8px 12px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font:11px var(--mono);cursor:pointer;border-radius:3px}
+  .mode-btn.active{border-color:var(--accent);color:var(--accent)}
+  .client-mode .internal-only{display:none !important}
+  .client-mode .breakdown{display:none !important}
+  .client-mode .margin-bar,.client-mode .margin-label{display:none !important}
+  #print-header{display:none;padding:10px 0 18px;border-bottom:1px solid var(--border);margin-bottom:14px}
+  #print-header h3{margin:0 0 4px;font:18px var(--sans)}
+  #print-header div{color:var(--muted)}
+  .client-mode #print-header{display:block}
+  @media (max-width:1200px){.shell{grid-template-columns:220px 1fr}.shell aside{display:none}}
+  @media print{
+    nav,.print-area,.calc-btn,.clear-btn,.remove-btn,.small-btn,.toggle-btn{display:none !important}
+    .shell{grid-template-columns:1fr}
+    aside{display:block;border:0}
+    main{padding:0}
+    body, .line-item, .breakdown, .panel, aside, main, header{background:#fff !important;color:#111 !important;border-color:#ccc !important}
+  }
 </style>
 </head>
 <body>
+<header>
+  <div class="logo">Iconic Signs FL <span>// Quote Calculator V5</span></div>
+  <div class="hdr-right">
+    <div class="badge">Trade-Only Wholesale</div>
+    <button id="client-toggle" class="toggle-btn" onclick="toggleClientMode()">Client View</button>
+  </div>
+</header>
 
-<h2>Iconic Signs Calculator (Fixed)</h2>
+<div class="shell">
+  <nav>
+    <div class="nav-label">Product Types</div>
+    <div class="nav-item active" onclick="showPanel('rta', this)"><div class="nav-dot"></div>RTA Cut Vinyl <span class="nav-pill ready">Live</span></div>
+    <div class="nav-item" onclick="showPanel('uv', this)"><div class="nav-dot"></div>UV Flatbed Print <span class="nav-pill ready">Live</span></div>
+    <div class="nav-item" onclick="showPanel('cnc', this)"><div class="nav-dot"></div>CNC Routed <span class="nav-pill ready">Live</span></div>
+    <div class="nav-item" onclick="showPanel('ada', this)"><div class="nav-dot"></div>ADA Signage <span class="nav-pill ready">Live</span></div>
+    <div class="nav-label" style="margin-top:26px;">Configuration</div>
+    <div class="nav-item" onclick="showPanel('settings', this)"><div class="nav-dot"></div>Shop Rates</div>
+  </nav>
 
-<label>Description</label><br>
-<input id="desc" value="parking signs"><br>
+  <main>
+    <div id="print-header">
+      <h3>Iconic Signs FL</h3>
+      <div>Wholesale Sign Manufacturing Quote</div>
+    </div>
 
-<label>Qty</label><br>
-<input id="qty" value="4"><br>
+    <div class="panel active" id="panel-rta">
+      <div class="panel-header">
+        <h2>RTA / Cut Vinyl</h2>
+        <p>Ready-to-apply vinyl. Costed by roll pull, transfer tape, labor, and pricing floors.</p>
+      </div>
+      <div class="field-row">
+        <div><label>Job description</label><input id="rta-desc" type="text" placeholder="e.g. Logo + text set"></div>
+        <div><label>Quantity <span class="hint">(sets)</span></label><input id="rta-qty" type="number" value="1" min="1"></div>
+      </div>
+      <div class="section-div">Piece 1 — main graphic</div>
+      <div class="field-row four">
+        <div><label>Width <span class="hint">in</span></label><input id="rta-w1" type="number" step="0.25" oninput="orientationHint(1)"></div>
+        <div><label>Height <span class="hint">in</span></label><input id="rta-h1" type="number" step="0.25" oninput="orientationHint(1)"></div>
+        <div><label>Color / vinyl</label><input id="rta-color1" type="text" placeholder="e.g. Black 751"></div>
+        <div><label>Weed complexity</label><select id="rta-weed1"><option value="simple">Simple</option><option value="moderate" selected>Moderate</option><option value="detailed">Detailed</option></select></div>
+      </div>
+      <div id="orient-hint-1"></div>
+      <div class="section-div">Piece 2 — optional</div>
+      <div class="field-row four">
+        <div><label>Width <span class="hint">in</span></label><input id="rta-w2" type="number" step="0.25" oninput="orientationHint(2)"></div>
+        <div><label>Height <span class="hint">in</span></label><input id="rta-h2" type="number" step="0.25" oninput="orientationHint(2)"></div>
+        <div><label>Color / vinyl</label><input id="rta-color2" type="text" placeholder="e.g. White 751"></div>
+        <div><label>Weed complexity</label><select id="rta-weed2"><option value="simple">Simple</option><option value="moderate" selected>Moderate</option><option value="detailed">Detailed</option></select></div>
+      </div>
+      <div id="orient-hint-2"></div>
+      <div class="section-div">Job options</div>
+      <div class="field-row three">
+        <div><label>Piece assembly</label><select id="rta-assembly"><option value="independent">Independent pieces</option><option value="kit" selected>Kitted as a set</option></select></div>
+        <div><label>File prep</label><select id="rta-files"><option value="0">Cut-ready — no prep</option><option value="25">Minor cleanup ($25)</option><option value="40">Trace / rebuild ($40)</option></select></div>
+        <div><label>Price per sq ft</label><div class="input-unit"><input id="rta-sqft-rate" type="number" value="8" step="0.25"><span class="unit-label">$/ft²</span></div></div>
+      </div>
+      <div class="btn-row"><button class="calc-btn" id="rta-calc-btn" onclick="calcRTA()">Calculate + Add to Quote</button></div>
+      <div class="breakdown" id="rta-breakdown"></div>
+    </div>
 
-<label>Width (in)</label><br>
-<input id="w" value="12"><br>
+    <div class="panel" id="panel-uv">
+      <div class="panel-header">
+        <h2>UV Flatbed Print</h2>
+        <p>Direct print to sheet goods. Includes white ink controls, laminate, and sheet nesting validation.</p>
+      </div>
+      <div class="field-row">
+        <div><label>Job description</label><input id="uv-desc" type="text" placeholder="e.g. 4x8 ACM panels"></div>
+        <div><label>Quantity <span class="hint">(pieces)</span></label><input id="uv-qty" type="number" value="1" min="1" oninput="uvSheetHint()"></div>
+      </div>
+      <div class="section-div">Panel size</div>
+      <div class="field-row three">
+        <div><label>Width <span class="hint">in</span></label><input id="uv-w" type="number" step="0.5" oninput="uvSheetHint()"></div>
+        <div><label>Height <span class="hint">in</span></label><input id="uv-h" type="number" step="0.5" oninput="uvSheetHint()"></div>
+        <div><label>Bleed / spacing <span class="hint">each side</span></label><input id="uv-bleed" type="number" value="0.125" step="0.125" oninput="uvSheetHint()"></div>
+      </div>
+      <div class="section-div">Substrate</div>
+      <div class="field-row three">
+        <div><label>Material</label><select id="uv-material" onchange="materialChange('uv')"></select></div>
+        <div><label>Sheet cost</label><div class="input-unit"><input id="uv-sheet-cost" type="number" step="0.01"><span class="unit-label">$</span></div></div>
+        <div><label>Sheet size</label><select id="uv-sheet-size" onchange="uvSheetHint()"><option value="48x96">48 × 96" (4×8)</option><option value="60x120">60 × 120" (5×10)</option></select></div>
+      </div>
+      <div id="uv-sheet-hint"></div>
+      <div class="section-div">Ink / laminate</div>
+      <div class="field-row four">
+        <div><label>CMYK coverage</label><select id="uv-coverage"><option value="1.0">Full (100%)</option><option value="0.75">Heavy (75%)</option><option value="0.5">Medium (50%)</option><option value="0.25">Light (25%)</option></select></div>
+        <div><label>White ink</label><select id="uv-white"><option value="none" selected>None</option><option value="spot">Spot white</option><option value="flood">Flood white</option><option value="double">Double strike white</option></select></div>
+        <div><label>White coverage</label><select id="uv-white-coverage"><option value="0.25">Light (25%)</option><option value="0.5" selected>Medium (50%)</option><option value="0.75">Heavy (75%)</option><option value="1.0">Full (100%)</option></select></div>
+        <div><label>Layers</label><select id="uv-layers"><option value="1" selected>Single layer</option><option value="2">Double layer</option></select></div>
+      </div>
+      <div class="field-row">
+        <div><label>Laminate type</label><select id="uv-lam"><option value="none">No laminate</option><option value="economy">Economy semi-gloss — $0.96/ft²</option><option value="intermediate">Intermediate — $1.24/ft²</option></select></div>
+        <div><label>File prep</label><select id="uv-files"><option value="0">Print-ready — no prep</option><option value="25">Minor cleanup ($25)</option><option value="40">Rebuild / raster ($40)</option></select></div>
+      </div>
+      <div class="section-div">Sell price</div>
+      <div class="field-row">
+        <div><label>Price per sq ft</label><div class="input-unit"><input id="uv-sqft-rate" type="number" value="12" step="0.25"><span class="unit-label">$/ft²</span></div></div>
+        <div><label>Print mode note</label><div class="settings-note">White ink adds both cost and time. Sheet usage uses simple grid nesting.</div></div>
+      </div>
+      <div class="btn-row"><button class="calc-btn" id="uv-calc-btn" onclick="calcUV()">Calculate + Add to Quote</button></div>
+      <div class="breakdown" id="uv-breakdown"></div>
+    </div>
 
-<label>Height (in)</label><br>
-<input id="h" value="12"><br>
+    <div class="panel" id="panel-cnc">
+      <div class="panel-header">
+        <h2>CNC Routed</h2>
+        <p>Dual mode routing calculator: Fast Quote for speed, Accurate Mode for toolpath-driven estimates.</p>
+      </div>
+      <div class="mode-toggle">
+        <button id="cnc-mode-fast" class="mode-btn active" onclick="setCNCMode('fast')">Fast Quote</button>
+        <button id="cnc-mode-accurate" class="mode-btn" onclick="setCNCMode('accurate')">Accurate</button>
+      </div>
+      <div class="field-row">
+        <div><label>Job description</label><input id="cnc-desc" type="text" placeholder="e.g. parking signs"></div>
+        <div><label>Quantity <span class="hint">(pieces)</span></label><input id="cnc-qty" type="number" value="1" min="1" oninput="cncPreview()"></div>
+      </div>
+      <div class="section-div">Panel size</div>
+      <div class="field-row three">
+        <div><label>Width <span class="hint">in</span></label><input id="cnc-w" type="number" step="0.5" oninput="cncPreview()"></div>
+        <div><label>Height <span class="hint">in</span></label><input id="cnc-h" type="number" step="0.5" oninput="cncPreview()"></div>
+        <div><label>Margin / spacing <span class="hint">each side</span></label><input id="cnc-bleed" type="number" value="0.125" step="0.125" oninput="cncPreview()"></div>
+      </div>
+      <div class="section-div">Material</div>
+      <div class="field-row three">
+        <div><label>Material</label><select id="cnc-material" onchange="materialChange('cnc')"></select></div>
+        <div><label>Sheet cost</label><div class="input-unit"><input id="cnc-sheet-cost" type="number" step="0.01"><span class="unit-label">$</span></div></div>
+        <div><label>Sheet size</label><select id="cnc-sheet-size" onchange="cncPreview()"><option value="48x96">48 × 96" (4×8)</option><option value="60x120">60 × 120" (5×10)</option></select></div>
+      </div>
+      <div id="cnc-sheet-hint"></div>
+      <div class="section-div">Routing</div>
+      <div class="field-row four">
+        <div><label>Complexity</label><select id="cnc-complexity" oninput="cncPreview()"><option value="1.0">Simple</option><option value="1.3" selected>Moderate</option><option value="1.8">Heavy</option></select></div>
+        <div><label>Inside cutouts</label><input id="cnc-cutouts" type="number" value="0" min="0" oninput="cncPreview()"></div>
+        <div><label>Mounting holes</label><input id="cnc-holes" type="number" value="0" min="0" oninput="cncPreview()"></div>
+        <div><label>Hole diameter <span class="hint">in</span></label><input id="cnc-hole-dia" type="number" value="0.25" step="0.0625" oninput="cncPreview()"></div>
+      </div>
+      <div class="field-row four">
+        <div><label>Hole process</label><select id="cnc-hole-process" oninput="cncPreview()"><option value="through">Through cut</option><option value="drill">Drill cycle</option></select></div>
+        <div><label>Tabs required</label><select id="cnc-tabs" oninput="cncPreview()"><option value="no">No tabs</option><option value="yes">Tabs required</option></select></div>
+        <div><label>Edge finish</label><select id="cnc-edge" oninput="cncPreview()"><option value="standard">Standard</option><option value="clean">Clean edge / slower</option></select></div>
+        <div><label>File prep</label><select id="cnc-files"><option value="0">Cut-ready — no prep</option><option value="25">Minor cleanup ($25)</option><option value="40">Trace / rebuild ($40)</option></select></div>
+      </div>
+      <div class="section-div">Sell price</div>
+      <div class="field-row">
+        <div><label>Price per sq ft</label><div class="input-unit"><input id="cnc-sqft-rate" type="number" value="14" step="0.25"><span class="unit-label">$/ft²</span></div></div>
+        <div><label>Estimated toolpath <span class="hint">display only</span></label><div class="input-unit"><input id="cnc-toolpath-display" type="text" value="—" readonly><span class="unit-label">in</span></div></div>
+      </div>
+      <div class="btn-row"><button class="calc-btn" id="cnc-calc-btn" onclick="calcCNC()">Calculate + Add to Quote</button></div>
+      <div class="breakdown" id="cnc-breakdown"></div>
+    </div>
 
-<label>Material Cost (sheet)</label><br>
-<input id="sheet" value="63.24"><br>
+    <div class="panel" id="panel-ada">
+      <div class="panel-header">
+        <h2>ADA Signage</h2>
+        <p>Structured ADA estimator using substrate, tactile copy, braille lines, finish, and mounting.</p>
+      </div>
+      <div class="field-row">
+        <div><label>Job description</label><input id="ada-desc" type="text" placeholder="e.g. Room IDs"></div>
+        <div><label>Quantity <span class="hint">(pieces)</span></label><input id="ada-qty" type="number" value="1" min="1" oninput="adaPreview()"></div>
+      </div>
+      <div class="section-div">Panel size</div>
+      <div class="field-row three">
+        <div><label>Width <span class="hint">in</span></label><input id="ada-w" type="number" step="0.25" oninput="adaPreview()"></div>
+        <div><label>Height <span class="hint">in</span></label><input id="ada-h" type="number" step="0.25" oninput="adaPreview()"></div>
+        <div><label>Spacing / bleed <span class="hint">each side</span></label><input id="ada-bleed" type="number" value="0.125" step="0.125" oninput="adaPreview()"></div>
+      </div>
+      <div class="section-div">Material</div>
+      <div class="field-row three">
+        <div><label>Material</label><select id="ada-material" onchange="materialChange('ada')"></select></div>
+        <div><label>Sheet cost</label><div class="input-unit"><input id="ada-sheet-cost" type="number" step="0.01"><span class="unit-label">$</span></div></div>
+        <div><label>Sheet size</label><select id="ada-sheet-size" onchange="adaPreview()"><option value="24x48">24 × 48"</option><option value="24x96">24 × 96"</option><option value="48x96">48 × 96"</option></select></div></div>
+      <div id="ada-sheet-hint"></div>
+      <div class="section-div">ADA drivers</div>
+      <div class="field-row four">
+        <div><label>Raised character count</label><input id="ada-char-count" type="number" value="12" min="0"></div>
+        <div><label>Braille line count</label><input id="ada-braille-lines" type="number" value="1" min="0"></div>
+        <div><label>Background finish</label><select id="ada-finish"><option value="none">No background print</option><option value="print" selected>Printed background</option><option value="paint">Painted background</option></select></div>
+        <div><label>Rounded corners</label><select id="ada-round"><option value="no">No</option><option value="yes">Yes</option></select></div>
+      </div>
+      <div class="field-row">
+        <div><label>Mounting</label><select id="ada-mount"><option value="none">No mounting tape</option><option value="tape" selected>Mounting tape</option></select></div>
+        <div><label>File prep</label><select id="ada-files"><option value="0">Ready — no prep</option><option value="25">Minor cleanup ($25)</option><option value="40">Rebuild / layout ($40)</option></select></div>
+      </div>
+      <div class="section-div">Sell price</div>
+      <div class="field-row">
+        <div><label>Price per sq ft</label><div class="input-unit"><input id="ada-sqft-rate" type="number" value="24" step="0.25"><span class="unit-label">$/ft²</span></div></div>
+        <div><label>Process note</label><div class="settings-note">This is a structured estimator, not a compliance checker or braille translator.</div></div>
+      </div>
+      <div class="btn-row"><button class="calc-btn" id="ada-calc-btn" onclick="calcADA()">Calculate + Add to Quote</button></div>
+      <div class="breakdown" id="ada-breakdown"></div>
+    </div>
 
-<label>Sell Price ($/ft²)</label><br>
-<input id="rate" value="14"><br>
+    <div class="panel" id="panel-settings">
+      <div class="panel-header">
+        <h2>Shop Rates</h2>
+        <p>Internal rate inputs. Changes apply on the next calculation.</p>
+      </div>
+      <div class="settings-note">Quote price = highest of: ($/ft² floor), (cost × markup floor), minimum job charge.</div>
+      <div class="section-div">General pricing</div>
+      <div class="field-row three">
+        <div><label>Shop labor rate</label><div class="input-unit"><input id="s-labor" type="number" value="50" step="5"><span class="unit-label">$/hr</span></div></div>
+        <div><label>Minimum job charge</label><div class="input-unit"><input id="s-min-job" type="number" value="75" step="5"><span class="unit-label">$</span></div></div>
+        <div><label>Default markup</label><select id="s-markup"><option value="1.5">1.50×</option><option value="1.6">1.60×</option><option value="1.75" selected>1.75×</option><option value="2.0">2.00×</option></select></div>
+      </div>
+      <div class="section-div">Vinyl</div>
+      <div class="field-row four">
+        <div><label>Vinyl cost</label><div class="input-unit"><input id="s-vinyl-yd" type="number" value="7.70" step="0.05"><span class="unit-label">$/yd</span></div></div>
+        <div><label>Roll width</label><select id="s-roll-width"><option value="24" selected>24"</option><option value="30">30"</option><option value="54">54"</option></select></div>
+        <div><label>Transfer tape rate</label><div class="input-unit"><input id="s-tape" type="number" value="4.05" step="0.05"><span class="unit-label">$/100 in</span></div></div>
+        <div><label>Waste buffer</label><select id="s-waste"><option value="0.10">10%</option><option value="0.15" selected>15%</option><option value="0.20">20%</option></select></div>
+      </div>
+      <div class="section-div">UV print</div>
+      <div class="field-row four">
+        <div><label>CMYK ink rate</label><div class="input-unit"><input id="s-uv-cmyk" type="number" value="0.04" step="0.005"><span class="unit-label">$/ft²</span></div></div>
+        <div><label>White ink rate</label><div class="input-unit"><input id="s-uv-white" type="number" value="0.085" step="0.005"><span class="unit-label">$/ft²</span></div></div>
+        <div><label>Ink waste factor</label><div class="input-unit"><input id="s-uv-waste-factor" type="number" value="1.25" step="0.05"><span class="unit-label">×</span></div></div>
+        <div><label>Base print min / ft²</label><div class="input-unit"><input id="s-uv-print-min" type="number" value="0.8" step="0.05"><span class="unit-label">min</span></div></div>
+      </div>
+      <div class="section-div">CNC</div>
+      <div class="field-row four">
+        <div><label>Router feed rate</label><div class="input-unit"><input id="s-cnc-ipm" type="number" value="120" step="5"><span class="unit-label">IPM</span></div></div>
+        <div><label>Bit wear / job</label><div class="input-unit"><input id="s-cnc-bit" type="number" value="3.50" step="0.25"><span class="unit-label">$</span></div></div>
+        <div><label>CNC setup time</label><div class="input-unit"><input id="s-cnc-setup" type="number" value="8" step="1"><span class="unit-label">min</span></div></div>
+        <div><label>Handling min / piece</label><div class="input-unit"><input id="s-cnc-handling" type="number" value="1.5" step="0.25"><span class="unit-label">min</span></div></div>
+      </div>
+      <div class="section-div">ADA</div>
+      <div class="field-row four">
+        <div><label>Tactile char rate</label><div class="input-unit"><input id="s-ada-char" type="number" value="0.15" step="0.01"><span class="unit-label">$/char</span></div></div>
+        <div><label>Braille line rate</label><div class="input-unit"><input id="s-ada-braille" type="number" value="1.50" step="0.10"><span class="unit-label">$/line</span></div></div>
+        <div><label>Printed bg rate</label><div class="input-unit"><input id="s-ada-print-bg" type="number" value="3.00" step="0.10"><span class="unit-label">$/pc</span></div></div>
+        <div><label>Painted bg rate</label><div class="input-unit"><input id="s-ada-paint-bg" type="number" value="4.50" step="0.10"><span class="unit-label">$/pc</span></div></div>
+      </div>
+      <div class="field-row three">
+        <div><label>ADA setup time</label><div class="input-unit"><input id="s-ada-setup" type="number" value="10" step="1"><span class="unit-label">min</span></div></div>
+        <div><label>ADA handling / piece</label><div class="input-unit"><input id="s-ada-handling" type="number" value="2" step="0.25"><span class="unit-label">min</span></div></div>
+        <div><label>Mounting tape / piece</label><div class="input-unit"><input id="s-ada-tape" type="number" value="0.75" step="0.10"><span class="unit-label">$</span></div></div>
+      </div>
+    </div>
+  </main>
 
-<br>
-
-<button onclick="calc()">Calculate + Add</button>
-
-<h3>Result</h3>
-<div id="out">No items yet</div>
+  <aside>
+    <div class="aside-header">Quote Summary <button class="clear-btn" onclick="clearQuote()">Clear</button></div>
+    <div class="aside-body" id="quote-body"><div class="empty-state">No items yet.<br>Calculate a job<br>to add it here.</div></div>
+    <div class="totals" id="quote-totals" style="display:none">
+      <div class="total-row internal-only" id="row-total-cost"><span class="k">Cost basis</span><span class="v" id="t-cost">—</span></div>
+      <div class="total-row"><span class="k">Total sq ft</span><span class="v" id="t-sqft">—</span></div>
+      <div class="total-row internal-only" id="row-total-rate"><span class="k">Effective $/ft²</span><span class="v" id="t-rate">—</span></div>
+      <div class="total-row grand"><span class="k">Quote Total</span><span class="v" id="t-total">—</span></div>
+      <div class="margin-bar internal-only"><div class="margin-fill" id="margin-fill"></div></div>
+      <div class="margin-label internal-only"><span>Gross margin</span><span id="margin-pct">—</span></div>
+    </div>
+    <div class="print-area" id="print-area" style="display:none"><button class="print-btn" onclick="window.print()">Print / Save PDF</button></div>
+  </aside>
+</div>
 
 <script>
+const MATERIALS = {
+  "acm_3mm_48x96":    {label:"ACM 3mm 4×8 — $63.24", cost:63.24, w:48, h:96},
+  "acm_3mm_60x120":   {label:"ACM 3mm 5×10 — $107.76", cost:107.76, w:60, h:120},
+  "acm_6mm_48x96":    {label:"ACM 6mm 4×8 — $98.58", cost:98.58, w:48, h:96},
+  "acm_6mm_60x120":   {label:"ACM 6mm 5×10 — $175.50", cost:175.50, w:60, h:120},
+  "pvc_18_48x96_wh":  {label:'PVC 1/8" 4×8 White — $43.75', cost:43.75, w:48, h:96},
+  "pvc_18_60x120_wh": {label:'PVC 1/8" 5×10 White — $67.00', cost:67.00, w:60, h:120},
+  "pvc_14_48x96_wh":  {label:'PVC 1/4" 4×8 White — $82.68', cost:82.68, w:48, h:96},
+  "pvc_12_48x96_wh":  {label:'PVC 1/2" 4×8 White — $154.47', cost:154.47, w:48, h:96},
+  "mdo_48x96":        {label:'MDO 3/4" 4×8 — $164.31', cost:164.31, w:48, h:96},
+  "coro_4mm_48x96":   {label:'Coroplast 4mm 4×8 — $120.00', cost:120.00, w:48, h:96},
+  "acr_14_48x96_cl":  {label:'Acrylic 1/4" 4×8 Clear — $141.29', cost:141.29, w:48, h:96},
+  "acr_316_48x96":    {label:'Acrylic 3/16" 4×8 — $113.20', cost:113.20, w:48, h:96}
+};
+const ADA_MATERIALS = {
+  "ada_24x48_std": {label:'ADA stock 24×48 — $48.00', cost:48, w:24, h:48},
+  "ada_24x96_std": {label:'ADA stock 24×96 — $92.00', cost:92, w:24, h:96},
+  "ada_48x96_std": {label:'ADA stock 48×96 — $168.00', cost:168, w:48, h:96},
+  "ada_24x48_acr": {label:'Acrylic 24×48 — $65.00', cost:65, w:24, h:48}
+};
+const UV_LAMINATE = {none:{rate:0,label:'None'},economy:{rate:0.96,label:'Economy semi-gloss'},intermediate:{rate:1.24,label:'Intermediate'}};
+let quoteItems = [];
+let editing = {type:null,index:null};
+let clientMode = false;
+let cncMode = 'fast';
 
-function calc() {
-
-  var qty = parseFloat(document.getElementById('qty').value) || 0;
-  var w = parseFloat(document.getElementById('w').value) || 0;
-  var h = parseFloat(document.getElementById('h').value) || 0;
-  var sheet = parseFloat(document.getElementById('sheet').value) || 0;
-  var rate = parseFloat(document.getElementById('rate').value) || 0;
-
-  if (qty <= 0 || w <= 0 || h <= 0) {
-    alert("Invalid inputs");
-    return;
-  }
-
-  // sqft
-  var sqft = (w * h) / 144 * qty;
-
-  // simple cost model
-  var materialCost = sheet;
-  var labor = sqft * 2;
-  var cost = materialCost + labor;
-
-  // sell
-  var price = Math.max(sqft * rate, cost * 1.75, 75);
-
-  document.getElementById('out').innerHTML =
-    "SqFt: " + sqft.toFixed(2) + "<br>" +
-    "Cost: $" + cost.toFixed(2) + "<br>" +
-    "Sell: $" + price.toFixed(2);
-
-}
-
+function esc(s){return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+function money(v){return '$' + (Number(v)||0).toFixed(2)}
+function pct(v){return (Number(v)||0).toFixed(1) + '%'}
+function n(id, fb=0){const v=parseFloat(document.getElementById(id)?.value); return (isFinite(v) ? Math.max(v,0) : fb)}
+function i(id, fb=0){const v=parseInt(document.getElementById(id)?.value,10); return (isFinite(v) ? Math.max(v,0) : fb)}
+function t(id, fb=''){return (document.getElementById(id)?.value || fb).trim()}
+function gmFromMarkup(m){return m>0?((m-1)/m)*100:0}
+function qtyLabel(item){if(item.qty===1) return '1 ' + item.unit; return item.unit==='pc' ? item.qty + ' pcs' : item.qty + ' ' + item.unit + 's'}
+function getSettings(){return {labor:n('s-labor',50), minJob:n('s-min-job',75), markup:n('s-markup',1.75), vinylPerYd:n('s-vinyl-yd',7.70), rollWidth:i('s-roll-width',24), tapeRate:n('s-tape',4.05), waste:n('s-waste',0.15), uvCmyk:n('s-uv-cmyk',0.04), uvWhite:n('s-uv-white',0.085), uvWasteFactor:n('s-uv-waste-factor',1.25), uvPrintMin:n('s-uv-print-min',0.8), cncIPM:n('s-cnc-ipm',120), cncBit:n('s-cnc-bit',3.5), cncSetup:n('s-cnc-setup',8), cncHandling:n('s-cnc-handling',1.5), adaChar:n('s-ada-char',0.15), adaBraille:n('s-ada-braille',1.5), adaPrintBg:n('s-ada-print-bg',3), adaPaintBg:n('s-ada-paint-bg',4.5), adaSetup:n('s-ada-setup',10), adaHandling:n('s-ada-handling',2), adaTape:n('s-ada-tape',0.75)}}
+function showPanel(id, el){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));document.getElementById('panel-'+id).classList.add('active');if(el) el.classList.add('active')}
+function toggleClientMode(){clientMode=!clientMode;document.body.classList.toggle('client-mode', clientMode);document.getElementById('client-toggle').textContent = clientMode ? 'Internal View' : 'Client View';renderQuote()}
+function fillMaterialSelect(id, map){const sel=document.getElementById(id);sel.innerHTML='<option value="">— select —</option>'+Object.entries(map).map(([k,v])=>`<option value="${k}">${esc(v.label)}</option>`).join('')}
+function materialChange(prefix){const map = prefix==='ada' ? ADA_MATERIALS : MATERIALS;const key=t(prefix+'-material');const mat=map[key];if(!mat) return;document.getElementById(prefix+'-sheet-cost').value = mat.cost.toFixed(2);const size = `${mat.w}x${mat.h}`;if(document.getElementById(prefix+'-sheet-size').querySelector(`option[value="${size}"]`)){document.getElementById(prefix+'-sheet-size').value = size}if(prefix==='uv') uvSheetHint();if(prefix==='cnc') cncPreview();if(prefix==='ada') adaPreview()}
+function parseSize(v){const [w,h]=String(v).split('x').map(Number); return {w:w||0,h:h||0}}
+function sheetFit(panelW, panelH, sheetW, sheetH, qty){const fitA=Math.floor(sheetW/panelW)*Math.floor(sheetH/panelH);const fitB=Math.floor(sheetW/panelH)*Math.floor(sheetH/panelW);const perSheet=Math.max(fitA,fitB);if(perSheet<1) return {valid:false,perSheet:0,sheets:0};return {valid:true,perSheet,sheets:Math.ceil(qty/perSheet)}}
+function chooseBestOrientation(width,height,rollWidth){const opts=[];if(width<=rollWidth) opts.push({pull:height,label:`${width}" across × ${height}" pull`});if(height<=rollWidth) opts.push({pull:width,label:`${height}" across × ${width}" pull`});opts.sort((a,b)=>a.pull-b.pull);return opts.length ? {fits:true,...opts[0]} : {fits:false,label:`Does not fit ${rollWidth}" roll without tiling`}}
+function orientationHint(piece){const s=getSettings(), w=n('rta-w'+piece), h=n('rta-h'+piece), div=document.getElementById('orient-hint-'+piece);if(!w || !h){div.innerHTML=''; return}const o=chooseBestOrientation(w,h,s.rollWidth);div.innerHTML = o.fits ? `<div class="flag ok">✓ ${esc(o.label)}</div>` : `<div class="flag error">⚠ ${esc(o.label)}</div>`}
+function calcVinylCost(w,h,qty,s){const o=chooseBestOrientation(w,h,s.rollWidth);if(!o.fits) return {fits:false,error:o.label};const totalPull=o.pull*qty*(1+s.waste);return {fits:true,label:o.label,cost:totalPull*(s.vinylPerYd/36)}}
+function calcTapeCost(w,h,qty,s){const o=chooseBestOrientation(w,h,24);if(!o.fits) return {fits:false,error:o.label};const totalPull=o.pull*qty*1.08;return {fits:true,label:o.label,cost:(totalPull/100)*s.tapeRate}}
+function estimateRTALabor(params, laborRate){const weedFactor={simple:1,moderate:1.25,detailed:1.6};let mins=8;const sqft1=params.w1*params.h1/144, sqft2=params.has2?params.w2*params.h2/144:0;mins += params.qty*2 + sqft1*params.qty*2.2*(weedFactor[params.weed1]||1.25);if(params.has2) mins += params.qty*2 + sqft2*params.qty*2.2*(weedFactor[params.weed2]||1.25);mins += params.qty*7;if(params.has2 && params.assembly==='kit') mins += params.qty*5;if(params.filePrep>=40) mins += 35; else if(params.filePrep>0) mins += 25;return {mins:Math.round(mins), cost:(mins/60)*laborRate}}
+function addOrUpdate(item){if(editing.index!==null && editing.type===item.type){quoteItems[editing.index]=item;editing={type:null,index:null}} else quoteItems.push(item);resetButtons();renderQuote()}
+function resetButtons(){[['rta-calc-btn','Calculate + Add to Quote'],['uv-calc-btn','Calculate + Add to Quote'],['cnc-calc-btn','Calculate + Add to Quote'],['ada-calc-btn','Calculate + Add to Quote']].forEach(([id,txt])=>{const el=document.getElementById(id); if(el) el.textContent=txt})}
+function calcRTA(){const s=getSettings();const desc=t('rta-desc','Cut Vinyl Job'), qty=i('rta-qty',1), w1=n('rta-w1'), h1=n('rta-h1'), w2=n('rta-w2'), h2=n('rta-h2');if(qty<1 || w1<=0 || h1<=0){alert('Enter Piece 1 dimensions and quantity.'); return}const has2=w2>0 && h2>0;const color1=t('rta-color1','Color 1'), color2=t('rta-color2','Color 2'), weed1=t('rta-weed1','moderate'), weed2=t('rta-weed2','moderate');const assembly=t('rta-assembly','kit'), filePrep=n('rta-files',0), sqftRate=n('rta-sqft-rate',8);const v1=calcVinylCost(w1,h1,qty,s), tp1=calcTapeCost(w1,h1,qty,s);if(!v1.fits || !tp1.fits){alert((!v1.fits?v1.error:tp1.error)); return}let v2={cost:0,label:''}, tp2={cost:0,label:''};if(has2){v2=calcVinylCost(w2,h2,qty,s); tp2=calcTapeCost(w2,h2,qty,s); if(!v2.fits || !tp2.fits){alert((!v2.fits?v2.error:tp2.error)); return}}const labor=estimateRTALabor({qty,w1,h1,w2,h2,has2,weed1,weed2,assembly,filePrep},s.labor);const totalSqft=((w1*h1)/144*qty)+((has2?(w2*h2):0)/144*qty);const matCost=v1.cost+tp1.cost+v2.cost+tp2.cost;const totalCost=matCost+labor.cost+filePrep;const floorSqft=totalSqft*sqftRate, floorMarkup=totalCost*s.markup, quotePrice=Math.max(floorSqft,floorMarkup,s.minJob);const margin=quotePrice>0?((quotePrice-totalCost)/quotePrice)*100:0;document.getElementById('rta-breakdown').className='breakdown show';document.getElementById('rta-breakdown').innerHTML = `<div class="breakdown-title">Cost Breakdown — ${esc(desc)} (qty ${qty})</div><div class="bk-row"><span class="k">${esc(color1)} vinyl</span><span class="v">${money(v1.cost)}</span></div><div class="bk-row"><span class="k">${esc(color1)} transfer tape</span><span class="v">${money(tp1.cost)}</span></div>${has2?`<div class="bk-row"><span class="k">${esc(color2)} vinyl</span><span class="v">${money(v2.cost)}</span></div><div class="bk-row"><span class="k">${esc(color2)} transfer tape</span><span class="v">${money(tp2.cost)}</span></div>`:''}<div class="bk-row"><span class="k">Labor (~${labor.mins} min @ ${money(s.labor)}/hr)</span><span class="v">${money(labor.cost)}</span></div>${filePrep?`<div class="bk-row"><span class="k">File prep</span><span class="v">${money(filePrep)}</span></div>`:''}<div class="bk-row"><span class="k">Your cost basis</span><span class="v">${money(totalCost)}</span></div><div class="bk-row"><span class="k">Floor A — ${money(sqftRate)}/ft²</span><span class="v">${money(floorSqft)}</span></div><div class="bk-row"><span class="k">Floor B — ${s.markup.toFixed(2)}× cost</span><span class="v">${money(floorMarkup)}</span></div><div class="bk-row"><span class="k">Floor C — minimum job</span><span class="v">${money(s.minJob)}</span></div><div class="bk-row highlight"><span class="k">Quote price</span><span class="v">${money(quotePrice)}</span></div><div class="bk-row margin-row"><span class="k">Gross margin</span><span class="v">${pct(margin)}</span></div>`;addOrUpdate({type:'RTA Cut Vinyl',unit:'set',desc,qty,sqft:totalSqft,cost:totalCost,price:quotePrice,margin,raw:{desc,qty,w1,h1,w2,h2,color1,color2,weed1,weed2,assembly,filePrep,sqftRate}})}
+function uvSheetHint(){const w=n('uv-w'), h=n('uv-h'), bleed=n('uv-bleed',0.125), qty=i('uv-qty',1), size=parseSize(t('uv-sheet-size','48x96')), div=document.getElementById('uv-sheet-hint');if(!w || !h){div.innerHTML=''; return}const fit=sheetFit(w+bleed*2,h+bleed*2,size.w,size.h,qty);if(!fit.valid){div.innerHTML=`<div class="flag error">⚠ Panel with bleed does not fit selected sheet size.</div>`; return}div.innerHTML=`<div class="flag ok">✓ ${qty} panel${qty!==1?'s':''} → ${fit.sheets} sheet${fit.sheets!==1?'s':''} (${fit.perSheet} per sheet).</div>`}
+function calcUV(){const s=getSettings();const desc=t('uv-desc','UV Flatbed Job'), qty=i('uv-qty',1), w=n('uv-w'), h=n('uv-h'), bleed=n('uv-bleed',0.125);if(qty<1 || w<=0 || h<=0){alert('Enter width, height, and quantity.'); return}const size=parseSize(t('uv-sheet-size','48x96')), fit=sheetFit(w+bleed*2,h+bleed*2,size.w,size.h,qty);if(!fit.valid){alert('Panel with bleed does not fit selected sheet size.'); return}const sheetCost=n('uv-sheet-cost'), coverage=n('uv-coverage',1), white=t('uv-white','none'), whiteCoverage=n('uv-white-coverage',0.5), layers=n('uv-layers',1), lamKey=t('uv-lam','none'), filePrep=n('uv-files',0), sqftRate=n('uv-sqft-rate',12);const lam=UV_LAMINATE[lamKey]||UV_LAMINATE.none;const totalSqft=(w*h/144)*qty;const matCost=fit.sheets*sheetCost;const baseInkCost=totalSqft*coverage*s.uvCmyk*s.uvWasteFactor;let whiteMult=0, whiteTimeFactor=1;if(white==='spot'){whiteMult=1.0; whiteTimeFactor=1.3}if(white==='flood'){whiteMult=1.6; whiteTimeFactor=1.6}if(white==='double'){whiteMult=2.2; whiteTimeFactor=2.0}const whiteInkCost=totalSqft*whiteCoverage*s.uvWhite*whiteMult*layers*s.uvWasteFactor;const inkCost=baseInkCost+whiteInkCost;const lamCost=lam.rate*totalSqft;let laborMin = 8 + qty*3.5 + totalSqft*s.uvPrintMin*whiteTimeFactor*layers;if(filePrep>=40) laborMin+=35; else if(filePrep>0) laborMin+=25;const laborCost=(laborMin/60)*s.labor;const totalCost=matCost+inkCost+lamCost+laborCost+filePrep;const floorSqft=totalSqft*sqftRate, floorMarkup=totalCost*s.markup, quotePrice=Math.max(floorSqft,floorMarkup,s.minJob), margin=((quotePrice-totalCost)/quotePrice)*100;document.getElementById('uv-breakdown').className='breakdown show';document.getElementById('uv-breakdown').innerHTML=`<div class="breakdown-title">Cost Breakdown — ${esc(desc)} (qty ${qty})</div><div class="bk-row"><span class="k">Substrate — ${fit.sheets} sheet${fit.sheets!==1?'s':''} × ${money(sheetCost)}</span><span class="v">${money(matCost)}</span></div><div class="bk-row"><span class="k">CMYK ink</span><span class="v">${money(baseInkCost)}</span></div>${white!=='none' ? `<div class="bk-row"><span class="k">White ink (${esc(white)}, ${whiteCoverage*100}%, ${layers} layer${layers!==1?'s':''})</span><span class="v">${money(whiteInkCost)}</span></div>`:''}${lam.rate>0 ? `<div class="bk-row"><span class="k">Laminate — ${esc(lam.label)}</span><span class="v">${money(lamCost)}</span></div>`:''}<div class="bk-row"><span class="k">Labor (~${Math.round(laborMin)} min @ ${money(s.labor)}/hr)</span><span class="v">${money(laborCost)}</span></div>${filePrep?`<div class="bk-row"><span class="k">File prep</span><span class="v">${money(filePrep)}</span></div>`:''}<div class="bk-row"><span class="k">Your cost basis</span><span class="v">${money(totalCost)}</span></div><div class="bk-row"><span class="k">Floor A — ${money(sqftRate)}/ft²</span><span class="v">${money(floorSqft)}</span></div><div class="bk-row"><span class="k">Floor B — ${s.markup.toFixed(2)}× cost</span><span class="v">${money(floorMarkup)}</span></div><div class="bk-row"><span class="k">Floor C — minimum job</span><span class="v">${money(s.minJob)}</span></div><div class="bk-row highlight"><span class="k">Quote price</span><span class="v">${money(quotePrice)}</span></div><div class="bk-row margin-row"><span class="k">Gross margin</span><span class="v">${pct(margin)}</span></div>`;addOrUpdate({type:'UV Flatbed Print',unit:'pc',desc,qty,sqft:totalSqft,cost:totalCost,price:quotePrice,margin,raw:{desc,qty,w,h,bleed,sheetCost,size:t('uv-sheet-size'),coverage,white,whiteCoverage,layers,lamKey,filePrep,sqftRate}})}
+function setCNCMode(mode){cncMode=mode;document.getElementById('cnc-mode-fast').classList.toggle('active', mode==='fast');document.getElementById('cnc-mode-accurate').classList.toggle('active', mode==='accurate');cncPreview()}
+function estimateToolpath(w,h,complexity,insideCutouts){const perimeter=(w*2+h*2);return perimeter*(1.15*complexity + 0.35*insideCutouts)}
+function estimateHoleMinutes(count,dia,process,edge){if(count<=0) return 0;if(process==='drill') return count*0.08;const circum=Math.PI*dia, ipm=edge==='clean'?45:70;return count*((circum/ipm)+0.05)}
+function cncPreview(){const w=n('cnc-w'), h=n('cnc-h'), qty=i('cnc-qty',1), bleed=n('cnc-bleed',0.125), size=parseSize(t('cnc-sheet-size','48x96'));const hint=document.getElementById('cnc-sheet-hint');if(w && h){const fit=sheetFit(w+bleed*2,h+bleed*2,size.w,size.h,qty);hint.innerHTML = fit.valid ? `<div class="flag ok">✓ ${qty} panel${qty!==1?'s':''} → ${fit.sheets} sheet${fit.sheets!==1?'s':''} (${fit.perSheet} per sheet).</div>` : `<div class="flag error">⚠ Part does not fit selected sheet size.</div>`} else hint.innerHTML='';const complexity=n('cnc-complexity',1.3), cutouts=i('cnc-cutouts',0), holes=i('cnc-holes',0), holeDia=n('cnc-hole-dia',0.25);const toolpath=estimateToolpath(w,h,complexity,cutouts) + holes*(Math.PI*holeDia);document.getElementById('cnc-toolpath-display').value = toolpath ? toolpath.toFixed(1) : '—'}
+function calcCNC(){const s=getSettings();const desc=t('cnc-desc','CNC Routed Job'), qty=i('cnc-qty',1), w=n('cnc-w'), h=n('cnc-h'), bleed=n('cnc-bleed',0.125), sheetCost=n('cnc-sheet-cost');if(qty<1 || w<=0 || h<=0){alert('Enter width, height, and quantity.'); return}const size=parseSize(t('cnc-sheet-size','48x96')), fit=sheetFit(w+bleed*2,h+bleed*2,size.w,size.h,qty);if(!fit.valid){alert('Part does not fit selected sheet size.'); return}const complexity=n('cnc-complexity',1.3), cutouts=i('cnc-cutouts',0), holes=i('cnc-holes',0), holeDia=n('cnc-hole-dia',0.25), holeProcess=t('cnc-hole-process','through'), tabs=t('cnc-tabs','no'), edge=t('cnc-edge','standard'), filePrep=n('cnc-files',0), sqftRate=n('cnc-sqft-rate',14);const totalSqft=(w*h/144)*qty, matCost=fit.sheets*sheetCost;let routeMin=0, holeMin=0, toolpath=0;if(cncMode==='fast'){const basePerPc = (w*h/144)*1.4*complexity;routeMin = qty*(2 + basePerPc);holeMin = holes*qty*(holeProcess==='drill'?0.08:0.12);if(tabs==='yes') routeMin += qty*0.8;if(edge==='clean') routeMin *= 1.2;toolpath = estimateToolpath(w,h,complexity,cutouts) + holes*(Math.PI*holeDia)} else {toolpath = estimateToolpath(w,h,complexity,cutouts);routeMin = (toolpath/s.cncIPM)*qty*(edge==='clean'?1.25:1.0);holeMin = estimateHoleMinutes(holes*qty,holeDia,holeProcess,edge);if(tabs==='yes') routeMin += qty*0.8}let laborMin = s.cncSetup + qty*s.cncHandling + routeMin + holeMin;if(filePrep>=40) laborMin += 35; else if(filePrep>0) laborMin += 25;const laborCost=(laborMin/60)*s.labor;const totalCost=matCost+laborCost+s.cncBit+filePrep;const floorSqft=totalSqft*sqftRate, floorMarkup=totalCost*s.markup, quotePrice=Math.max(floorSqft,floorMarkup,s.minJob), margin=((quotePrice-totalCost)/quotePrice)*100;document.getElementById('cnc-breakdown').className='breakdown show';document.getElementById('cnc-breakdown').innerHTML=`<div class="breakdown-title">Cost Breakdown — ${esc(desc)} (qty ${qty})</div><div class="bk-row"><span class="k">Routing mode</span><span class="v">${esc(cncMode==='fast'?'Fast Quote':'Accurate')}</span></div><div class="bk-row"><span class="k">Substrate — ${fit.sheets} sheet${fit.sheets!==1?'s':''} × ${money(sheetCost)}</span><span class="v">${money(matCost)}</span></div><div class="bk-row"><span class="k">Estimated toolpath</span><span class="v">${toolpath.toFixed(1)} in</span></div><div class="bk-row"><span class="k">Route time</span><span class="v">${routeMin.toFixed(1)} min</span></div><div class="bk-row"><span class="k">Mounting holes (${holes} / pc)</span><span class="v">${holeMin.toFixed(1)} min</span></div><div class="bk-row"><span class="k">Bit wear / job</span><span class="v">${money(s.cncBit)}</span></div><div class="bk-row"><span class="k">Labor (~${Math.round(laborMin)} min @ ${money(s.labor)}/hr)</span><span class="v">${money(laborCost)}</span></div>${filePrep?`<div class="bk-row"><span class="k">File prep</span><span class="v">${money(filePrep)}</span></div>`:''}<div class="bk-row"><span class="k">Your cost basis</span><span class="v">${money(totalCost)}</span></div><div class="bk-row"><span class="k">Floor A — ${money(sqftRate)}/ft²</span><span class="v">${money(floorSqft)}</span></div><div class="bk-row"><span class="k">Floor B — ${s.markup.toFixed(2)}× cost</span><span class="v">${money(floorMarkup)}</span></div><div class="bk-row"><span class="k">Floor C — minimum job</span><span class="v">${money(s.minJob)}</span></div><div class="bk-row highlight"><span class="k">Quote price</span><span class="v">${money(quotePrice)}</span></div><div class="bk-row margin-row"><span class="k">Gross margin</span><span class="v">${pct(margin)}</span></div>`;addOrUpdate({type:'CNC Routed',unit:'pc',desc,qty,sqft:totalSqft,cost:totalCost,price:quotePrice,margin,raw:{desc,qty,w,h,bleed,sheetCost,size:t('cnc-sheet-size'),complexity,cutouts,holes,holeDia,holeProcess,tabs,edge,filePrep,sqftRate,cncMode}})}
+function adaPreview(){const w=n('ada-w'), h=n('ada-h'), bleed=n('ada-bleed',0.125), qty=i('ada-qty',1), size=parseSize(t('ada-sheet-size','24x48')), div=document.getElementById('ada-sheet-hint');if(!w||!h){div.innerHTML='';return}const fit=sheetFit(w+bleed*2,h+bleed*2,size.w,size.h,qty);div.innerHTML = fit.valid ? `<div class="flag ok">✓ ${qty} panel${qty!==1?'s':''} → ${fit.sheets} sheet${fit.sheets!==1?'s':''} (${fit.perSheet} per sheet).</div>` : `<div class="flag error">⚠ Panel with bleed does not fit selected sheet size.</div>`}
+function calcADA(){const s=getSettings();const desc=t('ada-desc','ADA Signage'), qty=i('ada-qty',1), w=n('ada-w'), h=n('ada-h'), bleed=n('ada-bleed',0.125);if(qty<1 || w<=0 || h<=0){alert('Enter width, height, and quantity.'); return}const size=parseSize(t('ada-sheet-size','24x48')), fit=sheetFit(w+bleed*2,h+bleed*2,size.w,size.h,qty);if(!fit.valid){alert('Panel with bleed does not fit selected sheet size.'); return}const sheetCost=n('ada-sheet-cost'), chars=i('ada-char-count',0), braille=i('ada-braille-lines',0), finish=t('ada-finish','print'), round=t('ada-round','no'), mount=t('ada-mount','tape'), filePrep=n('ada-files',0), sqftRate=n('ada-sqft-rate',24);const totalSqft=(w*h/144)*qty, matCost=fit.sheets*sheetCost;const tactileCost=chars*qty*s.adaChar, brailleCost=braille*qty*s.adaBraille;const bgCost = finish==='print' ? qty*s.adaPrintBg : finish==='paint' ? qty*s.adaPaintBg : 0;const mountCost = mount==='tape' ? qty*s.adaTape : 0;let laborMin = s.adaSetup + qty*s.adaHandling + chars*qty*0.05 + braille*qty*0.4 + (round==='yes'?qty*0.4:0);if(filePrep>=40) laborMin += 35; else if(filePrep>0) laborMin += 25;const laborCost=(laborMin/60)*s.labor;const totalCost=matCost+tactileCost+brailleCost+bgCost+mountCost+laborCost+filePrep;const floorSqft=totalSqft*sqftRate, floorMarkup=totalCost*s.markup, quotePrice=Math.max(floorSqft,floorMarkup,s.minJob), margin=((quotePrice-totalCost)/quotePrice)*100;document.getElementById('ada-breakdown').className='breakdown show';document.getElementById('ada-breakdown').innerHTML=`<div class="breakdown-title">Cost Breakdown — ${esc(desc)} (qty ${qty})</div><div class="bk-row"><span class="k">Substrate — ${fit.sheets} sheet${fit.sheets!==1?'s':''} × ${money(sheetCost)}</span><span class="v">${money(matCost)}</span></div><div class="bk-row"><span class="k">Tactile copy (${chars} chars / pc)</span><span class="v">${money(tactileCost)}</span></div><div class="bk-row"><span class="k">Braille (${braille} line(s) / pc)</span><span class="v">${money(brailleCost)}</span></div>${bgCost?`<div class="bk-row"><span class="k">${finish==='print'?'Printed':'Painted'} background</span><span class="v">${money(bgCost)}</span></div>`:''}${mountCost?`<div class="bk-row"><span class="k">Mounting tape</span><span class="v">${money(mountCost)}</span></div>`:''}<div class="bk-row"><span class="k">Labor (~${Math.round(laborMin)} min @ ${money(s.labor)}/hr)</span><span class="v">${money(laborCost)}</span></div>${filePrep?`<div class="bk-row"><span class="k">File prep</span><span class="v">${money(filePrep)}</span></div>`:''}<div class="bk-row"><span class="k">Your cost basis</span><span class="v">${money(totalCost)}</span></div><div class="bk-row"><span class="k">Floor A — ${money(sqftRate)}/ft²</span><span class="v">${money(floorSqft)}</span></div><div class="bk-row"><span class="k">Floor B — ${s.markup.toFixed(2)}× cost</span><span class="v">${money(floorMarkup)}</span></div><div class="bk-row"><span class="k">Floor C — minimum job</span><span class="v">${money(s.minJob)}</span></div><div class="bk-row highlight"><span class="k">Quote price</span><span class="v">${money(quotePrice)}</span></div><div class="bk-row margin-row"><span class="k">Gross margin</span><span class="v">${pct(margin)}</span></div>`;addOrUpdate({type:'ADA Signage',unit:'pc',desc,qty,sqft:totalSqft,cost:totalCost,price:quotePrice,margin,raw:{desc,qty,w,h,bleed,sheetCost,size:t('ada-sheet-size'),chars,braille,finish,round,mount,filePrep,sqftRate}})}
+function loadItemForEdit(idx){const item=quoteItems[idx]; if(!item) return;editing={type:item.type,index:idx};if(item.type==='RTA Cut Vinyl'){const r=item.raw; ['desc','qty','w1','h1','color1','w2','h2','color2','sqftRate'].forEach(k=>{ if(document.getElementById('rta-'+k)) document.getElementById('rta-'+k).value=r[k]??''});document.getElementById('rta-weed1').value=r.weed1; document.getElementById('rta-weed2').value=r.weed2; document.getElementById('rta-assembly').value=r.assembly; document.getElementById('rta-files').value=r.filePrep;document.getElementById('rta-calc-btn').textContent='Update Quote Item';showPanel('rta', document.querySelectorAll('.nav-item')[0])}
+if(item.type==='UV Flatbed Print'){const r=item.raw; ['desc','qty','w','h','bleed','sheetCost','sqftRate'].forEach(k=>{ if(document.getElementById('uv-'+k)) document.getElementById('uv-'+k).value=r[k]??''});document.getElementById('uv-sheet-size').value=r.size; document.getElementById('uv-coverage').value=r.coverage; document.getElementById('uv-white').value=r.white; document.getElementById('uv-white-coverage').value=r.whiteCoverage; document.getElementById('uv-layers').value=r.layers; document.getElementById('uv-lam').value=r.lamKey; document.getElementById('uv-files').value=r.filePrep;document.getElementById('uv-calc-btn').textContent='Update Quote Item';showPanel('uv', document.querySelectorAll('.nav-item')[1]); uvSheetHint()}
+if(item.type==='CNC Routed'){const r=item.raw;document.getElementById('cnc-desc').value=r.desc??'';document.getElementById('cnc-qty').value=r.qty??'';document.getElementById('cnc-w').value=r.w??'';document.getElementById('cnc-h').value=r.h??'';document.getElementById('cnc-bleed').value=r.bleed??'';document.getElementById('cnc-sheet-cost').value=r.sheetCost??'';document.getElementById('cnc-sqft-rate').value=r.sqftRate??'';document.getElementById('cnc-cutouts').value=r.cutouts??'';document.getElementById('cnc-holes').value=r.holes??'';document.getElementById('cnc-hole-dia').value=r.holeDia??'';document.getElementById('cnc-sheet-size').value=r.size; document.getElementById('cnc-complexity').value=r.complexity; document.getElementById('cnc-hole-process').value=r.holeProcess; document.getElementById('cnc-tabs').value=r.tabs; document.getElementById('cnc-edge').value=r.edge; document.getElementById('cnc-files').value=r.filePrep; setCNCMode(r.cncMode||'fast');document.getElementById('cnc-calc-btn').textContent='Update Quote Item';showPanel('cnc', document.querySelectorAll('.nav-item')[2]); cncPreview()}
+if(item.type==='ADA Signage'){const r=item.raw;document.getElementById('ada-desc').value=r.desc??'';document.getElementById('ada-qty').value=r.qty??'';document.getElementById('ada-w').value=r.w??'';document.getElementById('ada-h').value=r.h??'';document.getElementById('ada-bleed').value=r.bleed??'';document.getElementById('ada-sheet-cost').value=r.sheetCost??'';document.getElementById('ada-sqft-rate').value=r.sqftRate??'';document.getElementById('ada-sheet-size').value=r.size; document.getElementById('ada-char-count').value=r.chars; document.getElementById('ada-braille-lines').value=r.braille; document.getElementById('ada-finish').value=r.finish; document.getElementById('ada-round').value=r.round; document.getElementById('ada-mount').value=r.mount; document.getElementById('ada-files').value=r.filePrep;document.getElementById('ada-calc-btn').textContent='Update Quote Item';showPanel('ada', document.querySelectorAll('.nav-item')[3]); adaPreview()}}
+function removeItem(idx){quoteItems.splice(idx,1);if(editing.index===idx) editing={type:null,index:null};renderQuote()}
+function clearQuote(){if(!quoteItems.length || confirm('Clear all quote items?')){quoteItems=[]; editing={type:null,index:null}; resetButtons(); ['rta-breakdown','uv-breakdown','cnc-breakdown','ada-breakdown'].forEach(id=>{document.getElementById(id).className='breakdown'; document.getElementById(id).innerHTML=''}); renderQuote()}}
+function renderQuote(){const body=document.getElementById('quote-body');if(!quoteItems.length){body.innerHTML='<div class="empty-state">No items yet.<br>Calculate a job<br>to add it here.</div>';document.getElementById('quote-totals').style.display='none';document.getElementById('print-area').style.display='none';return}body.innerHTML = quoteItems.map((item,idx)=>`<div class="line-item"><button class="remove-btn" onclick="removeItem(${idx})">×</button><div class="li-title">${esc(item.type)}</div><div class="li-desc">${esc(item.desc)}</div><div class="li-row"><span class="k">Qty</span><span class="v">${esc(qtyLabel(item))}</span></div><div class="li-row"><span class="k">Sq ft</span><span class="v">${item.sqft.toFixed(2)} ft²</span></div>${clientMode ? '' : `<div class="li-row"><span class="k">Cost basis</span><span class="v cost">${money(item.cost)}</span></div><div class="li-row"><span class="k">Margin</span><span class="v">${pct(item.margin)}</span></div>`}<div class="li-row"><span class="k">Sell price</span><span class="v price">${money(item.price)}</span></div><div class="li-row" style="margin-top:8px"><span></span><button class="small-btn" onclick="loadItemForEdit(${idx})">Edit</button></div></div>`).join('');const totalCost=quoteItems.reduce((a,b)=>a+b.cost,0), totalPrice=quoteItems.reduce((a,b)=>a+b.price,0), totalSqft=quoteItems.reduce((a,b)=>a+b.sqft,0), totalMargin=((totalPrice-totalCost)/totalPrice)*100;document.getElementById('t-cost').textContent=money(totalCost);document.getElementById('t-sqft').textContent=totalSqft.toFixed(2)+' ft²';document.getElementById('t-rate').textContent=money(totalSqft?totalPrice/totalSqft:0)+'/ft²';document.getElementById('t-total').textContent=money(totalPrice);document.getElementById('margin-fill').style.width=Math.max(0,Math.min(100,totalMargin))+'%';document.getElementById('margin-pct').textContent=pct(totalMargin);document.getElementById('quote-totals').style.display='block';document.getElementById('print-area').style.display='block';document.getElementById('row-total-cost').style.display = clientMode ? 'none':'flex';document.getElementById('row-total-rate').style.display = clientMode ? 'none':'flex'}
+(function init(){fillMaterialSelect('uv-material', MATERIALS);fillMaterialSelect('cnc-material', MATERIALS);fillMaterialSelect('ada-material', ADA_MATERIALS);document.getElementById('s-markup').querySelectorAll('option').forEach(opt=>{const m=parseFloat(opt.value); opt.textContent=`${m.toFixed(2)}× cost (${gmFromMarkup(m).toFixed(1)}% GM)`})})();
 </script>
-
 </body>
 </html>
