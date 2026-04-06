@@ -110,45 +110,65 @@ button:hover {
 
   <div class="grid">
     <div>
-      <label>Material Cost</label>
+      <label>Material Cost / Sheet</label>
       <input id="sheetCost" type="number" value="63.24" step="0.01" min="0">
     </div>
     <div>
-      <label>Print Margin %</label>
-      <input id="margin" type="number" value="30" step="0.01" min="0">
-    </div>
-  </div>
-
-  <div class="grid">
-    <div>
-      <label>Gap</label>
+      <label>Gap Between Parts (in)</label>
       <input id="gap" type="number" value="0" step="0.01" min="0">
     </div>
-    <div>
-      <label>Edge Margin</label>
-      <input id="edge" type="number" value="0" step="0.01" min="0">
-    </div>
   </div>
 
   <div class="grid">
+    <div>
+      <label>Edge Margin (in)</label>
+      <input id="edge" type="number" value="0" step="0.01" min="0">
+    </div>
     <div>
       <label>Minimum Job</label>
       <input id="minJob" type="number" value="0" step="0.01" min="0">
     </div>
+  </div>
+
+  <div class="grid">
     <div>
-      <label>Sell Floor ($/ft²)</label>
-      <input id="sqftFloor" type="number" value="14" step="0.01" min="0">
+      <label>Overhead / Labor Add</label>
+      <input id="overhead" type="number" value="0" step="0.01" min="0">
+    </div>
+    <div>
+      <label>CNC Cut Charge</label>
+      <select id="cncCharge">
+        <option value="50" selected>$50</option>
+        <option value="75">$75</option>
+        <option value="100">$100</option>
+        <option value="125">$125</option>
+        <option value="150">$150</option>
+      </select>
     </div>
   </div>
 
   <div class="grid">
     <div>
-      <label>Labor Minutes</label>
-      <input id="laborMin" type="number" value="0" step="0.01" min="0">
+      <label>Custom CNC Charge Override</label>
+      <input id="cncCustom" type="number" value="0" step="0.01" min="0">
     </div>
     <div>
-      <label>Labor Rate ($/hr)</label>
-      <input id="laborRate" type="number" value="50" step="0.01" min="0">
+      <label>Use Pricing Method</label>
+      <select id="pricingMode">
+        <option value="material_plus_cnc" selected>Material + Overhead + CNC Charge</option>
+        <option value="sqft_only">SqFt Only</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div>
+      <label>SqFt Sell Rate (only if SqFt mode used)</label>
+      <input id="sqftRate" type="number" value="14" step="0.01" min="0">
+    </div>
+    <div>
+      <label>Note</label>
+      <input id="note" type="text" value="Use CNC charge method for simple routed panels">
     </div>
   </div>
 </div>
@@ -198,16 +218,18 @@ function calc() {
   const sheetW = parseFloat(document.getElementById("sheetW").value) || 0;
   const sheetH = parseFloat(document.getElementById("sheetH").value) || 0;
   const sheetCost = parseFloat(document.getElementById("sheetCost").value) || 0;
-  const margin = (parseFloat(document.getElementById("margin").value) || 0) / 100;
   const gap = parseFloat(document.getElementById("gap").value) || 0;
   const edge = parseFloat(document.getElementById("edge").value) || 0;
   const minJob = parseFloat(document.getElementById("minJob").value) || 0;
-  const sqftFloor = parseFloat(document.getElementById("sqftFloor").value) || 0;
-  const laborMin = parseFloat(document.getElementById("laborMin").value) || 0;
-  const laborRate = parseFloat(document.getElementById("laborRate").value) || 0;
+  const overhead = parseFloat(document.getElementById("overhead").value) || 0;
+  const cncChargeSelected = parseFloat(document.getElementById("cncCharge").value) || 0;
+  const cncCustom = parseFloat(document.getElementById("cncCustom").value) || 0;
+  const pricingMode = document.getElementById("pricingMode").value;
+  const sqftRate = parseFloat(document.getElementById("sqftRate").value) || 0;
+  const note = document.getElementById("note").value || "";
 
   if (sheetW <= 0 || sheetH <= 0) {
-    document.getElementById("out").innerHTML = "Enter valid sheet width and sheet height.";
+    document.getElementById("out").innerHTML = "Enter valid sheet width and height.";
     return;
   }
 
@@ -219,10 +241,12 @@ function calc() {
     return;
   }
 
+  // Standard orientation
   const fitXStandard = Math.floor((usableW + gap) / (w + gap));
   const fitYStandard = Math.floor((usableH + gap) / (h + gap));
   const perSheetStandard = fitXStandard * fitYStandard;
 
+  // Rotated orientation
   const fitXRotated = Math.floor((usableW + gap) / (h + gap));
   const fitYRotated = Math.floor((usableH + gap) / (w + gap));
   const perSheetRotated = fitXRotated * fitYRotated;
@@ -246,12 +270,23 @@ function calc() {
 
   const sheetsNeeded = Math.ceil(qty / perSheet);
   const materialCost = sheetsNeeded * sheetCost;
-  const laborCost = (laborMin / 60) * laborRate;
-  const cost = materialCost + laborCost;
+  const cncCharge = cncCustom > 0 ? cncCustom : cncChargeSelected;
 
-  const sellFromMargin = cost * (1 + margin);
-  const sellFromSqFt = totalSqft * sqftFloor;
-  const sell = Math.max(sellFromMargin, sellFromSqFt, minJob);
+  let sell = 0;
+  let pricingExplanation = "";
+
+  if (pricingMode === "material_plus_cnc") {
+    sell = materialCost + overhead + cncCharge;
+    pricingExplanation = "Material + Overhead + CNC Charge";
+  } else {
+    sell = totalSqft * sqftRate;
+    pricingExplanation = "SqFt pricing mode";
+  }
+
+  if (sell < minJob) {
+    sell = minJob;
+    pricingExplanation += " (minimum job applied)";
+  }
 
   document.getElementById("out").innerHTML = `
     <strong>Description:</strong> ${escapeHtml(desc)}<br>
@@ -270,11 +305,12 @@ function calc() {
     <strong>Sheets Needed:</strong> ${sheetsNeeded}<br><br>
 
     <strong>Material Cost:</strong> $${materialCost.toFixed(2)}<br>
-    <strong>Labor Cost:</strong> $${laborCost.toFixed(2)}<br>
-    <strong>Total Cost:</strong> $${cost.toFixed(2)}<br>
-    <strong>Sell from Margin:</strong> $${sellFromMargin.toFixed(2)}<br>
-    <strong>Sell from SqFt Floor:</strong> $${sellFromSqFt.toFixed(2)}<br>
-    <strong>Final Sell:</strong> $${sell.toFixed(2)}
+    <strong>Overhead / Labor Add:</strong> $${overhead.toFixed(2)}<br>
+    <strong>CNC Charge:</strong> $${cncCharge.toFixed(2)}<br>
+    <strong>Pricing Method:</strong> ${pricingExplanation}<br><br>
+
+    <strong>Final Sell:</strong> $${sell.toFixed(2)}<br><br>
+    <strong>Note:</strong> ${escapeHtml(note)}
   `;
 }
 
