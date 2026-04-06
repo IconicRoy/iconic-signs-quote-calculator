@@ -9,7 +9,7 @@
       font-family: Arial, sans-serif;
       background: #111;
       color: #fff;
-      max-width: 760px;
+      max-width: 900px;
       margin: 30px auto;
       padding: 20px;
     }
@@ -71,6 +71,12 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 16px;
+    }
+
+    hr {
+      border: 0;
+      border-top: 1px solid #333;
+      margin: 16px 0;
     }
 
     @media (max-width: 640px) {
@@ -135,6 +141,21 @@
     </div>
 
     <div class="field">
+      <label for="partGapIn">Part Gap (in)</label>
+      <input type="number" id="partGapIn" value="0.25" min="0" step="0.01" />
+    </div>
+
+    <div class="field">
+      <label for="edgeMarginIn">Edge Margin (in)</label>
+      <input type="number" id="edgeMarginIn" value="0.5" min="0" step="0.01" />
+    </div>
+
+    <div class="field">
+      <label for="bleedAllowanceIn">Bleed / Oversize (in)</label>
+      <input type="number" id="bleedAllowanceIn" value="0" min="0" step="0.01" />
+    </div>
+
+    <div class="field">
       <label for="minimumJobCharge">Minimum Job Charge ($)</label>
       <input type="number" id="minimumJobCharge" value="0" min="0" step="0.01" />
     </div>
@@ -183,6 +204,9 @@
         const materialCostPerSheet = Number(document.getElementById("materialCostPerSheet").value);
         const printMarginPercent = Number(document.getElementById("printMarginPercent").value);
         const cutComplexity = document.getElementById("cutComplexity").value;
+        const partGapIn = Number(document.getElementById("partGapIn").value);
+        const edgeMarginIn = Number(document.getElementById("edgeMarginIn").value);
+        const bleedAllowanceIn = Number(document.getElementById("bleedAllowanceIn").value);
         const minimumJobCharge = Number(document.getElementById("minimumJobCharge").value);
 
         if (!qty || qty <= 0) throw new Error("Qty must be greater than 0.");
@@ -192,6 +216,9 @@
         if (!sheetHeightIn || sheetHeightIn <= 0) throw new Error("Sheet height must be greater than 0.");
         if (materialCostPerSheet < 0) throw new Error("Material cost cannot be negative.");
         if (printMarginPercent < 0) throw new Error("Print margin cannot be negative.");
+        if (partGapIn < 0) throw new Error("Part gap cannot be negative.");
+        if (edgeMarginIn < 0) throw new Error("Edge margin cannot be negative.");
+        if (bleedAllowanceIn < 0) throw new Error("Bleed / oversize cannot be negative.");
         if (minimumJobCharge < 0) throw new Error("Minimum job charge cannot be negative.");
 
         const cncRates = {
@@ -205,18 +232,35 @@
         const totalSqFt = pieceSqFt * qty;
         const sheetSqFt = (sheetWidthIn * sheetHeightIn) / 144;
 
-        const piecesPerRow = Math.floor(sheetWidthIn / widthIn);
-        const piecesPerCol = Math.floor(sheetHeightIn / heightIn);
+        const usableSheetWidth = sheetWidthIn - (edgeMarginIn * 2);
+        const usableSheetHeight = sheetHeightIn - (edgeMarginIn * 2);
+
+        if (usableSheetWidth <= 0 || usableSheetHeight <= 0) {
+          throw new Error("Edge margins leave no usable sheet area.");
+        }
+
+        const effectiveWidth = widthIn + bleedAllowanceIn;
+        const effectiveHeight = heightIn + bleedAllowanceIn;
+
+        if (effectiveWidth <= 0 || effectiveHeight <= 0) {
+          throw new Error("Effective piece size must be greater than 0.");
+        }
+
+        const pitchX = effectiveWidth + partGapIn;
+        const pitchY = effectiveHeight + partGapIn;
+
+        const piecesPerRow = Math.floor((usableSheetWidth + partGapIn) / pitchX);
+        const piecesPerCol = Math.floor((usableSheetHeight + partGapIn) / pitchY);
         const piecesPerSheet = piecesPerRow * piecesPerCol;
 
         if (piecesPerSheet === 0) {
-          throw new Error("Piece size is larger than the selected sheet.");
+          throw new Error("Piece size plus margins/gaps will not fit on the selected sheet.");
         }
 
         const sheetsUsed = Math.ceil(qty / piecesPerSheet);
         const materialCost = sheetsUsed * materialCostPerSheet;
         const printSell = materialCost * (1 + printMarginPercent / 100);
-        const cncCharge = sheetsUsed * cncRates[cutComplexity];
+        const cncCharge = sheetsUsed * (cncRates[cutComplexity] || 0);
         const subtotal = printSell + cncCharge;
         const finalSell = Math.max(subtotal, minimumJobCharge);
         const pricePerPiece = finalSell / qty;
@@ -224,21 +268,27 @@
         resultContent.innerHTML = `
           <div class="result-line"><strong>Description:</strong> ${description || "-"}</div>
           <div class="result-line"><strong>Qty:</strong> ${qty}</div>
-          <div class="result-line"><strong>Size:</strong> ${number(widthIn)}" × ${number(heightIn)}"</div>
+          <div class="result-line"><strong>Finished Size:</strong> ${number(widthIn)}" × ${number(heightIn)}"</div>
           <div class="result-line"><strong>Sq Ft Each:</strong> ${number(pieceSqFt)}</div>
           <div class="result-line"><strong>Total Sq Ft:</strong> ${number(totalSqFt)}</div>
+          <hr>
           <div class="result-line"><strong>Sheet Size:</strong> ${number(sheetWidthIn)}" × ${number(sheetHeightIn)}" (${number(sheetSqFt)} sq ft)</div>
+          <div class="result-line"><strong>Edge Margin:</strong> ${number(edgeMarginIn)}"</div>
+          <div class="result-line"><strong>Usable Sheet Area:</strong> ${number(usableSheetWidth)}" × ${number(usableSheetHeight)}"</div>
+          <div class="result-line"><strong>Part Gap:</strong> ${number(partGapIn)}"</div>
+          <div class="result-line"><strong>Bleed / Oversize:</strong> ${number(bleedAllowanceIn)}"</div>
+          <div class="result-line"><strong>Effective Part Size for Nesting:</strong> ${number(effectiveWidth)}" × ${number(effectiveHeight)}"</div>
           <div class="result-line"><strong>Pieces Per Row:</strong> ${piecesPerRow}</div>
           <div class="result-line"><strong>Pieces Per Column:</strong> ${piecesPerCol}</div>
           <div class="result-line"><strong>Pieces Per Sheet:</strong> ${piecesPerSheet}</div>
           <div class="result-line"><strong>Sheets Used:</strong> ${sheetsUsed}</div>
-          <hr style="border-color:#333; margin:16px 0;">
+          <hr>
           <div class="result-line"><strong>Material Cost:</strong> ${money(materialCost)}</div>
           <div class="result-line"><strong>Print Sell:</strong> ${money(printSell)}</div>
           <div class="result-line"><strong>CNC Charge:</strong> ${money(cncCharge)}</div>
           <div class="result-line"><strong>Subtotal:</strong> ${money(subtotal)}</div>
           <div class="result-line"><strong>Minimum Job Charge:</strong> ${money(minimumJobCharge)}</div>
-          <hr style="border-color:#333; margin:16px 0;">
+          <hr>
           <div class="result-line"><strong>Final Sell:</strong> ${money(finalSell)}</div>
           <div class="result-line"><strong>Price Each:</strong> ${money(pricePerPiece)}</div>
         `;
