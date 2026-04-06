@@ -6,173 +6,175 @@
 <title>Iconic Signs FL — Quote Calculator</title>
 
 <style>
-body { background:#111; color:#eee; font-family:Arial; margin:0; }
-header { padding:15px; border-bottom:1px solid #333; display:flex; justify-content:space-between; }
-.shell { display:grid; grid-template-columns:220px 1fr 300px; height:100vh; }
-
-nav { border-right:1px solid #333; padding:10px; }
-nav div { padding:10px; cursor:pointer; }
-nav div:hover { background:#222; }
-
-main { padding:20px; overflow:auto; }
-aside { border-left:1px solid #333; padding:20px; }
-
-input, select { width:100%; padding:6px; margin:5px 0; }
-button { padding:10px; background:#d4a853; border:none; cursor:pointer; }
-
-.panel { display:none; }
-.panel.active { display:block; }
-
-.item { border-bottom:1px solid #333; padding:10px 0; }
+body {background:#111;color:#eee;font-family:Arial;padding:20px}
+input,select{width:100%;padding:8px;margin-bottom:10px;background:#222;border:1px solid #444;color:#fff}
+button{padding:10px 16px;background:#d4a853;border:none;cursor:pointer}
+.result{margin-top:20px;padding:10px;background:#222}
+.hidden{display:none}
+.toggle{margin-bottom:20px}
 </style>
 </head>
 
 <body>
 
-<header>
-  <div>ICONIC SIGNS FL</div>
-  <div>Quote System</div>
-</header>
+<h2>Iconic Signs Quote Calculator</h2>
 
-<div class="shell">
-
-<nav>
-  <div onclick="show('rta')">RTA Vinyl</div>
-  <div onclick="show('uv')">UV Print</div>
-  <div onclick="show('cnc')">CNC Routed</div>
-  <div onclick="show('ada')">ADA</div>
-</nav>
-
-<main>
-
-<!-- RTA -->
-<div id="rta" class="panel active">
-  <h3>RTA Vinyl</h3>
-  <input id="rta_w" placeholder="Width">
-  <input id="rta_h" placeholder="Height">
-  <input id="rta_q" placeholder="Qty">
-  <button onclick="addRTA()">Add</button>
+<div class="toggle">
+<button onclick="setMode('simple')">Simple</button>
+<button onclick="setMode('advanced')">Advanced</button>
 </div>
 
-<!-- UV -->
-<div id="uv" class="panel">
-  <h3>UV Print</h3>
-  <input id="uv_w" placeholder="Width">
-  <input id="uv_h" placeholder="Height">
-  <input id="uv_q" placeholder="Qty">
-  <select id="uv_white">
-    <option value="0">No White</option>
-    <option value="1">White Ink</option>
-  </select>
-  <button onclick="addUV()">Add</button>
+<div>
+<label>Description</label>
+<input id="desc" value="parking signs">
+
+<label>Qty</label>
+<input id="qty" type="number" value="4">
+
+<label>Width (in)</label>
+<input id="w" type="number" value="12">
+
+<label>Height (in)</label>
+<input id="h" type="number" value="12">
 </div>
 
-<!-- CNC -->
-<div id="cnc" class="panel">
-  <h3>CNC Routed</h3>
-  <input id="cnc_w" placeholder="Width">
-  <input id="cnc_h" placeholder="Height">
-  <input id="cnc_q" placeholder="Qty">
-  <input id="cnc_holes" placeholder="Mount Holes">
-  <button onclick="addCNC()">Add</button>
-</div>
+<div id="advanced" class="hidden">
 
-<!-- ADA -->
-<div id="ada" class="panel">
-  <h3>ADA</h3>
-  <input id="ada_w" placeholder="Width">
-  <input id="ada_h" placeholder="Height">
-  <input id="ada_q" placeholder="Qty">
-  <button onclick="addADA()">Add</button>
-</div>
+<label>Sheet Width</label>
+<input id="sheetW" value="48">
 
-</main>
+<label>Sheet Height</label>
+<input id="sheetH" value="96">
 
-<aside>
-  <h3>Quote</h3>
-  <div id="quote"></div>
-  <h2 id="total">$0</h2>
-</aside>
+<label>Material Cost</label>
+<input id="sheetCost" value="63.24">
+
+<label>Print Margin %</label>
+<input id="margin" value="30">
+
+<label>Gap</label>
+<input id="gap" value="0.25">
+
+<label>Edge Margin</label>
+<input id="edge" value="0.5">
+
+<label>Minimum Job</label>
+<input id="minJob" value="0">
 
 </div>
+
+<div id="simple">
+
+<label>Sell Price ($/ft²)</label>
+<input id="rate" value="14">
+
+</div>
+
+<br>
+<button onclick="calc()">Calculate</button>
+
+<div class="result" id="out"></div>
 
 <script>
 
-let items = [];
+let mode = "simple";
 
-function show(id){
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+function setMode(m){
+mode = m;
+document.getElementById("advanced").classList.toggle("hidden", m !== "advanced");
+document.getElementById("simple").classList.toggle("hidden", m !== "simple");
 }
 
-function addItem(desc, cost){
-  items.push({desc, cost});
-  render();
+function calc(){
+
+let qty = parseFloat(qtyEl().value);
+let w = parseFloat(wEl().value);
+let h = parseFloat(hEl().value);
+
+let sqftEach = (w*h)/144;
+let totalSqft = sqftEach * qty;
+
+if(mode === "simple"){
+
+let rate = parseFloat(rateEl().value);
+let sell = totalSqft * rate;
+
+out().innerHTML = `
+SqFt: ${totalSqft.toFixed(2)}<br>
+Sell: $${sell.toFixed(2)}
+`;
+
+return;
 }
 
-function render(){
-  let q = document.getElementById('quote');
-  q.innerHTML = '';
-  let total = 0;
+// ADVANCED MODE
 
-  items.forEach(i=>{
-    total += i.cost;
-    q.innerHTML += `<div class="item">${i.desc} - $${i.cost.toFixed(2)}</div>`;
-  });
+let sheetW = parseFloat(sheetWEl().value);
+let sheetH = parseFloat(sheetHEl().value);
+let sheetCost = parseFloat(sheetCostEl().value);
+let margin = parseFloat(marginEl().value)/100;
+let gap = parseFloat(gapEl().value);
+let edge = parseFloat(edgeEl().value);
+let minJob = parseFloat(minJobEl().value);
 
-  document.getElementById('total').innerText = '$' + total.toFixed(2);
+// effective size
+let partW = w + gap*2;
+let partH = h + gap*2;
+
+// usable sheet
+let usableW = sheetW - edge*2;
+let usableH = sheetH - edge*2;
+
+let fitX = Math.floor(usableW / partW);
+let fitY = Math.floor(usableH / partH);
+
+let perSheet = fitX * fitY;
+
+if(perSheet <= 0){
+out().innerHTML = "Does not fit sheet";
+return;
 }
 
-/* RTA */
-function addRTA(){
-  let w = +rta_w.value;
-  let h = +rta_h.value;
-  let q = +rta_q.value;
+let sheets = Math.ceil(qty / perSheet);
 
-  let sqft = (w*h/144)*q;
-  let price = sqft * 8;
+let materialCost = sheets * sheetCost;
 
-  addItem('RTA', price);
+// basic production estimate
+let cost = materialCost;
+
+// markup
+let sell = Math.max(
+cost * (1 + margin),
+totalSqft * 14,
+minJob
+);
+
+out().innerHTML = `
+SqFt Each: ${sqftEach.toFixed(2)}<br>
+Total SqFt: ${totalSqft.toFixed(2)}<br><br>
+
+Per Sheet: ${perSheet}<br>
+Sheets Needed: ${sheets}<br><br>
+
+Cost: $${cost.toFixed(2)}<br>
+Sell: $${sell.toFixed(2)}
+`;
+
 }
 
-/* UV */
-function addUV(){
-  let w = +uv_w.value;
-  let h = +uv_h.value;
-  let q = +uv_q.value;
-  let white = +uv_white.value;
-
-  let sqft = (w*h/144)*q;
-  let price = sqft * 12;
-
-  if(white) price *= 1.4;
-
-  addItem('UV Print', price);
-}
-
-/* CNC */
-function addCNC(){
-  let w = +cnc_w.value;
-  let h = +cnc_h.value;
-  let q = +cnc_q.value;
-  let holes = +cnc_holes.value;
-
-  let sqft = (w*h/144)*q;
-  let price = sqft * 14 + holes * 0.5;
-
-  addItem('CNC', price);
-}
-
-/* ADA */
-function addADA(){
-  let w = +ada_w.value;
-  let h = +ada_h.value;
-  let q = +ada_q.value;
-
-  let price = q * 35;
-
-  addItem('ADA', price);
-}
+// shortcuts
+const qtyEl=()=>document.getElementById("qty");
+const wEl=()=>document.getElementById("w");
+const hEl=()=>document.getElementById("h");
+const rateEl=()=>document.getElementById("rate");
+const sheetWEl=()=>document.getElementById("sheetW");
+const sheetHEl=()=>document.getElementById("sheetH");
+const sheetCostEl=()=>document.getElementById("sheetCost");
+const marginEl=()=>document.getElementById("margin");
+const gapEl=()=>document.getElementById("gap");
+const edgeEl=()=>document.getElementById("edge");
+const minJobEl=()=>document.getElementById("minJob");
+const out=()=>document.getElementById("out");
 
 </script>
 
