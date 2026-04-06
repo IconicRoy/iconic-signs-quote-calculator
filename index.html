@@ -1,330 +1,292 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Iconic Signs Quote Calculator</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Iconic Signs FL - Quote Builder</title>
 <style>
-body {
-  background: #111;
-  color: #eee;
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 20px;
-}
-h1 {
-  margin-top: 0;
-}
-input, select {
-  width: 100%;
-  padding: 10px;
-  margin: 6px 0 14px 0;
-  background: #222;
-  border: 1px solid #444;
-  color: #fff;
-  box-sizing: border-box;
-}
-button {
-  padding: 14px 22px;
-  background: #d4a853;
-  border: none;
-  color: #111;
-  cursor: pointer;
-  font-size: 16px;
-  margin-right: 10px;
-}
-button:hover {
-  opacity: 0.9;
-}
-.toggle {
-  margin-bottom: 20px;
-}
-.hidden {
-  display: none;
-}
-.result {
-  margin-top: 24px;
-  background: #1d1d1d;
-  padding: 16px;
-  border: 1px solid #333;
-  white-space: normal;
-  line-height: 1.5;
-}
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-}
-@media (max-width: 800px) {
-  .grid {
-    grid-template-columns: 1fr;
+  :root{
+    --bg:#111; --panel:#1b1b1b; --panel2:#222; --line:#333;
+    --text:#eee; --muted:#aaa; --accent:#d4a853; --accent2:#b8935f;
+    --good:#71c58b;
   }
-}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
+  header{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+  h1{margin:0;font-size:28px}
+  .sub{color:var(--muted);font-size:13px}
+  .wrap{display:grid;grid-template-columns:230px 1fr 340px;min-height:calc(100vh - 69px)}
+  nav{border-right:1px solid var(--line);padding:18px 0;background:#141414}
+  .nav-title{padding:0 18px 10px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+  .nav-btn{width:100%;text-align:left;background:none;border:none;color:var(--text);padding:11px 18px;cursor:pointer;font-size:14px;border-left:3px solid transparent}
+  .nav-btn:hover{background:#1d1d1d}
+  .nav-btn.active{background:#1d1d1d;border-left-color:var(--accent)}
+  main{padding:20px;overflow:auto}
+  .panel{display:none}.panel.active{display:block}
+  .card{background:var(--panel);border:1px solid var(--line);padding:16px;margin-bottom:16px}
+  .card h2{margin:0 0 6px;font-size:20px}
+  .card p{margin:0;color:var(--muted);font-size:13px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+  .grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px}
+  label{display:block;margin:12px 0 6px;color:var(--muted);font-size:12px}
+  input,select{width:100%;padding:10px;background:var(--panel2);border:1px solid #444;color:var(--text);font-size:14px}
+  button.primary,button.secondary{padding:12px 18px;border:none;cursor:pointer;font-size:14px}
+  button.primary{background:var(--accent);color:#111}
+  button.secondary{background:#2c2c2c;color:var(--text);border:1px solid #444}
+  button.primary:hover{background:var(--accent2)}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .result{margin-top:14px;background:#202020;border:1px solid var(--line);padding:14px;line-height:1.5}
+  .k{color:var(--muted)}
+  aside{border-left:1px solid var(--line);padding:18px;background:#151515}
+  .quote-item{background:var(--panel);border:1px solid var(--line);padding:12px;margin-bottom:10px}
+  .quote-item h4{margin:0 0 6px;font-size:15px}
+  .quote-item .meta{font-size:12px;color:var(--muted)}
+  .quote-item .price{margin-top:8px;font-size:18px;color:var(--good)}
+  .tiny{font-size:12px;color:var(--muted)}
+  .totals{margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+  .totals div{margin:6px 0}
+  .grand{font-size:24px;color:var(--good);font-weight:bold}
+  @media (max-width:1200px){.wrap{grid-template-columns:1fr}nav,aside{border:none}}
+  @media print{nav,.no-print,header .sub{display:none !important}.wrap{grid-template-columns:1fr}aside{border:none;padding:0}main{display:none}body,aside,.quote-item{background:#fff !important;color:#111 !important;border-color:#ccc !important}.price,.grand{color:#111 !important}}
 </style>
 </head>
 <body>
-
-<h1>Iconic Signs Quote Calculator</h1>
-
-<div class="toggle">
-  <button type="button" onclick="setMode('simple')">Simple</button>
-  <button type="button" onclick="setMode('advanced')">Advanced</button>
-</div>
-
-<label>Description</label>
-<input id="desc" type="text" value="parking signs">
-
-<div class="grid">
+<header>
   <div>
-    <label>Qty</label>
-    <input id="qty" type="number" value="8" step="1" min="1">
+    <h1>Iconic Signs FL Quote Builder</h1>
+    <div class="sub">Single file. Multi-line quotes for UV, CNC, ADA, and dimensional letters.</div>
   </div>
-  <div>
-    <label>Width (in)</label>
-    <input id="w" type="number" value="23.5" step="0.01" min="0">
+  <div class="row no-print">
+    <button class="secondary" onclick="clearQuote()">Clear Quote</button>
+    <button class="primary" onclick="window.print()">Print / Save PDF</button>
   </div>
+</header>
+
+<div class="wrap">
+  <nav class="no-print">
+    <div class="nav-title">Line Item Types</div>
+    <button class="nav-btn active" onclick="showPanel('uv', this)">UV Print</button>
+    <button class="nav-btn" onclick="showPanel('cnc', this)">CNC Routed Panel</button>
+    <button class="nav-btn" onclick="showPanel('ada', this)">ADA Sign</button>
+    <button class="nav-btn" onclick="showPanel('letters', this)">Dimensional Letters</button>
+  </nav>
+
+  <main>
+    <div id="panel-uv" class="panel active">
+      <div class="card"><h2>UV Print</h2><p>Direct print with optional laminate and white ink.</p></div>
+      <div class="card">
+        <div class="grid">
+          <div><label>Description</label><input id="uv_desc" value="UV printed panel"></div>
+          <div><label>Quantity</label><input id="uv_qty" type="number" value="1" min="1" step="1"></div>
+        </div>
+        <div class="grid">
+          <div><label>Width (in)</label><input id="uv_w" type="number" value="48" step="0.01"></div>
+          <div><label>Height (in)</label><input id="uv_h" type="number" value="96" step="0.01"></div>
+        </div>
+        <div class="grid3">
+          <div><label>Material cost per sheet</label><input id="uv_sheet_cost" type="number" value="63.24" step="0.01"></div>
+          <div><label>Sheet width</label><input id="uv_sheet_w" type="number" value="48" step="0.01"></div>
+          <div><label>Sheet height</label><input id="uv_sheet_h" type="number" value="96" step="0.01"></div>
+        </div>
+        <div class="grid4">
+          <div><label>Lamination</label><select id="uv_lam"><option value="0">None</option><option value="0.96">Economy $0.96/ft²</option><option value="1.24">Intermediate $1.24/ft²</option><option value="1.75">Premium $1.75/ft²</option></select></div>
+          <div><label>White ink</label><select id="uv_white"><option value="0">None</option><option value="0.08">Spot white +$0.08/ft²</option><option value="0.14">Flood white +$0.14/ft²</option><option value="0.22">Double white +$0.22/ft²</option></select></div>
+          <div><label>Base print rate ($/ft² cost)</label><input id="uv_print_cost" type="number" value="0.40" step="0.01"></div>
+          <div><label>Labor / overhead add</label><input id="uv_overhead" type="number" value="25" step="0.01"></div>
+        </div>
+        <div class="grid3">
+          <div><label>Target markup multiplier</label><input id="uv_markup" type="number" value="1.75" step="0.01"></div>
+          <div><label>Sell floor ($/ft²)</label><input id="uv_sell_floor" type="number" value="14" step="0.01"></div>
+          <div><label>Minimum job</label><input id="uv_min" type="number" value="75" step="0.01"></div>
+        </div>
+        <div class="row no-print"><button class="primary" onclick="addUV()">Add UV Line Item</button></div>
+        <div class="result" id="uv_result">No calculation yet.</div>
+      </div>
+    </div>
+
+    <div id="panel-cnc" class="panel">
+      <div class="card"><h2>CNC Routed Panel</h2><p>Material + overhead + simple CNC cut charge logic.</p></div>
+      <div class="card">
+        <div class="grid">
+          <div><label>Description</label><input id="cnc_desc" value="CNC routed panel"></div>
+          <div><label>Quantity</label><input id="cnc_qty" type="number" value="1" min="1" step="1"></div>
+        </div>
+        <div class="grid">
+          <div><label>Width (in)</label><input id="cnc_w" type="number" value="24" step="0.01"></div>
+          <div><label>Height (in)</label><input id="cnc_h" type="number" value="24" step="0.01"></div>
+        </div>
+        <div class="grid4">
+          <div><label>Sheet width</label><input id="cnc_sheet_w" type="number" value="48" step="0.01"></div>
+          <div><label>Sheet height</label><input id="cnc_sheet_h" type="number" value="96" step="0.01"></div>
+          <div><label>Material cost / sheet</label><input id="cnc_sheet_cost" type="number" value="63.24" step="0.01"></div>
+          <div><label>Gap between parts (in)</label><input id="cnc_gap" type="number" value="0" step="0.01"></div>
+        </div>
+        <div class="grid4">
+          <div><label>Edge margin (in)</label><input id="cnc_edge" type="number" value="0" step="0.01"></div>
+          <div><label>Overhead / labor add</label><input id="cnc_overhead" type="number" value="25" step="0.01"></div>
+          <div><label>Simple CNC cut charge</label><select id="cnc_cut_charge"><option value="50">$50</option><option value="75" selected>$75</option><option value="100">$100</option><option value="125">$125</option></select></div>
+          <div><label>Minimum job</label><input id="cnc_min" type="number" value="75" step="0.01"></div>
+        </div>
+        <div class="row no-print"><button class="primary" onclick="addCNC()">Add CNC Line Item</button></div>
+        <div class="result" id="cnc_result">No calculation yet.</div>
+      </div>
+    </div>
+
+    <div id="panel-ada" class="panel">
+      <div class="card"><h2>ADA Sign</h2><p>Material + tactile / braille + finish + markup.</p></div>
+      <div class="card">
+        <div class="grid">
+          <div><label>Description</label><input id="ada_desc" value="ADA room sign"></div>
+          <div><label>Quantity</label><input id="ada_qty" type="number" value="1" min="1" step="1"></div>
+        </div>
+        <div class="grid">
+          <div><label>Width (in)</label><input id="ada_w" type="number" value="6" step="0.01"></div>
+          <div><label>Height (in)</label><input id="ada_h" type="number" value="9" step="0.01"></div>
+        </div>
+        <div class="grid4">
+          <div><label>Material per piece</label><input id="ada_material" type="number" value="6" step="0.01"></div>
+          <div><label>Raised character count</label><input id="ada_chars" type="number" value="12" step="1"></div>
+          <div><label>Braille line count</label><input id="ada_braille" type="number" value="1" step="1"></div>
+          <div><label>Background finish add</label><select id="ada_finish"><option value="0">None</option><option value="3" selected>Printed +$3</option><option value="5">Painted +$5</option></select></div>
+        </div>
+        <div class="grid4">
+          <div><label>Char cost each</label><input id="ada_char_cost" type="number" value="0.15" step="0.01"></div>
+          <div><label>Braille cost / line</label><input id="ada_braille_cost" type="number" value="1.50" step="0.01"></div>
+          <div><label>Overhead / labor add</label><input id="ada_overhead" type="number" value="12" step="0.01"></div>
+          <div><label>Markup multiplier</label><input id="ada_markup" type="number" value="1.75" step="0.01"></div>
+        </div>
+        <div class="grid">
+          <div><label>Minimum job</label><input id="ada_min" type="number" value="35" step="0.01"></div>
+          <div><label>Sell floor ($/ft²)</label><input id="ada_sell_floor" type="number" value="24" step="0.01"></div>
+        </div>
+        <div class="row no-print"><button class="primary" onclick="addADA()">Add ADA Line Item</button></div>
+        <div class="result" id="ada_result">No calculation yet.</div>
+      </div>
+    </div>
+
+    <div id="panel-letters" class="panel">
+      <div class="card"><h2>Dimensional Letters</h2><p>Simple dimensional letter estimator using total overall size and material / finish adds.</p></div>
+      <div class="card">
+        <div class="grid">
+          <div><label>Description</label><input id="dl_desc" value="Dimensional letters"></div>
+          <div><label>Quantity (sets)</label><input id="dl_qty" type="number" value="1" min="1" step="1"></div>
+        </div>
+        <div class="grid">
+          <div><label>Total width (in)</label><input id="dl_w" type="number" value="64.25" step="0.01"></div>
+          <div><label>Total height (in)</label><input id="dl_h" type="number" value="11.5" step="0.01"></div>
+        </div>
+        <div class="grid4">
+          <div><label>Base material rate ($/ft² cost)</label><input id="dl_material_rate" type="number" value="12" step="0.01"></div>
+          <div><label>Thickness</label><select id="dl_thickness"><option value="1">Thin / standard</option><option value="1.25">Medium thickness</option><option value="1.5">Heavy thickness</option></select></div>
+          <div><label>Color match / finish add</label><input id="dl_finish_add" type="number" value="35" step="0.01"></div>
+          <div><label>Mounting pattern / template add</label><input id="dl_template_add" type="number" value="15" step="0.01"></div>
+        </div>
+        <div class="grid4">
+          <div><label>Overhead / labor add</label><input id="dl_overhead" type="number" value="40" step="0.01"></div>
+          <div><label>Markup multiplier</label><input id="dl_markup" type="number" value="1.75" step="0.01"></div>
+          <div><label>Sell floor ($/ft²)</label><input id="dl_sell_floor" type="number" value="24" step="0.01"></div>
+          <div><label>Minimum job</label><input id="dl_min" type="number" value="125" step="0.01"></div>
+        </div>
+        <div class="row no-print"><button class="primary" onclick="addLetters()">Add Dimensional Letters Line Item</button></div>
+        <div class="result" id="dl_result">No calculation yet.</div>
+      </div>
+    </div>
+  </main>
+
+  <aside>
+    <h3 style="margin-top:0">Quote Summary</h3>
+    <div class="tiny">Print from this panel for a clean quote summary.</div>
+    <div id="quote_items" style="margin-top:14px">No items yet.</div>
+    <div class="totals">
+      <div><span class="k">Line Items:</span> <span id="total_items">0</span></div>
+      <div><span class="k">Total Sell:</span></div>
+      <div class="grand" id="grand_total">$0.00</div>
+    </div>
+  </aside>
 </div>
-
-<div class="grid">
-  <div>
-    <label>Height (in)</label>
-    <input id="h" type="number" value="23.5" step="0.01" min="0">
-  </div>
-  <div id="simple">
-    <label>Sell Price ($/ft²)</label>
-    <input id="rate" type="number" value="14" step="0.01" min="0">
-  </div>
-</div>
-
-<div id="advanced">
-  <div class="grid">
-    <div>
-      <label>Sheet Width</label>
-      <input id="sheetW" type="number" value="48" step="0.01" min="0">
-    </div>
-    <div>
-      <label>Sheet Height</label>
-      <input id="sheetH" type="number" value="96" step="0.01" min="0">
-    </div>
-  </div>
-
-  <div class="grid">
-    <div>
-      <label>Material Cost / Sheet</label>
-      <input id="sheetCost" type="number" value="63.24" step="0.01" min="0">
-    </div>
-    <div>
-      <label>Gap Between Parts (in)</label>
-      <input id="gap" type="number" value="0" step="0.01" min="0">
-    </div>
-  </div>
-
-  <div class="grid">
-    <div>
-      <label>Edge Margin (in)</label>
-      <input id="edge" type="number" value="0" step="0.01" min="0">
-    </div>
-    <div>
-      <label>Minimum Job</label>
-      <input id="minJob" type="number" value="0" step="0.01" min="0">
-    </div>
-  </div>
-
-  <div class="grid">
-    <div>
-      <label>Overhead / Labor Add</label>
-      <input id="overhead" type="number" value="0" step="0.01" min="0">
-    </div>
-    <div>
-      <label>CNC Cut Charge</label>
-      <select id="cncCharge">
-        <option value="50" selected>$50</option>
-        <option value="75">$75</option>
-        <option value="100">$100</option>
-        <option value="125">$125</option>
-        <option value="150">$150</option>
-      </select>
-    </div>
-  </div>
-
-  <div class="grid">
-    <div>
-      <label>Custom CNC Charge Override</label>
-      <input id="cncCustom" type="number" value="0" step="0.01" min="0">
-    </div>
-    <div>
-      <label>Use Pricing Method</label>
-      <select id="pricingMode">
-        <option value="material_plus_cnc" selected>Material + Overhead + CNC Charge</option>
-        <option value="sqft_only">SqFt Only</option>
-      </select>
-    </div>
-  </div>
-
-  <div class="grid">
-    <div>
-      <label>SqFt Sell Rate (only if SqFt mode used)</label>
-      <input id="sqftRate" type="number" value="14" step="0.01" min="0">
-    </div>
-    <div>
-      <label>Note</label>
-      <input id="note" type="text" value="Use CNC charge method for simple routed panels">
-    </div>
-  </div>
-</div>
-
-<button type="button" onclick="calc()">Calculate</button>
-
-<div class="result" id="out">Enter values and click Calculate.</div>
 
 <script>
-let mode = "simple";
-
-function setMode(m) {
-  mode = m;
-  document.getElementById("advanced").classList.toggle("hidden", m !== "advanced");
-  document.getElementById("simple").classList.toggle("hidden", m !== "simple");
+let quote = [];
+function showPanel(name, btn){
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
 }
-
-function calc() {
-  const desc = document.getElementById("desc").value || "";
-  const qty = parseFloat(document.getElementById("qty").value) || 0;
-  const w = parseFloat(document.getElementById("w").value) || 0;
-  const h = parseFloat(document.getElementById("h").value) || 0;
-
-  if (qty <= 0 || w <= 0 || h <= 0) {
-    document.getElementById("out").innerHTML = "Enter valid quantity, width, and height.";
-    return;
-  }
-
-  const sqftEach = (w * h) / 144;
-  const totalSqft = sqftEach * qty;
-
-  if (mode === "simple") {
-    const rate = parseFloat(document.getElementById("rate").value) || 0;
-    const sell = totalSqft * rate;
-
-    document.getElementById("out").innerHTML = `
-      <strong>Description:</strong> ${escapeHtml(desc)}<br>
-      <strong>Qty:</strong> ${qty}<br>
-      <strong>Finished Size:</strong> ${w.toFixed(2)}" × ${h.toFixed(2)}"<br>
-      <strong>SqFt Each:</strong> ${sqftEach.toFixed(2)}<br>
-      <strong>Total SqFt:</strong> ${totalSqft.toFixed(2)}<br><br>
-      <strong>Sell:</strong> $${sell.toFixed(2)}
-    `;
-    return;
-  }
-
-  const sheetW = parseFloat(document.getElementById("sheetW").value) || 0;
-  const sheetH = parseFloat(document.getElementById("sheetH").value) || 0;
-  const sheetCost = parseFloat(document.getElementById("sheetCost").value) || 0;
-  const gap = parseFloat(document.getElementById("gap").value) || 0;
-  const edge = parseFloat(document.getElementById("edge").value) || 0;
-  const minJob = parseFloat(document.getElementById("minJob").value) || 0;
-  const overhead = parseFloat(document.getElementById("overhead").value) || 0;
-  const cncChargeSelected = parseFloat(document.getElementById("cncCharge").value) || 0;
-  const cncCustom = parseFloat(document.getElementById("cncCustom").value) || 0;
-  const pricingMode = document.getElementById("pricingMode").value;
-  const sqftRate = parseFloat(document.getElementById("sqftRate").value) || 0;
-  const note = document.getElementById("note").value || "";
-
-  if (sheetW <= 0 || sheetH <= 0) {
-    document.getElementById("out").innerHTML = "Enter valid sheet width and height.";
-    return;
-  }
-
-  const usableW = sheetW - edge * 2;
-  const usableH = sheetH - edge * 2;
-
-  if (usableW <= 0 || usableH <= 0) {
-    document.getElementById("out").innerHTML = "Edge margin is too large for the selected sheet.";
-    return;
-  }
-
-  // Standard orientation
+function fmt(n){ return '$' + (Number(n)||0).toFixed(2); }
+function htmlEsc(s){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+function calcSheetUsage(qty, w, h, sheetW, sheetH, gap, edge){
+  const usableW = sheetW - edge * 2, usableH = sheetH - edge * 2;
+  if (usableW <= 0 || usableH <= 0) return {ok:false, msg:'Edge margin too large.'};
   const fitXStandard = Math.floor((usableW + gap) / (w + gap));
   const fitYStandard = Math.floor((usableH + gap) / (h + gap));
   const perSheetStandard = fitXStandard * fitYStandard;
-
-  // Rotated orientation
   const fitXRotated = Math.floor((usableW + gap) / (h + gap));
   const fitYRotated = Math.floor((usableH + gap) / (w + gap));
   const perSheetRotated = fitXRotated * fitYRotated;
-
-  let rotated = false;
-  let fitX = fitXStandard;
-  let fitY = fitYStandard;
-  let perSheet = perSheetStandard;
-
-  if (perSheetRotated > perSheetStandard) {
-    rotated = true;
-    fitX = fitXRotated;
-    fitY = fitYRotated;
-    perSheet = perSheetRotated;
-  }
-
-  if (perSheet <= 0) {
-    document.getElementById("out").innerHTML = "Does not fit sheet.";
+  let rotated = false, fitX = fitXStandard, fitY = fitYStandard, perSheet = perSheetStandard;
+  if (perSheetRotated > perSheetStandard){ rotated = true; fitX = fitXRotated; fitY = fitYRotated; perSheet = perSheetRotated; }
+  if (perSheet <= 0) return {ok:false, msg:'Does not fit sheet.'};
+  return {ok:true, rotated, fitX, fitY, perSheet, sheets: Math.ceil(qty / perSheet), usableW, usableH};
+}
+function addLineItem(item){ quote.push(item); renderQuote(); }
+function removeLine(i){ quote.splice(i,1); renderQuote(); }
+function clearQuote(){ quote = []; renderQuote(); }
+function renderQuote(){
+  const box = document.getElementById('quote_items');
+  if (!quote.length){
+    box.innerHTML = 'No items yet.';
+    document.getElementById('total_items').textContent = '0';
+    document.getElementById('grand_total').textContent = '$0.00';
     return;
   }
-
-  const sheetsNeeded = Math.ceil(qty / perSheet);
-  const materialCost = sheetsNeeded * sheetCost;
-  const cncCharge = cncCustom > 0 ? cncCustom : cncChargeSelected;
-
-  let sell = 0;
-  let pricingExplanation = "";
-
-  if (pricingMode === "material_plus_cnc") {
-    sell = materialCost + overhead + cncCharge;
-    pricingExplanation = "Material + Overhead + CNC Charge";
-  } else {
-    sell = totalSqft * sqftRate;
-    pricingExplanation = "SqFt pricing mode";
-  }
-
-  if (sell < minJob) {
-    sell = minJob;
-    pricingExplanation += " (minimum job applied)";
-  }
-
-  document.getElementById("out").innerHTML = `
-    <strong>Description:</strong> ${escapeHtml(desc)}<br>
-    <strong>Qty:</strong> ${qty}<br>
-    <strong>Finished Size:</strong> ${w.toFixed(2)}" × ${h.toFixed(2)}"<br>
-    <strong>SqFt Each:</strong> ${sqftEach.toFixed(2)}<br>
-    <strong>Total SqFt:</strong> ${totalSqft.toFixed(2)}<br><br>
-
-    <strong>Sheet Size:</strong> ${sheetW.toFixed(2)}" × ${sheetH.toFixed(2)}"<br>
-    <strong>Usable Sheet:</strong> ${usableW.toFixed(2)}" × ${usableH.toFixed(2)}"<br>
-    <strong>Gap:</strong> ${gap.toFixed(2)}"<br>
-    <strong>Edge Margin:</strong> ${edge.toFixed(2)}"<br>
-    <strong>Best Orientation:</strong> ${rotated ? "Rotated" : "Standard"}<br>
-    <strong>Layout:</strong> ${fitX} across × ${fitY} down<br>
-    <strong>Per Sheet:</strong> ${perSheet}<br>
-    <strong>Sheets Needed:</strong> ${sheetsNeeded}<br><br>
-
-    <strong>Material Cost:</strong> $${materialCost.toFixed(2)}<br>
-    <strong>Overhead / Labor Add:</strong> $${overhead.toFixed(2)}<br>
-    <strong>CNC Charge:</strong> $${cncCharge.toFixed(2)}<br>
-    <strong>Pricing Method:</strong> ${pricingExplanation}<br><br>
-
-    <strong>Final Sell:</strong> $${sell.toFixed(2)}<br><br>
-    <strong>Note:</strong> ${escapeHtml(note)}
-  `;
+  box.innerHTML = quote.map((x,i)=>`<div class="quote-item"><div class="row" style="justify-content:space-between"><h4>${htmlEsc(x.type)} - ${htmlEsc(x.desc)}</h4><button class="secondary no-print" onclick="removeLine(${i})">Remove</button></div><div class="meta">Qty: ${x.qty}</div><div class="meta">${htmlEsc(x.note || '')}</div><div class="price">${fmt(x.sell)}</div></div>`).join('');
+  const total = quote.reduce((a,b)=>a + Number(b.sell || 0), 0);
+  document.getElementById('total_items').textContent = String(quote.length);
+  document.getElementById('grand_total').textContent = fmt(total);
 }
-
-function escapeHtml(str) {
-  return String(str)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+function addUV(){
+  const desc = document.getElementById('uv_desc').value, qty = Number(document.getElementById('uv_qty').value), w = Number(document.getElementById('uv_w').value), h = Number(document.getElementById('uv_h').value);
+  const sheetCost = Number(document.getElementById('uv_sheet_cost').value), sheetW = Number(document.getElementById('uv_sheet_w').value), sheetH = Number(document.getElementById('uv_sheet_h').value);
+  const lam = Number(document.getElementById('uv_lam').value), white = Number(document.getElementById('uv_white').value), printCost = Number(document.getElementById('uv_print_cost').value);
+  const overhead = Number(document.getElementById('uv_overhead').value), markup = Number(document.getElementById('uv_markup').value), sellFloor = Number(document.getElementById('uv_sell_floor').value), minJob = Number(document.getElementById('uv_min').value);
+  const sqftEach = (w*h)/144, totalSqft = sqftEach * qty, fit = calcSheetUsage(qty, w, h, sheetW, sheetH, 0, 0);
+  if (!fit.ok){ document.getElementById('uv_result').innerHTML = fit.msg; return; }
+  const material = fit.sheets * sheetCost, print = totalSqft * printCost, lamCost = totalSqft * lam, whiteCost = totalSqft * white;
+  const cost = material + print + lamCost + whiteCost + overhead;
+  const sell = Math.max(cost * markup, totalSqft * sellFloor, minJob);
+  document.getElementById('uv_result').innerHTML = `<div><span class="k">SqFt:</span> ${totalSqft.toFixed(2)}</div><div><span class="k">Sheets:</span> ${fit.sheets}</div><div><span class="k">Material:</span> ${fmt(material)}</div><div><span class="k">Print cost:</span> ${fmt(print)}</div><div><span class="k">Lamination:</span> ${fmt(lamCost)}</div><div><span class="k">White ink:</span> ${fmt(whiteCost)}</div><div><span class="k">Overhead:</span> ${fmt(overhead)}</div><div><span class="k">Cost:</span> ${fmt(cost)}</div><div><span class="k">Sell:</span> ${fmt(sell)}</div>`;
+  addLineItem({type:'UV', desc, qty, sell, note:`${totalSqft.toFixed(2)} ft² | material ${fmt(material)} | lam ${fmt(lamCost)} | white ${fmt(whiteCost)}`});
 }
-
-setMode("simple");
+function addCNC(){
+  const desc = document.getElementById('cnc_desc').value, qty = Number(document.getElementById('cnc_qty').value), w = Number(document.getElementById('cnc_w').value), h = Number(document.getElementById('cnc_h').value);
+  const sheetW = Number(document.getElementById('cnc_sheet_w').value), sheetH = Number(document.getElementById('cnc_sheet_h').value), sheetCost = Number(document.getElementById('cnc_sheet_cost').value);
+  const gap = Number(document.getElementById('cnc_gap').value), edge = Number(document.getElementById('cnc_edge').value), overhead = Number(document.getElementById('cnc_overhead').value), cutCharge = Number(document.getElementById('cnc_cut_charge').value), minJob = Number(document.getElementById('cnc_min').value);
+  const fit = calcSheetUsage(qty, w, h, sheetW, sheetH, gap, edge);
+  if (!fit.ok){ document.getElementById('cnc_result').innerHTML = fit.msg; return; }
+  const material = fit.sheets * sheetCost, sell = Math.max(material + overhead + cutCharge, minJob);
+  document.getElementById('cnc_result').innerHTML = `<div><span class="k">Layout:</span> ${fit.fitX} across x ${fit.fitY} down</div><div><span class="k">Per sheet:</span> ${fit.perSheet}</div><div><span class="k">Sheets needed:</span> ${fit.sheets}</div><div><span class="k">Material:</span> ${fmt(material)}</div><div><span class="k">Overhead:</span> ${fmt(overhead)}</div><div><span class="k">CNC cut charge:</span> ${fmt(cutCharge)}</div><div><span class="k">Sell:</span> ${fmt(sell)}</div>`;
+  addLineItem({type:'CNC', desc, qty, sell, note:`${fit.sheets} sheet(s) | material ${fmt(material)} | overhead ${fmt(overhead)} | cut ${fmt(cutCharge)}`});
+}
+function addADA(){
+  const desc = document.getElementById('ada_desc').value, qty = Number(document.getElementById('ada_qty').value), w = Number(document.getElementById('ada_w').value), h = Number(document.getElementById('ada_h').value);
+  const materialPerPiece = Number(document.getElementById('ada_material').value), chars = Number(document.getElementById('ada_chars').value), braille = Number(document.getElementById('ada_braille').value), finish = Number(document.getElementById('ada_finish').value);
+  const charCost = Number(document.getElementById('ada_char_cost').value), brailleCost = Number(document.getElementById('ada_braille_cost').value), overhead = Number(document.getElementById('ada_overhead').value), markup = Number(document.getElementById('ada_markup').value), minJob = Number(document.getElementById('ada_min').value), sellFloor = Number(document.getElementById('ada_sell_floor').value);
+  const sqftEach = (w*h)/144, totalSqft = sqftEach * qty, material = materialPerPiece * qty, tactile = chars * charCost * qty, brailleTotal = braille * brailleCost * qty, finishTotal = finish * qty;
+  const cost = material + tactile + brailleTotal + finishTotal + overhead;
+  const sell = Math.max(cost * markup, totalSqft * sellFloor, minJob);
+  document.getElementById('ada_result').innerHTML = `<div><span class="k">SqFt:</span> ${totalSqft.toFixed(2)}</div><div><span class="k">Material:</span> ${fmt(material)}</div><div><span class="k">Tactile:</span> ${fmt(tactile)}</div><div><span class="k">Braille:</span> ${fmt(brailleTotal)}</div><div><span class="k">Finish:</span> ${fmt(finishTotal)}</div><div><span class="k">Overhead:</span> ${fmt(overhead)}</div><div><span class="k">Cost:</span> ${fmt(cost)}</div><div><span class="k">Sell:</span> ${fmt(sell)}</div>`;
+  addLineItem({type:'ADA', desc, qty, sell, note:`material ${fmt(material)} | tactile ${fmt(tactile)} | braille ${fmt(brailleTotal)}`});
+}
+function addLetters(){
+  const desc = document.getElementById('dl_desc').value, qty = Number(document.getElementById('dl_qty').value), w = Number(document.getElementById('dl_w').value), h = Number(document.getElementById('dl_h').value);
+  const materialRate = Number(document.getElementById('dl_material_rate').value), thickness = Number(document.getElementById('dl_thickness').value), finishAdd = Number(document.getElementById('dl_finish_add').value), templateAdd = Number(document.getElementById('dl_template_add').value), overhead = Number(document.getElementById('dl_overhead').value), markup = Number(document.getElementById('dl_markup').value), sellFloor = Number(document.getElementById('dl_sell_floor').value), minJob = Number(document.getElementById('dl_min').value);
+  const sqftEach = (w*h)/144, totalSqft = sqftEach * qty, material = totalSqft * materialRate * thickness, cost = material + finishAdd + templateAdd + overhead, sell = Math.max(cost * markup, totalSqft * sellFloor, minJob);
+  document.getElementById('dl_result').innerHTML = `<div><span class="k">SqFt:</span> ${totalSqft.toFixed(2)}</div><div><span class="k">Material:</span> ${fmt(material)}</div><div><span class="k">Finish add:</span> ${fmt(finishAdd)}</div><div><span class="k">Template add:</span> ${fmt(templateAdd)}</div><div><span class="k">Overhead:</span> ${fmt(overhead)}</div><div><span class="k">Cost:</span> ${fmt(cost)}</div><div><span class="k">Sell:</span> ${fmt(sell)}</div>`;
+  addLineItem({type:'Dimensional Letters', desc, qty, sell, note:`${totalSqft.toFixed(2)} ft² | finish ${fmt(finishAdd)} | template ${fmt(templateAdd)}`});
+}
+renderQuote();
 </script>
-
 </body>
 </html>
