@@ -100,11 +100,6 @@
       color:#fff;
       border-color:#3b3d41;
     }
-    .btn.danger{
-      background:#2a1818;
-      color:#ffd2d2;
-      border-color:#5d2b2b;
-    }
 
     .panel{
       background:var(--panel);
@@ -161,18 +156,6 @@
     .field input:focus,.field select:focus,.field textarea:focus{
       border-color:var(--accent);
     }
-    .checkbox-row{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      margin-top:4px;
-      color:#ddd;
-      font-size:14px;
-    }
-    .checkbox-row input{
-      width:auto;
-      transform:scale(1.05);
-    }
     .actions{
       display:flex;
       gap:10px;
@@ -195,6 +178,12 @@
     .warn{color:#ffd28c}
     .error{color:#ff9090}
     .hidden{display:none!important}
+    .hr{
+      grid-column:1 / -1;
+      height:1px;
+      background:rgba(255,255,255,.08);
+      margin:4px 0;
+    }
 
     .summary{
       border-left:1px solid var(--border);
@@ -269,12 +258,7 @@
     .tab-pane{display:none}
     .tab-pane.active{display:block}
 
-    .print-only{
-      display:none;
-    }
-    .summary-print{
-      display:none;
-    }
+    .summary-print{display:none}
 
     @media (max-width: 1280px){
       .app{
@@ -297,7 +281,7 @@
         border-right:0;
         border-bottom:1px solid var(--border);
       }
-      .grid,.grid-3{grid-template-columns:1fr}
+      .grid,.grid-3,.metrics{grid-template-columns:1fr}
       .topbar{justify-content:flex-start;flex-wrap:wrap}
       .main,.summary{padding:16px}
     }
@@ -332,12 +316,13 @@
     <aside class="sidebar">
       <div class="brand">
         <h1>Iconic Signs FL Quote Builder</h1>
-        <p>Single file. Live preview for UV, CNC, ADA, and dimensional letters.</p>
+        <p>Live preview. Combined printed+routed workflow plus UV, CNC, ADA, and letters.</p>
       </div>
       <div class="nav-title">Line Item Types</div>
       <nav class="nav">
-        <button class="tab-btn active" data-tab="uv">UV Print</button>
-        <button class="tab-btn" data-tab="cnc">CNC Routed Panel</button>
+        <button class="tab-btn active" data-tab="combo">Printed + Routed Panel</button>
+        <button class="tab-btn" data-tab="uv">UV Only</button>
+        <button class="tab-btn" data-tab="cnc">CNC Only</button>
         <button class="tab-btn" data-tab="ada">ADA Sign</button>
         <button class="tab-btn" data-tab="letters">Dimensional Letters</button>
       </nav>
@@ -349,12 +334,137 @@
         <button class="btn" id="printPdfBtn">Print / Save PDF</button>
       </div>
 
-      <!-- UV -->
-      <section class="tab-pane active" id="tab-uv">
+      <!-- COMBINED -->
+      <section class="tab-pane active" id="tab-combo">
         <div class="panel">
           <div class="panel-head">
-            <h2>UV Print</h2>
-            <p>Sheet-based pricing with optional lamination and white ink. Live preview updates as you type.</p>
+            <h2>Printed + Routed Panel</h2>
+            <p>This is the main one-step workflow for rigid printed and cut jobs. Material counts once.</p>
+          </div>
+          <div class="panel-body">
+            <div class="grid">
+              <div class="field">
+                <label for="comboDescription">Description</label>
+                <input id="comboDescription" value="Printed and routed panel" />
+              </div>
+              <div class="field">
+                <label for="comboQty">Quantity</label>
+                <input id="comboQty" type="number" min="1" step="1" value="8" />
+              </div>
+
+              <div class="field">
+                <label for="comboWidth">Width (in)</label>
+                <input id="comboWidth" type="number" min="0.01" step="0.01" value="12" />
+              </div>
+              <div class="field">
+                <label for="comboHeight">Height (in)</label>
+                <input id="comboHeight" type="number" min="0.01" step="0.01" value="12" />
+              </div>
+
+              <div class="field">
+                <label for="comboMaterialSheet">Material cost per sheet ($)</label>
+                <input id="comboMaterialSheet" type="number" min="0" step="0.01" value="63.24" />
+              </div>
+              <div class="field">
+                <label for="comboMarkupPercent">Markup (%)</label>
+                <input id="comboMarkupPercent" type="number" min="0" step="0.01" value="30" />
+              </div>
+
+              <div class="field">
+                <label for="comboSheetWidth">Sheet width (in)</label>
+                <input id="comboSheetWidth" type="number" min="1" step="0.01" value="48" />
+              </div>
+              <div class="field">
+                <label for="comboSheetHeight">Sheet height (in)</label>
+                <input id="comboSheetHeight" type="number" min="1" step="0.01" value="96" />
+              </div>
+
+              <div class="field">
+                <label for="comboPartGap">Part gap (in)</label>
+                <input id="comboPartGap" type="number" min="0" step="0.01" value="0.25" />
+              </div>
+              <div class="field">
+                <label for="comboEdgeMargin">Edge margin (in)</label>
+                <input id="comboEdgeMargin" type="number" min="0" step="0.01" value="0.50" />
+              </div>
+
+              <div class="field">
+                <label for="comboBleed">Bleed / oversize (in)</label>
+                <input id="comboBleed" type="number" min="0" step="0.01" value="0" />
+              </div>
+              <div class="field">
+                <label for="comboBasePrintRate">Base print cost ($/ft²)</label>
+                <input id="comboBasePrintRate" type="number" min="0" step="0.01" value="0.40" />
+              </div>
+
+              <div class="field">
+                <label for="comboLamination">Lamination cost ($/ft²)</label>
+                <select id="comboLamination">
+                  <option value="0">None $0.00/ft²</option>
+                  <option value="0.50">Economy $0.50/ft²</option>
+                  <option value="0.75">Standard $0.75/ft²</option>
+                  <option value="0.96">Economy $0.96/ft²</option>
+                  <option value="1.25">Premium $1.25/ft²</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="comboWhiteInk">White ink cost ($/ft²)</label>
+                <select id="comboWhiteInk">
+                  <option value="0">None $0.00/ft²</option>
+                  <option value="0.08">Spot white +$0.08/ft²</option>
+                  <option value="0.14">Flood white +$0.14/ft²</option>
+                  <option value="0.22">Heavy white +$0.22/ft²</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="comboCncRate">Cut complexity</label>
+                <select id="comboCncRate">
+                  <option value="0">No cut</option>
+                  <option value="50" selected>Simple $50 / sheet</option>
+                  <option value="75">Medium $75 / sheet</option>
+                  <option value="125">Heavy $125 / sheet</option>
+                  <option value="175">Extreme $175 / sheet</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="comboOverhead">Labor / overhead add ($)</label>
+                <input id="comboOverhead" type="number" min="0" step="0.01" value="0" />
+              </div>
+
+              <div class="field">
+                <label for="comboMinimum">Minimum job ($)</label>
+                <input id="comboMinimum" type="number" min="0" step="0.01" value="75" />
+              </div>
+              <div class="field">
+                <label for="comboNotes">Internal notes</label>
+                <textarea id="comboNotes" placeholder="Optional internal notes..."></textarea>
+              </div>
+            </div>
+
+            <div class="actions">
+              <button class="btn" id="addComboBtn">Add Combined Line Item</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Combined Preview</h2>
+            <p id="comboError" class="error"></p>
+          </div>
+          <div class="panel-body">
+            <div class="metrics" id="comboPreview"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- UV -->
+      <section class="tab-pane" id="tab-uv">
+        <div class="panel">
+          <div class="panel-head">
+            <h2>UV Only</h2>
+            <p>Use when the job is printed only with no routing included.</p>
           </div>
           <div class="panel-body">
             <div class="grid">
@@ -418,7 +528,7 @@
                   <option value="0">None $0.00/ft²</option>
                   <option value="0.50">Economy $0.50/ft²</option>
                   <option value="0.75">Standard $0.75/ft²</option>
-                  <option value="0.96" selected>Economy $0.96/ft²</option>
+                  <option value="0.96">Economy $0.96/ft²</option>
                   <option value="1.25">Premium $1.25/ft²</option>
                 </select>
               </div>
@@ -427,21 +537,21 @@
                 <select id="uvWhiteInk">
                   <option value="0">None $0.00/ft²</option>
                   <option value="0.08">Spot white +$0.08/ft²</option>
-                  <option value="0.14" selected>Flood white +$0.14/ft²</option>
+                  <option value="0.14">Flood white +$0.14/ft²</option>
                   <option value="0.22">Heavy white +$0.22/ft²</option>
                 </select>
               </div>
 
               <div class="field">
                 <label for="uvOverhead">Labor / overhead add ($)</label>
-                <input id="uvOverhead" type="number" min="0" step="0.01" value="25" />
+                <input id="uvOverhead" type="number" min="0" step="0.01" value="0" />
               </div>
               <div class="field">
                 <label for="uvMinimum">Minimum job ($)</label>
                 <input id="uvMinimum" type="number" min="0" step="0.01" value="75" />
               </div>
 
-              <div class="field" style="grid-column:1 / -1;">
+              <div class="field">
                 <label for="uvNotes">Internal notes</label>
                 <textarea id="uvNotes" placeholder="Optional internal notes..."></textarea>
               </div>
@@ -468,8 +578,8 @@
       <section class="tab-pane" id="tab-cnc">
         <div class="panel">
           <div class="panel-head">
-            <h2>CNC Routed Panel</h2>
-            <p>Use for routed rigid panels. Material is optional here so you do not double count it when this is only an add-on.</p>
+            <h2>CNC Only</h2>
+            <p>Use for routed-only work. Material can be included or excluded.</p>
           </div>
           <div class="panel-body">
             <div class="grid">
@@ -545,7 +655,7 @@
                 </select>
               </div>
 
-              <div class="field" style="grid-column:1 / -1;">
+              <div class="field">
                 <label for="cncNotes">Internal notes</label>
                 <textarea id="cncNotes" placeholder="Optional internal notes..."></textarea>
               </div>
@@ -573,7 +683,7 @@
         <div class="panel">
           <div class="panel-head">
             <h2>ADA Sign</h2>
-            <p>Use when pricing tactile / braille room signs. This is a direct cost + markup model.</p>
+            <p>Direct cost plus markup model for tactile / braille signs.</p>
           </div>
           <div class="panel-body">
             <div class="grid">
@@ -631,7 +741,7 @@
                 <input id="adaMinimum" type="number" min="0" step="0.01" value="75" />
               </div>
 
-              <div class="field" style="grid-column:1 / -1;">
+              <div class="field">
                 <label for="adaNotes">Internal notes</label>
                 <textarea id="adaNotes" placeholder="Optional internal notes..."></textarea>
               </div>
@@ -659,7 +769,7 @@
         <div class="panel">
           <div class="panel-head">
             <h2>Dimensional Letters</h2>
-            <p>Use for flat cut / routed letters. Price from material + fabrication + finish + setup.</p>
+            <p>Use for flat cut / routed letters. Material + fabrication + finish + setup.</p>
           </div>
           <div class="panel-body">
             <div class="grid">
@@ -722,7 +832,7 @@
                 </select>
               </div>
 
-              <div class="field" style="grid-column:1 / -1;">
+              <div class="field">
                 <label for="letterNotes">Internal notes</label>
                 <textarea id="letterNotes" placeholder="Optional internal notes..."></textarea>
               </div>
@@ -788,6 +898,15 @@
       return `<div class="metric ${extraClass}"><strong>${label}:</strong> ${value}</div>`;
     }
 
+    function escapeHtml(str) {
+      return String(str || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
     function calcSheetUsage({ qty, widthIn, heightIn, sheetWidthIn, sheetHeightIn, partGapIn, edgeMarginIn, bleedIn }) {
       const usableW = sheetWidthIn - (edgeMarginIn * 2);
       const usableH = sheetHeightIn - (edgeMarginIn * 2);
@@ -824,85 +943,170 @@
       };
     }
 
+    function calcPrintedPanelBase(prefix, includeCnc = false) {
+      const description = val(`${prefix}Description`).trim() || "Printed panel";
+      const qty = numVal(`${prefix}Qty`);
+      const widthIn = numVal(`${prefix}Width`);
+      const heightIn = numVal(`${prefix}Height`);
+      const materialSheet = numVal(`${prefix}MaterialSheet`);
+      const markupPercent = numVal(`${prefix}MarkupPercent`);
+      const sheetWidthIn = numVal(`${prefix}SheetWidth`);
+      const sheetHeightIn = numVal(`${prefix}SheetHeight`);
+      const partGapIn = numVal(`${prefix}PartGap`);
+      const edgeMarginIn = numVal(`${prefix}EdgeMargin`);
+      const bleedIn = numVal(`${prefix}Bleed`);
+      const basePrintRate = numVal(`${prefix}BasePrintRate`);
+      const lamRate = Number(val(`${prefix}Lamination`));
+      const whiteRate = Number(val(`${prefix}WhiteInk`));
+      const overhead = numVal(`${prefix}Overhead`);
+      const minimum = numVal(`${prefix}Minimum`);
+      const notes = val(`${prefix}Notes`).trim();
+      const cncRate = includeCnc ? Number(val(`${prefix}CncRate`)) : 0;
+
+      if (qty <= 0 || widthIn <= 0 || heightIn <= 0 || sheetWidthIn <= 0 || sheetHeightIn <= 0) {
+        throw new Error("Enter valid quantity, size, and sheet dimensions.");
+      }
+
+      const pieceSqFt = (widthIn * heightIn) / 144;
+      const totalSqFt = pieceSqFt * qty;
+      const nesting = calcSheetUsage({
+        qty, widthIn, heightIn, sheetWidthIn, sheetHeightIn, partGapIn, edgeMarginIn, bleedIn
+      });
+
+      const materialCost = nesting.sheetsUsed * materialSheet;
+      const printCost = totalSqFt * basePrintRate;
+      const lamCost = totalSqFt * lamRate;
+      const whiteCost = totalSqFt * whiteRate;
+      const cncCost = nesting.sheetsUsed * cncRate;
+      const totalCost = materialCost + printCost + lamCost + whiteCost + cncCost + overhead;
+      const sell = Math.max(totalCost * (1 + (markupPercent / 100)), minimum);
+      const each = sell / qty;
+
+      return {
+        description,
+        qty,
+        widthIn,
+        heightIn,
+        pieceSqFt,
+        totalSqFt,
+        nesting,
+        materialCost,
+        printCost,
+        lamCost,
+        whiteCost,
+        cncCost,
+        overhead,
+        totalCost,
+        sell,
+        each,
+        notes,
+        minimum
+      };
+    }
+
+    function updateComboPreview() {
+      const target = document.getElementById("comboPreview");
+      const errorEl = document.getElementById("comboError");
+      errorEl.textContent = "";
+
+      try {
+        const r = calcPrintedPanelBase("combo", true);
+
+        const result = {
+          type: "Printed + Routed",
+          description: r.description,
+          qty: r.qty,
+          widthIn: r.widthIn,
+          heightIn: r.heightIn,
+          pieceSqFt: r.pieceSqFt,
+          totalSqFt: r.totalSqFt,
+          sheetsUsed: r.nesting.sheetsUsed,
+          piecesPerSheet: r.nesting.piecesPerSheet,
+          materialCost: r.materialCost,
+          printCost: r.printCost,
+          lamCost: r.lamCost,
+          whiteCost: r.whiteCost,
+          cncCost: r.cncCost,
+          overhead: r.overhead,
+          totalCost: r.totalCost,
+          sell: r.sell,
+          each: r.each,
+          notes: r.notes,
+          summary: `Qty: ${r.qty} | ${num(r.totalSqFt)} ft² | sheets ${r.nesting.sheetsUsed} | material ${money(r.materialCost)} | CNC ${money(r.cncCost)}`
+        };
+
+        target.innerHTML =
+          metric("Description", r.description) +
+          metric("Qty", r.qty) +
+          metric("Finished Size", `${num(r.widthIn)}" × ${num(r.heightIn)}"`) +
+          metric("SqFt each", num(r.pieceSqFt)) +
+          metric("Total SqFt", num(r.totalSqFt)) +
+          metric("Pieces / sheet", r.nesting.piecesPerSheet) +
+          metric("Sheets used", r.nesting.sheetsUsed) +
+          metric("Material", money(r.materialCost)) +
+          metric("Print cost", money(r.printCost)) +
+          metric("Lamination", money(r.lamCost)) +
+          metric("White ink", money(r.whiteCost)) +
+          metric("CNC charge", money(r.cncCost)) +
+          metric("Overhead", money(r.overhead)) +
+          metric("Cost", money(r.totalCost), "warn") +
+          metric("Sell", money(r.sell), "money") +
+          metric("Price each", money(r.each), "money");
+
+        document.getElementById("addComboBtn").dataset.preview = JSON.stringify(result);
+      } catch (err) {
+        target.innerHTML = "";
+        errorEl.textContent = err.message;
+        document.getElementById("addComboBtn").dataset.preview = "";
+      }
+    }
+
     function updateUvPreview() {
       const target = document.getElementById("uvPreview");
       const errorEl = document.getElementById("uvError");
       errorEl.textContent = "";
 
       try {
-        const description = val("uvDescription").trim() || "UV printed panel";
-        const qty = numVal("uvQty");
-        const widthIn = numVal("uvWidth");
-        const heightIn = numVal("uvHeight");
-        const materialSheet = numVal("uvMaterialSheet");
-        const markupPercent = numVal("uvMarkupPercent");
-        const sheetWidthIn = numVal("uvSheetWidth");
-        const sheetHeightIn = numVal("uvSheetHeight");
-        const partGapIn = numVal("uvPartGap");
-        const edgeMarginIn = numVal("uvEdgeMargin");
-        const bleedIn = numVal("uvBleed");
-        const basePrintRate = numVal("uvBasePrintRate");
-        const lamRate = Number(val("uvLamination"));
-        const whiteRate = Number(val("uvWhiteInk"));
-        const overhead = numVal("uvOverhead");
-        const minimum = numVal("uvMinimum");
-
-        if (qty <= 0 || widthIn <= 0 || heightIn <= 0 || sheetWidthIn <= 0 || sheetHeightIn <= 0) {
-          throw new Error("Enter valid quantity, size, and sheet dimensions.");
-        }
-
-        const pieceSqFt = (widthIn * heightIn) / 144;
-        const totalSqFt = pieceSqFt * qty;
-        const nesting = calcSheetUsage({
-          qty, widthIn, heightIn, sheetWidthIn, sheetHeightIn, partGapIn, edgeMarginIn, bleedIn
-        });
-
-        const materialCost = nesting.sheetsUsed * materialSheet;
-        const printCost = totalSqFt * basePrintRate;
-        const lamCost = totalSqFt * lamRate;
-        const whiteCost = totalSqFt * whiteRate;
-        const totalCost = materialCost + printCost + lamCost + whiteCost + overhead;
-        const sell = Math.max(totalCost * (1 + (markupPercent / 100)), minimum);
-        const each = sell / qty;
+        const r = calcPrintedPanelBase("uv", false);
 
         const result = {
           type: "UV",
-          description,
-          qty,
-          widthIn,
-          heightIn,
-          pieceSqFt,
-          totalSqFt,
-          sheetsUsed: nesting.sheetsUsed,
-          piecesPerSheet: nesting.piecesPerSheet,
-          materialCost,
-          printCost,
-          lamCost,
-          whiteCost,
-          overhead,
-          totalCost,
-          sell,
-          each,
-          notes: val("uvNotes").trim(),
-          summary: `Qty: ${qty} | ${num(totalSqFt)} ft² | sheets ${nesting.sheetsUsed} | material ${money(materialCost)} | lam ${money(lamCost)} | white ${money(whiteCost)}`
+          description: r.description,
+          qty: r.qty,
+          widthIn: r.widthIn,
+          heightIn: r.heightIn,
+          pieceSqFt: r.pieceSqFt,
+          totalSqFt: r.totalSqFt,
+          sheetsUsed: r.nesting.sheetsUsed,
+          piecesPerSheet: r.nesting.piecesPerSheet,
+          materialCost: r.materialCost,
+          printCost: r.printCost,
+          lamCost: r.lamCost,
+          whiteCost: r.whiteCost,
+          overhead: r.overhead,
+          totalCost: r.totalCost,
+          sell: r.sell,
+          each: r.each,
+          notes: r.notes,
+          summary: `Qty: ${r.qty} | ${num(r.totalSqFt)} ft² | sheets ${r.nesting.sheetsUsed} | material ${money(r.materialCost)}`
         };
 
         target.innerHTML =
-          metric("Description", description) +
-          metric("Qty", qty, "") +
-          metric("Finished Size", `${num(widthIn)}" × ${num(heightIn)}"`) +
-          metric("SqFt each", num(pieceSqFt)) +
-          metric("Total SqFt", num(totalSqFt)) +
-          metric("Pieces / sheet", nesting.piecesPerSheet) +
-          metric("Sheets used", nesting.sheetsUsed) +
-          metric("Material", money(materialCost)) +
-          metric("Print cost", money(printCost)) +
-          metric("Lamination", money(lamCost)) +
-          metric("White ink", money(whiteCost)) +
-          metric("Overhead", money(overhead)) +
-          metric("Cost", money(totalCost), "warn") +
-          metric("Sell", money(sell), "money") +
-          metric("Price each", money(each), "money");
+          metric("Description", r.description) +
+          metric("Qty", r.qty) +
+          metric("Finished Size", `${num(r.widthIn)}" × ${num(r.heightIn)}"`) +
+          metric("SqFt each", num(r.pieceSqFt)) +
+          metric("Total SqFt", num(r.totalSqFt)) +
+          metric("Pieces / sheet", r.nesting.piecesPerSheet) +
+          metric("Sheets used", r.nesting.sheetsUsed) +
+          metric("Material", money(r.materialCost)) +
+          metric("Print cost", money(r.printCost)) +
+          metric("Lamination", money(r.lamCost)) +
+          metric("White ink", money(r.whiteCost)) +
+          metric("Overhead", money(r.overhead)) +
+          metric("Cost", money(r.totalCost), "warn") +
+          metric("Sell", money(r.sell), "money") +
+          metric("Price each", money(r.each), "money");
 
         document.getElementById("addUvBtn").dataset.preview = JSON.stringify(result);
       } catch (err) {
@@ -1179,15 +1383,6 @@
       refreshQuoteSummary();
     }
 
-    function escapeHtml(str) {
-      return String(str || "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#39;");
-    }
-
     function bindLiveUpdates(ids, fn) {
       ids.forEach(id => {
         const el = document.getElementById(id);
@@ -1206,6 +1401,7 @@
       });
     });
 
+    document.getElementById("addComboBtn").addEventListener("click", () => addPreviewToQuote("addComboBtn"));
     document.getElementById("addUvBtn").addEventListener("click", () => addPreviewToQuote("addUvBtn"));
     document.getElementById("addCncBtn").addEventListener("click", () => addPreviewToQuote("addCncBtn"));
     document.getElementById("addAdaBtn").addEventListener("click", () => addPreviewToQuote("addAdaBtn"));
@@ -1217,6 +1413,12 @@
     });
 
     document.getElementById("printPdfBtn").addEventListener("click", () => window.print());
+
+    bindLiveUpdates([
+      "comboDescription","comboQty","comboWidth","comboHeight","comboMaterialSheet","comboMarkupPercent",
+      "comboSheetWidth","comboSheetHeight","comboPartGap","comboEdgeMargin","comboBleed",
+      "comboBasePrintRate","comboLamination","comboWhiteInk","comboCncRate","comboOverhead","comboMinimum","comboNotes"
+    ], updateComboPreview);
 
     bindLiveUpdates([
       "uvDescription","uvQty","uvWidth","uvHeight","uvMaterialSheet","uvMarkupPercent",
@@ -1241,6 +1443,7 @@
       "letterMarkupPercent","letterMinimum","letterMaterialType","letterNotes"
     ], updateLetterPreview);
 
+    updateComboPreview();
     updateUvPreview();
     updateCncPreview();
     updateAdaPreview();
