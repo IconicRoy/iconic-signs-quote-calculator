@@ -15,248 +15,82 @@
       --accent:#d4a853;
       --accent-2:#9b7a36;
       --success:#63c87d;
+      --warn:#ffd28c;
+      --danger:#db5b5b;
       --shadow:0 10px 28px rgba(0,0,0,.25);
     }
     *{box-sizing:border-box}
     html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif}
     body{min-height:100vh}
-    .app{
-      display:grid;
-      grid-template-columns:220px minmax(580px,1fr) 360px;
-      min-height:100vh;
-    }
-    .sidebar,.main,.summary{min-height:100vh}
-    .sidebar{
-      border-right:1px solid var(--border);
-      background:#0d0d0e;
-      padding:18px 0;
-    }
-    .brand{
-      padding:0 18px 14px;
-      border-bottom:1px solid var(--border);
-      margin-bottom:12px;
-    }
+    .app{display:grid;grid-template-columns:220px minmax(620px,1fr) 380px;min-height:100vh}
+    .sidebar{border-right:1px solid var(--border);background:#0d0d0e;padding:18px 0}
+    .main{padding:22px;background:var(--bg)}
+    .summary{border-left:1px solid var(--border);background:#101113;padding:22px 18px;position:sticky;top:0;height:100vh;overflow:auto}
+    .brand{padding:0 18px 14px;border-bottom:1px solid var(--border);margin-bottom:12px}
     .brand h1{margin:0;font-size:18px;line-height:1.15}
     .brand p{margin:6px 0 0;font-size:12px;color:var(--muted);line-height:1.35}
-    .nav-title{
-      padding:12px 18px 8px;
-      color:var(--muted);
-      font-size:11px;
-      letter-spacing:.12em;
-      text-transform:uppercase;
-    }
-    .nav button{
-      display:block;
-      width:100%;
-      background:transparent;
-      color:var(--text);
-      border:0;
-      border-left:3px solid transparent;
-      text-align:left;
-      padding:14px 18px;
-      font-size:16px;
-      cursor:pointer;
-    }
+    .nav-title{padding:12px 18px 8px;color:var(--muted);font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+    .nav button{display:block;width:100%;background:transparent;color:var(--text);border:0;border-left:3px solid transparent;text-align:left;padding:14px 18px;font-size:16px;cursor:pointer}
     .nav button:hover{background:#141416}
-    .nav button.active{
-      background:#171719;
-      border-left-color:var(--accent);
-      color:#fff;
-    }
-
-    .main{padding:22px;background:var(--bg)}
-    .topbar{
-      display:flex;
-      gap:12px;
-      justify-content:flex-end;
-      margin-bottom:18px;
-      flex-wrap:wrap;
-    }
-    .btn{
-      background:var(--accent);
-      color:#111;
-      border:1px solid var(--accent-2);
-      padding:12px 16px;
-      font-weight:700;
-      cursor:pointer;
-      border-radius:3px;
-      font-size:14px;
-    }
-    .btn:hover{filter:brightness(1.04)}
-    .btn.secondary{
-      background:#26272a;
-      color:#fff;
-      border-color:#3b3d41;
-    }
-    .btn.small{
-      padding:8px 10px;
-      font-size:12px;
-    }
-
-    .panel{
-      background:var(--panel);
-      border:1px solid var(--border);
-      box-shadow:var(--shadow);
-      margin-bottom:18px;
-    }
-    .panel-head{
-      padding:18px 18px 16px;
-      border-bottom:1px solid var(--border);
-    }
+    .nav button.active{background:#171719;border-left-color:var(--accent);color:#fff}
+    .panel{background:var(--panel);border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:18px}
+    .panel-head{padding:18px 18px 16px;border-bottom:1px solid var(--border)}
     .panel-head h2{margin:0;font-size:20px}
     .panel-head p{margin:6px 0 0;color:var(--muted);font-size:14px}
     .panel-body{padding:18px}
-
-    .grid{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:14px;
-    }
-    .field{
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-    }
-    .field label{
-      font-size:13px;
-      color:#ddd;
-    }
-    .field input,
-    .field select,
-    .field textarea{
-      width:100%;
-      background:var(--panel-2);
-      color:var(--text);
-      border:1px solid #3a3b40;
-      padding:11px 12px;
-      font-size:16px;
-      outline:none;
-    }
+    .topbar{display:flex;gap:12px;justify-content:flex-end;margin-bottom:18px;flex-wrap:wrap}
+    .btn{background:var(--accent);color:#111;border:1px solid var(--accent-2);padding:12px 16px;font-weight:700;cursor:pointer;border-radius:3px;font-size:14px}
+    .btn:hover{filter:brightness(1.04)}
+    .btn.secondary{background:#26272a;color:#fff;border-color:#3b3d41}
+    .btn.small{padding:8px 10px;font-size:12px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .field{display:flex;flex-direction:column;gap:6px}
+    .field label{font-size:13px;color:#ddd}
+    .field input,.field select,.field textarea{width:100%;background:var(--panel-2);color:var(--text);border:1px solid #3a3b40;padding:11px 12px;font-size:16px;outline:none}
     .field textarea{min-height:84px;resize:vertical}
     .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent)}
-    .actions{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top:12px;
-    }
-    .metrics{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:8px 18px;
-      font-size:15px;
-      line-height:1.35;
-    }
-    .metric{
-      padding:2px 0;
-      border-bottom:1px dashed rgba(255,255,255,.06);
-    }
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px 18px;font-size:15px;line-height:1.35}
+    .metric{padding:2px 0;border-bottom:1px dashed rgba(255,255,255,.06)}
     .metric strong{color:#fff}
     .money{color:#8af0a8;font-weight:700}
-    .warn{color:#ffd28c}
+    .warn{color:var(--warn)}
     .error{color:#ff9090}
     .ok{color:#8af0a8;font-size:13px;margin-top:8px}
-
-    .summary{
-      border-left:1px solid var(--border);
-      background:#101113;
-      padding:22px 18px;
-      position:sticky;
-      top:0;
-      height:100vh;
-      overflow:auto;
-    }
-    .summary h3{margin:0 0 12px;font-size:20px}
-    .summary p.help{color:var(--muted);margin:0 0 14px;font-size:14px;line-height:1.4}
-    .quote-card{
-      border:1px solid var(--border);
-      background:var(--panel);
-      padding:14px;
-      margin-bottom:12px;
-    }
-    .quote-card-head{
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      align-items:flex-start;
-      margin-bottom:8px;
-    }
-    .quote-card-title{font-weight:700;font-size:15px;line-height:1.25}
-    .quote-card-sub{color:var(--muted);font-size:12px;margin-top:5px;line-height:1.35}
-    .quote-card-price{color:#7df0a1;font-weight:700;font-size:18px;margin-top:10px}
-    .link-btn{
-      background:#26272a;
-      color:#fff;
-      border:1px solid #3b3d41;
-      padding:8px 10px;
-      font-size:13px;
-      cursor:pointer;
-    }
-    .totals{
-      border-top:1px solid var(--border);
-      margin-top:14px;
-      padding-top:14px;
-      font-size:16px;
-      line-height:1.6;
-    }
-    .totals .grand{font-size:20px;font-weight:700;color:#7df0a1}
-
+    .mini{font-size:12px;color:var(--muted)}
     .tab-pane{display:none}
     .tab-pane.active{display:block}
+    .quote-card,.job-card{border:1px solid var(--border);background:var(--panel);padding:14px;margin-bottom:12px}
+    .quote-card-head,.job-card-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:8px}
+    .quote-card-title,.job-card-title{font-weight:700;font-size:15px;line-height:1.25}
+    .quote-card-sub,.job-card-sub{color:var(--muted);font-size:12px;margin-top:5px;line-height:1.35}
+    .quote-card-price,.job-card-price{color:#7df0a1;font-weight:700;font-size:18px;margin-top:10px}
+    .link-btn{background:#26272a;color:#fff;border:1px solid #3b3d41;padding:8px 10px;font-size:13px;cursor:pointer}
+    .totals{border-top:1px solid var(--border);margin-top:14px;padding-top:14px;font-size:16px;line-height:1.6}
+    .totals .grand{font-size:20px;font-weight:700;color:#7df0a1}
     .summary-print{display:none}
-
-    .preset-editor-row{
-      display:grid;
-      grid-template-columns:1.5fr .8fr .8fr .8fr;
-      gap:10px;
-      align-items:center;
-      margin-bottom:10px;
-    }
-    .preset-editor-head{
-      color:var(--muted);
-      font-size:12px;
-      margin-bottom:10px;
-    }
-    .mini{
-      font-size:12px;
-      color:var(--muted);
-    }
-
-    @media (max-width: 1320px){
+    .preset-editor-row{display:grid;grid-template-columns:1.5fr .8fr .8fr .8fr;gap:10px;align-items:center;margin-bottom:10px}
+    .preset-editor-head{color:var(--muted);font-size:12px;margin-bottom:10px}
+    .badge{display:inline-block;padding:3px 8px;border:1px solid #3b3d41;border-radius:999px;color:#ddd;font-size:12px}
+    table{width:100%;border-collapse:collapse}
+    th,td{border-bottom:1px solid rgba(255,255,255,.08);padding:8px 6px;text-align:left;font-size:14px}
+    th{color:var(--muted);font-weight:600}
+    @media (max-width:1320px){
       .app{grid-template-columns:220px 1fr}
-      .summary{
-        grid-column:1 / -1;
-        border-left:0;
-        border-top:1px solid var(--border);
-        position:static;
-        height:auto;
-      }
+      .summary{grid-column:1 / -1;border-left:0;border-top:1px solid var(--border);position:static;height:auto}
     }
-    @media (max-width: 860px){
+    @media (max-width:860px){
       .app{grid-template-columns:1fr}
-      .sidebar{
-        min-height:auto;
-        border-right:0;
-        border-bottom:1px solid var(--border);
-      }
-      .grid,.metrics,.preset-editor-row{grid-template-columns:1fr}
+      .sidebar{border-right:0;border-bottom:1px solid var(--border)}
       .main,.summary{padding:16px}
+      .grid,.metrics,.preset-editor-row{grid-template-columns:1fr}
       .topbar{justify-content:flex-start}
     }
-
     @media print{
       body{background:#fff;color:#000}
-      .sidebar,.main .topbar,.nav,.panel-head p,.actions,.non-print{display:none!important}
+      .sidebar,.topbar,.nav,.actions,.non-print,.hide-print{display:none!important}
       .app{display:block}
-      .summary{
-        position:static;
-        height:auto;
-        overflow:visible;
-        border:none;
-        background:#fff;
-        color:#000;
-        padding:0;
-      }
+      .summary{position:static;height:auto;overflow:visible;border:none;background:#fff;color:#000;padding:0}
       .summary h3,.summary p.help{display:none}
       .quote-card{background:#fff;color:#000;border:1px solid #ccc;page-break-inside:avoid}
       .quote-card-price,.totals .grand{color:#000}
@@ -265,1198 +99,1090 @@
   </style>
 </head>
 <body>
-  <div class="app">
-    <aside class="sidebar">
-      <div class="brand">
-        <h1>Iconic Signs FL Quote Builder</h1>
-        <p>Live preview. Presets can be edited from the front end and saved in this browser.</p>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <h1>Iconic Signs FL Quote Builder</h1>
+      <p>Presets, live preview, printable quotes, CSV export, and job tracking saved in this browser.</p>
+    </div>
+    <div class="nav-title">Sections</div>
+    <nav class="nav">
+      <button class="tab-btn active" data-tab="header">Quote Header</button>
+      <button class="tab-btn" data-tab="combo">Printed + Routed Panel</button>
+      <button class="tab-btn" data-tab="uv">UV Only</button>
+      <button class="tab-btn" data-tab="cnc">CNC Only</button>
+      <button class="tab-btn" data-tab="ada">ADA Sign</button>
+      <button class="tab-btn" data-tab="letters">Dimensional Letters</button>
+      <button class="tab-btn" data-tab="presets">Material Presets</button>
+      <button class="tab-btn" data-tab="jobs">Job Tracking</button>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="topbar non-print">
+      <button class="btn secondary" id="exportQuoteCsvBtn">Export Quote CSV</button>
+      <button class="btn secondary" id="addQuoteToJobsBtn">Add Quote to Job Log</button>
+      <button class="btn secondary" id="clearQuoteBtn">Clear Quote</button>
+      <button class="btn" id="printPdfBtn">Print / Save PDF</button>
+    </div>
+
+    <section class="tab-pane active" id="tab-header">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Quote Header</h2>
+          <p>These fields print with the quote and are also stored with job tracking entries.</p>
+        </div>
+        <div class="panel-body">
+          <div class="grid">
+            <div class="field"><label for="quoteNumber">Quote #</label><input id="quoteNumber" value="1001" /></div>
+            <div class="field"><label for="quoteDate">Date</label><input id="quoteDate" type="date" /></div>
+            <div class="field"><label for="quoteCustomer">Customer</label><input id="quoteCustomer" /></div>
+            <div class="field"><label for="quoteCompany">Company</label><input id="quoteCompany" /></div>
+            <div class="field"><label for="quoteProject">Project</label><input id="quoteProject" /></div>
+            <div class="field"><label for="quoteSalesRep">Sales Rep</label><input id="quoteSalesRep" value="Roy" /></div>
+            <div class="field" style="grid-column:1 / -1;"><label for="quoteNotes">Quote notes</label><textarea id="quoteNotes" placeholder="Terms, turnaround, exclusions, or internal notes..."></textarea></div>
+          </div>
+        </div>
       </div>
-      <div class="nav-title">Line Item Types</div>
-      <nav class="nav">
-        <button class="tab-btn active" data-tab="combo">Printed + Routed Panel</button>
-        <button class="tab-btn" data-tab="uv">UV Only</button>
-        <button class="tab-btn" data-tab="cnc">CNC Only</button>
-        <button class="tab-btn" data-tab="ada">ADA Sign</button>
-        <button class="tab-btn" data-tab="letters">Dimensional Letters</button>
-        <button class="tab-btn" data-tab="presets">Material Presets</button>
-      </nav>
-    </aside>
+    </section>
 
-    <main class="main">
-      <div class="topbar non-print">
-        <button class="btn secondary" id="clearQuoteBtn">Clear Quote</button>
-        <button class="btn" id="printPdfBtn">Print / Save PDF</button>
+    <section class="tab-pane" id="tab-combo">
+      <div class="panel">
+        <div class="panel-head"><h2>Printed + Routed Panel</h2><p>Main one-step workflow. Material counts once.</p></div>
+        <div class="panel-body">
+          <div class="grid">
+            <div class="field"><label for="comboDescription">Description</label><input id="comboDescription" value="Printed and routed panel" /></div>
+            <div class="field"><label for="comboQty">Quantity</label><input id="comboQty" type="number" min="1" step="1" value="8" /></div>
+
+            <div class="field"><label for="comboMaterialPreset">Material preset</label><select id="comboMaterialPreset"></select></div>
+            <div class="field"><label for="comboMaterialSheet">Material cost per sheet ($)</label><input id="comboMaterialSheet" type="number" min="0" step="0.01" value="63.24" /></div>
+
+            <div class="field"><label for="comboWidth">Width (in)</label><input id="comboWidth" type="number" min="0.01" step="0.01" value="12" /></div>
+            <div class="field"><label for="comboHeight">Height (in)</label><input id="comboHeight" type="number" min="0.01" step="0.01" value="12" /></div>
+
+            <div class="field"><label for="comboSheetWidth">Sheet width (in)</label><input id="comboSheetWidth" type="number" min="1" step="0.01" value="48" /></div>
+            <div class="field"><label for="comboSheetHeight">Sheet height (in)</label><input id="comboSheetHeight" type="number" min="1" step="0.01" value="96" /></div>
+
+            <div class="field"><label for="comboMarkupPercent">Markup (%)</label><input id="comboMarkupPercent" type="number" min="0" step="0.01" value="30" /></div>
+            <div class="field"><label for="comboBasePrintRate">Base print cost ($/ft²)</label><input id="comboBasePrintRate" type="number" min="0" step="0.01" value="0.40" /></div>
+
+            <div class="field">
+              <label for="comboLamination">Lamination cost ($/ft²)</label>
+              <select id="comboLamination">
+                <option value="0">None $0.00/ft²</option>
+                <option value="0.50">Economy $0.50/ft²</option>
+                <option value="0.75">Standard $0.75/ft²</option>
+                <option value="0.96">Economy $0.96/ft²</option>
+                <option value="1.25">Premium $1.25/ft²</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="comboWhiteInk">White ink cost ($/ft²)</label>
+              <select id="comboWhiteInk">
+                <option value="0">None $0.00/ft²</option>
+                <option value="0.08">Spot white +$0.08/ft²</option>
+                <option value="0.14">Flood white +$0.14/ft²</option>
+                <option value="0.22">Heavy white +$0.22/ft²</option>
+              </select>
+            </div>
+
+            <div class="field"><label for="comboPartGap">Part gap (in)</label><input id="comboPartGap" type="number" min="0" step="0.01" value="0.25" /></div>
+            <div class="field"><label for="comboEdgeMargin">Edge margin (in)</label><input id="comboEdgeMargin" type="number" min="0" step="0.01" value="0.50" /></div>
+
+            <div class="field"><label for="comboBleed">Bleed / oversize (in)</label><input id="comboBleed" type="number" min="0" step="0.01" value="0" /></div>
+            <div class="field">
+              <label for="comboCncRate">Cut complexity</label>
+              <select id="comboCncRate">
+                <option value="0">No cut</option>
+                <option value="50" selected>Simple $50 / sheet</option>
+                <option value="75">Medium $75 / sheet</option>
+                <option value="125">Heavy $125 / sheet</option>
+                <option value="175">Extreme $175 / sheet</option>
+              </select>
+            </div>
+
+            <div class="field"><label for="comboOverhead">Labor / overhead add ($)</label><input id="comboOverhead" type="number" min="0" step="0.01" value="0" /></div>
+            <div class="field"><label for="comboMinimum">Minimum job ($)</label><input id="comboMinimum" type="number" min="0" step="0.01" value="75" /></div>
+
+            <div class="field" style="grid-column:1 / -1;"><label for="comboNotes">Internal notes</label><textarea id="comboNotes" placeholder="Optional internal notes..."></textarea></div>
+          </div>
+          <div class="actions"><button class="btn" id="addComboBtn">Add Combined Line Item</button></div>
+        </div>
       </div>
+      <div class="panel"><div class="panel-head"><h2>Combined Preview</h2><p id="comboError" class="error"></p></div><div class="panel-body"><div class="metrics" id="comboPreview"></div></div></div>
+    </section>
 
-      <section class="tab-pane active" id="tab-combo">
-        <div class="panel">
-          <div class="panel-head">
-            <h2>Printed + Routed Panel</h2>
-            <p>Main one-step workflow. Select a preset or override the material cost manually.</p>
-          </div>
-          <div class="panel-body">
-            <div class="grid">
-              <div class="field">
-                <label for="comboDescription">Description</label>
-                <input id="comboDescription" value="Printed and routed panel" />
-              </div>
-              <div class="field">
-                <label for="comboQty">Quantity</label>
-                <input id="comboQty" type="number" min="1" step="1" value="8" />
-              </div>
+    <section class="tab-pane" id="tab-uv">
+      <div class="panel">
+        <div class="panel-head"><h2>UV Only</h2><p>Printed only.</p></div>
+        <div class="panel-body">
+          <div class="grid">
+            <div class="field"><label for="uvDescription">Description</label><input id="uvDescription" value="UV printed panel" /></div>
+            <div class="field"><label for="uvQty">Quantity</label><input id="uvQty" type="number" min="1" step="1" value="1" /></div>
 
-              <div class="field">
-                <label for="comboMaterialPreset">Material preset</label>
-                <select id="comboMaterialPreset"></select>
-              </div>
-              <div class="field">
-                <label for="comboMaterialSheet">Material cost per sheet ($)</label>
-                <input id="comboMaterialSheet" type="number" min="0" step="0.01" value="63.24" />
-              </div>
+            <div class="field"><label for="uvMaterialPreset">Material preset</label><select id="uvMaterialPreset"></select></div>
+            <div class="field"><label for="uvMaterialSheet">Material cost per sheet ($)</label><input id="uvMaterialSheet" type="number" min="0" step="0.01" value="63.24" /></div>
 
-              <div class="field">
-                <label for="comboWidth">Width (in)</label>
-                <input id="comboWidth" type="number" min="0.01" step="0.01" value="12" />
-              </div>
-              <div class="field">
-                <label for="comboHeight">Height (in)</label>
-                <input id="comboHeight" type="number" min="0.01" step="0.01" value="12" />
-              </div>
+            <div class="field"><label for="uvWidth">Width (in)</label><input id="uvWidth" type="number" min="0.01" step="0.01" value="48" /></div>
+            <div class="field"><label for="uvHeight">Height (in)</label><input id="uvHeight" type="number" min="0.01" step="0.01" value="96" /></div>
 
-              <div class="field">
-                <label for="comboSheetWidth">Sheet width (in)</label>
-                <input id="comboSheetWidth" type="number" min="1" step="0.01" value="48" />
-              </div>
-              <div class="field">
-                <label for="comboSheetHeight">Sheet height (in)</label>
-                <input id="comboSheetHeight" type="number" min="1" step="0.01" value="96" />
-              </div>
+            <div class="field"><label for="uvSheetWidth">Sheet width (in)</label><input id="uvSheetWidth" type="number" min="1" step="0.01" value="48" /></div>
+            <div class="field"><label for="uvSheetHeight">Sheet height (in)</label><input id="uvSheetHeight" type="number" min="1" step="0.01" value="96" /></div>
 
-              <div class="field">
-                <label for="comboMarkupPercent">Markup (%)</label>
-                <input id="comboMarkupPercent" type="number" min="0" step="0.01" value="30" />
-              </div>
-              <div class="field">
-                <label for="comboBasePrintRate">Base print cost ($/ft²)</label>
-                <input id="comboBasePrintRate" type="number" min="0" step="0.01" value="0.40" />
-              </div>
+            <div class="field"><label for="uvMarkupPercent">Markup (%)</label><input id="uvMarkupPercent" type="number" min="0" step="0.01" value="30" /></div>
+            <div class="field"><label for="uvBasePrintRate">Base print cost ($/ft²)</label><input id="uvBasePrintRate" type="number" min="0" step="0.01" value="0.40" /></div>
 
-              <div class="field">
-                <label for="comboLamination">Lamination cost ($/ft²)</label>
-                <select id="comboLamination">
-                  <option value="0">None $0.00/ft²</option>
-                  <option value="0.50">Economy $0.50/ft²</option>
-                  <option value="0.75">Standard $0.75/ft²</option>
-                  <option value="0.96">Economy $0.96/ft²</option>
-                  <option value="1.25">Premium $1.25/ft²</option>
-                </select>
-              </div>
-              <div class="field">
-                <label for="comboWhiteInk">White ink cost ($/ft²)</label>
-                <select id="comboWhiteInk">
-                  <option value="0">None $0.00/ft²</option>
-                  <option value="0.08">Spot white +$0.08/ft²</option>
-                  <option value="0.14">Flood white +$0.14/ft²</option>
-                  <option value="0.22">Heavy white +$0.22/ft²</option>
-                </select>
-              </div>
-
-              <div class="field">
-                <label for="comboPartGap">Part gap (in)</label>
-                <input id="comboPartGap" type="number" min="0" step="0.01" value="0.25" />
-              </div>
-              <div class="field">
-                <label for="comboEdgeMargin">Edge margin (in)</label>
-                <input id="comboEdgeMargin" type="number" min="0" step="0.01" value="0.50" />
-              </div>
-
-              <div class="field">
-                <label for="comboBleed">Bleed / oversize (in)</label>
-                <input id="comboBleed" type="number" min="0" step="0.01" value="0" />
-              </div>
-              <div class="field">
-                <label for="comboCncRate">Cut complexity</label>
-                <select id="comboCncRate">
-                  <option value="0">No cut</option>
-                  <option value="50" selected>Simple $50 / sheet</option>
-                  <option value="75">Medium $75 / sheet</option>
-                  <option value="125">Heavy $125 / sheet</option>
-                  <option value="175">Extreme $175 / sheet</option>
-                </select>
-              </div>
-
-              <div class="field">
-                <label for="comboOverhead">Labor / overhead add ($)</label>
-                <input id="comboOverhead" type="number" min="0" step="0.01" value="0" />
-              </div>
-              <div class="field">
-                <label for="comboMinimum">Minimum job ($)</label>
-                <input id="comboMinimum" type="number" min="0" step="0.01" value="75" />
-              </div>
-
-              <div class="field" style="grid-column:1 / -1;">
-                <label for="comboNotes">Internal notes</label>
-                <textarea id="comboNotes" placeholder="Optional internal notes..."></textarea>
-              </div>
+            <div class="field">
+              <label for="uvLamination">Lamination cost ($/ft²)</label>
+              <select id="uvLamination">
+                <option value="0">None $0.00/ft²</option>
+                <option value="0.50">Economy $0.50/ft²</option>
+                <option value="0.75">Standard $0.75/ft²</option>
+                <option value="0.96">Economy $0.96/ft²</option>
+                <option value="1.25">Premium $1.25/ft²</option>
+              </select>
             </div>
-            <div class="actions">
-              <button class="btn" id="addComboBtn">Add Combined Line Item</button>
+            <div class="field">
+              <label for="uvWhiteInk">White ink cost ($/ft²)</label>
+              <select id="uvWhiteInk">
+                <option value="0">None $0.00/ft²</option>
+                <option value="0.08">Spot white +$0.08/ft²</option>
+                <option value="0.14">Flood white +$0.14/ft²</option>
+                <option value="0.22">Heavy white +$0.22/ft²</option>
+              </select>
             </div>
+
+            <div class="field"><label for="uvPartGap">Part gap (in)</label><input id="uvPartGap" type="number" min="0" step="0.01" value="0.25" /></div>
+            <div class="field"><label for="uvEdgeMargin">Edge margin (in)</label><input id="uvEdgeMargin" type="number" min="0" step="0.01" value="0.50" /></div>
+
+            <div class="field"><label for="uvBleed">Bleed / oversize (in)</label><input id="uvBleed" type="number" min="0" step="0.01" value="0" /></div>
+            <div class="field"><label for="uvOverhead">Labor / overhead add ($)</label><input id="uvOverhead" type="number" min="0" step="0.01" value="0" /></div>
+
+            <div class="field"><label for="uvMinimum">Minimum job ($)</label><input id="uvMinimum" type="number" min="0" step="0.01" value="75" /></div>
+            <div class="field"><label for="uvNotes">Internal notes</label><textarea id="uvNotes" placeholder="Optional internal notes..."></textarea></div>
           </div>
+          <div class="actions"><button class="btn" id="addUvBtn">Add UV Line Item</button></div>
         </div>
-
-        <div class="panel">
-          <div class="panel-head">
-            <h2>Combined Preview</h2>
-            <p id="comboError" class="error"></p>
-          </div>
-          <div class="panel-body">
-            <div class="metrics" id="comboPreview"></div>
-          </div>
-        </div>
-      </section>
-
-      <section class="tab-pane" id="tab-uv">
-        <div class="panel">
-          <div class="panel-head">
-            <h2>UV Only</h2>
-            <p>Printed only. Preset auto-fills sheet size and cost.</p>
-          </div>
-          <div class="panel-body">
-            <div class="grid">
-              <div class="field">
-                <label for="uvDescription">Description</label>
-                <input id="uvDescription" value="UV printed panel" />
-              </div>
-              <div class="field">
-                <label for="uvQty">Quantity</label>
-                <input id="uvQty" type="number" min="1" step="1" value="1" />
-              </div>
-
-              <div class="field">
-                <label for="uvMaterialPreset">Material preset</label>
-                <select id="uvMaterialPreset"></select>
-              </div>
-              <div class="field">
-                <label for="uvMaterialSheet">Material cost per sheet ($)</label>
-                <input id="uvMaterialSheet" type="number" min="0" step="0.01" value="63.24" />
-              </div>
-
-              <div class="field">
-                <label for="uvWidth">Width (in)</label>
-                <input id="uvWidth" type="number" min="0.01" step="0.01" value="48" />
-              </div>
-              <div class="field">
-                <label for="uvHeight">Height (in)</label>
-                <input id="uvHeight" type="number" min="0.01" step="0.01" value="96" />
-              </div>
-
-              <div class="field">
-                <label for="uvSheetWidth">Sheet width (in)</label>
-                <input id="uvSheetWidth" type="number" min="1" step="0.01" value="48" />
-              </div>
-              <div class="field">
-                <label for="uvSheetHeight">Sheet height (in)</label>
-                <input id="uvSheetHeight" type="number" min="1" step="0.01" value="96" />
-              </div>
-
-              <div class="field">
-                <label for="uvMarkupPercent">Markup (%)</label>
-                <input id="uvMarkupPercent" type="number" min="0" step="0.01" value="30" />
-              </div>
-              <div class="field">
-                <label for="uvBasePrintRate">Base print cost ($/ft²)</label>
-                <input id="uvBasePrintRate" type="number" min="0" step="0.01" value="0.40" />
-              </div>
-
-              <div class="field">
-                <label for="uvLamination">Lamination cost ($/ft²)</label>
-                <select id="uvLamination">
-                  <option value="0">None $0.00/ft²</option>
-                  <option value="0.50">Economy $0.50/ft²</option>
-                  <option value="0.75">Standard $0.75/ft²</option>
-                  <option value="0.96">Economy $0.96/ft²</option>
-                  <option value="1.25">Premium $1.25/ft²</option>
-                </select>
-              </div>
-              <div class="field">
-                <label for="uvWhiteInk">White ink cost ($/ft²)</label>
-                <select id="uvWhiteInk">
-                  <option value="0">None $0.00/ft²</option>
-                  <option value="0.08">Spot white +$0.08/ft²</option>
-                  <option value="0.14">Flood white +$0.14/ft²</option>
-                  <option value="0.22">Heavy white +$0.22/ft²</option>
-                </select>
-              </div>
-
-              <div class="field">
-                <label for="uvPartGap">Part gap (in)</label>
-                <input id="uvPartGap" type="number" min="0" step="0.01" value="0.25" />
-              </div>
-              <div class="field">
-                <label for="uvEdgeMargin">Edge margin (in)</label>
-                <input id="uvEdgeMargin" type="number" min="0" step="0.01" value="0.50" />
-              </div>
-
-              <div class="field">
-                <label for="uvBleed">Bleed / oversize (in)</label>
-                <input id="uvBleed" type="number" min="0" step="0.01" value="0" />
-              </div>
-              <div class="field">
-                <label for="uvOverhead">Labor / overhead add ($)</label>
-                <input id="uvOverhead" type="number" min="0" step="0.01" value="0" />
-              </div>
-
-              <div class="field">
-                <label for="uvMinimum">Minimum job ($)</label>
-                <input id="uvMinimum" type="number" min="0" step="0.01" value="75" />
-              </div>
-              <div class="field">
-                <label for="uvNotes">Internal notes</label>
-                <textarea id="uvNotes" placeholder="Optional internal notes..."></textarea>
-              </div>
-            </div>
-            <div class="actions">
-              <button class="btn" id="addUvBtn">Add UV Line Item</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="panel-head">
-            <h2>UV Preview</h2>
-            <p id="uvError" class="error"></p>
-          </div>
-          <div class="panel-body">
-            <div class="metrics" id="uvPreview"></div>
-          </div>
-        </div>
-      </section>
-
-      <section class="tab-pane" id="tab-cnc">
-        <div class="panel">
-          <div class="panel-head">
-            <h2>CNC Only</h2>
-            <p>Routed-only work. Material can be included or excluded.</p>
-          </div>
-          <div class="panel-body">
-            <div class="grid">
-              <div class="field">
-                <label for="cncDescription">Description</label>
-                <input id="cncDescription" value="CNC routed panel" />
-              </div>
-              <div class="field">
-                <label for="cncQty">Quantity</label>
-                <input id="cncQty" type="number" min="1" step="1" value="1" />
-              </div>
-
-              <div class="field">
-                <label for="cncMaterialPreset">Material preset</label>
-                <select id="cncMaterialPreset"></select>
-              </div>
-              <div class="field">
-                <label for="cncMaterialSheet">Material cost per sheet ($)</label>
-                <input id="cncMaterialSheet" type="number" min="0" step="0.01" value="63.24" />
-              </div>
-
-              <div class="field">
-                <label for="cncWidth">Width (in)</label>
-                <input id="cncWidth" type="number" min="0.01" step="0.01" value="48" />
-              </div>
-              <div class="field">
-                <label for="cncHeight">Height (in)</label>
-                <input id="cncHeight" type="number" min="0.01" step="0.01" value="96" />
-              </div>
-
-              <div class="field">
-                <label for="cncSheetWidth">Sheet width (in)</label>
-                <input id="cncSheetWidth" type="number" min="1" step="0.01" value="48" />
-              </div>
-              <div class="field">
-                <label for="cncSheetHeight">Sheet height (in)</label>
-                <input id="cncSheetHeight" type="number" min="1" step="0.01" value="96" />
-              </div>
-
-              <div class="field">
-                <label for="cncPartGap">Part gap (in)</label>
-                <input id="cncPartGap" type="number" min="0" step="0.01" value="0.25" />
-              </div>
-              <div class="field">
-                <label for="cncEdgeMargin">Edge margin (in)</label>
-                <input id="cncEdgeMargin" type="number" min="0" step="0.01" value="0.50" />
-              </div>
-
-              <div class="field">
-                <label for="cncComplexity">Cut complexity</label>
-                <select id="cncComplexity">
-                  <option value="0">No cut</option>
-                  <option value="50" selected>Simple $50 / sheet</option>
-                  <option value="75">Medium $75 / sheet</option>
-                  <option value="125">Heavy $125 / sheet</option>
-                  <option value="175">Extreme $175 / sheet</option>
-                </select>
-              </div>
-              <div class="field">
-                <label for="cncMarkupPercent">Markup (%)</label>
-                <input id="cncMarkupPercent" type="number" min="0" step="0.01" value="0" />
-              </div>
-
-              <div class="field">
-                <label for="cncOverhead">Setup / overhead add ($)</label>
-                <input id="cncOverhead" type="number" min="0" step="0.01" value="0" />
-              </div>
-              <div class="field">
-                <label for="cncMinimum">Minimum job ($)</label>
-                <input id="cncMinimum" type="number" min="0" step="0.01" value="50" />
-              </div>
-
-              <div class="field">
-                <label for="cncMaterialMode">Material mode</label>
-                <select id="cncMaterialMode">
-                  <option value="exclude" selected>Do not include material here</option>
-                  <option value="include">Include material in CNC line item</option>
-                </select>
-              </div>
-              <div class="field">
-                <label for="cncNotes">Internal notes</label>
-                <textarea id="cncNotes" placeholder="Optional internal notes..."></textarea>
-              </div>
-            </div>
-            <div class="actions">
-              <button class="btn" id="addCncBtn">Add CNC Line Item</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="panel-head">
-            <h2>CNC Preview</h2>
-            <p id="cncError" class="error"></p>
-          </div>
-          <div class="panel-body">
-            <div class="metrics" id="cncPreview"></div>
-          </div>
-        </div>
-      </section>
-
-      <section class="tab-pane" id="tab-ada">
-        <div class="panel">
-          <div class="panel-head">
-            <h2>ADA Sign</h2>
-            <p>Direct cost plus markup model for tactile / braille signs.</p>
-          </div>
-          <div class="panel-body">
-            <div class="grid">
-              <div class="field">
-                <label for="adaDescription">Description</label>
-                <input id="adaDescription" value="ADA sign" />
-              </div>
-              <div class="field">
-                <label for="adaQty">Quantity</label>
-                <input id="adaQty" type="number" min="1" step="1" value="10" />
-              </div>
-
-              <div class="field">
-                <label for="adaWidth">Width (in)</label>
-                <input id="adaWidth" type="number" min="0.01" step="0.01" value="6" />
-              </div>
-              <div class="field">
-                <label for="adaHeight">Height (in)</label>
-                <input id="adaHeight" type="number" min="0.01" step="0.01" value="9" />
-              </div>
-
-              <div class="field">
-                <label for="adaBaseMaterialEach">Base material cost each ($)</label>
-                <input id="adaBaseMaterialEach" type="number" min="0" step="0.01" value="4.50" />
-              </div>
-              <div class="field">
-                <label for="adaTactileEach">Raised / tactile add each ($)</label>
-                <input id="adaTactileEach" type="number" min="0" step="0.01" value="2.50" />
-              </div>
-
-              <div class="field">
-                <label for="adaBrailleEach">Braille add each ($)</label>
-                <input id="adaBrailleEach" type="number" min="0" step="0.01" value="1.25" />
-              </div>
-              <div class="field">
-                <label for="adaPaintFinishEach">Paint / finish each ($)</label>
-                <input id="adaPaintFinishEach" type="number" min="0" step="0.01" value="0.75" />
-              </div>
-
-              <div class="field">
-                <label for="adaSetup">Setup / file prep ($)</label>
-                <input id="adaSetup" type="number" min="0" step="0.01" value="35" />
-              </div>
-              <div class="field">
-                <label for="adaOverhead">Overhead add ($)</label>
-                <input id="adaOverhead" type="number" min="0" step="0.01" value="0" />
-              </div>
-
-              <div class="field">
-                <label for="adaMarkupPercent">Markup (%)</label>
-                <input id="adaMarkupPercent" type="number" min="0" step="0.01" value="30" />
-              </div>
-              <div class="field">
-                <label for="adaMinimum">Minimum job ($)</label>
-                <input id="adaMinimum" type="number" min="0" step="0.01" value="75" />
-              </div>
-
-              <div class="field" style="grid-column:1 / -1;">
-                <label for="adaNotes">Internal notes</label>
-                <textarea id="adaNotes" placeholder="Optional internal notes..."></textarea>
-              </div>
-            </div>
-            <div class="actions">
-              <button class="btn" id="addAdaBtn">Add ADA Line Item</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="panel-head">
-            <h2>ADA Preview</h2>
-            <p id="adaError" class="error"></p>
-          </div>
-          <div class="panel-body">
-            <div class="metrics" id="adaPreview"></div>
-          </div>
-        </div>
-      </section>
-
-      <section class="tab-pane" id="tab-letters">
-        <div class="panel">
-          <div class="panel-head">
-            <h2>Dimensional Letters</h2>
-            <p>Material + fabrication + finish + setup.</p>
-          </div>
-          <div class="panel-body">
-            <div class="grid">
-              <div class="field">
-                <label for="letterDescription">Description</label>
-                <input id="letterDescription" value="Dimensional letters" />
-              </div>
-              <div class="field">
-                <label for="letterQty">Quantity</label>
-                <input id="letterQty" type="number" min="1" step="1" value="6" />
-              </div>
-
-              <div class="field">
-                <label for="letterAvgHeight">Average letter height (in)</label>
-                <input id="letterAvgHeight" type="number" min="0.01" step="0.01" value="11.5" />
-              </div>
-              <div class="field">
-                <label for="letterAvgWidth">Average letter width (in)</label>
-                <input id="letterAvgWidth" type="number" min="0.01" step="0.01" value="8" />
-              </div>
-
-              <div class="field">
-                <label for="letterMaterialEach">Material cost each ($)</label>
-                <input id="letterMaterialEach" type="number" min="0" step="0.01" value="8" />
-              </div>
-              <div class="field">
-                <label for="letterCutEach">Cut / fabrication each ($)</label>
-                <input id="letterCutEach" type="number" min="0" step="0.01" value="12" />
-              </div>
-
-              <div class="field">
-                <label for="letterFinishEach">Paint / finish each ($)</label>
-                <input id="letterFinishEach" type="number" min="0" step="0.01" value="4" />
-              </div>
-              <div class="field">
-                <label for="letterInstallPattern">Pattern / layout / setup ($)</label>
-                <input id="letterInstallPattern" type="number" min="0" step="0.01" value="35" />
-              </div>
-
-              <div class="field">
-                <label for="letterOverhead">Overhead add ($)</label>
-                <input id="letterOverhead" type="number" min="0" step="0.01" value="0" />
-              </div>
-              <div class="field">
-                <label for="letterMarkupPercent">Markup (%)</label>
-                <input id="letterMarkupPercent" type="number" min="0" step="0.01" value="30" />
-              </div>
-
-              <div class="field">
-                <label for="letterMinimum">Minimum job ($)</label>
-                <input id="letterMinimum" type="number" min="0" step="0.01" value="100" />
-              </div>
-              <div class="field">
-                <label for="letterMaterialType">Material type</label>
-                <select id="letterMaterialType">
-                  <option value="PVC">PVC</option>
-                  <option value="Acrylic">Acrylic</option>
-                  <option value="ACM">ACM</option>
-                  <option value="Aluminum">Aluminum</option>
-                </select>
-              </div>
-
-              <div class="field" style="grid-column:1 / -1;">
-                <label for="letterNotes">Internal notes</label>
-                <textarea id="letterNotes" placeholder="Optional internal notes..."></textarea>
-              </div>
-            </div>
-            <div class="actions">
-              <button class="btn" id="addLetterBtn">Add Letter Line Item</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="panel-head">
-            <h2>Dimensional Letters Preview</h2>
-            <p id="letterError" class="error"></p>
-          </div>
-          <div class="panel-body">
-            <div class="metrics" id="letterPreview"></div>
-          </div>
-        </div>
-      </section>
-
-      <section class="tab-pane" id="tab-presets">
-        <div class="panel">
-          <div class="panel-head">
-            <h2>Material Presets</h2>
-            <p>Edit costs from the front end. Changes save in this browser.</p>
-          </div>
-          <div class="panel-body">
-            <div class="preset-editor-head preset-editor-row">
-              <div>Name</div>
-              <div>Cost / Sheet</div>
-              <div>Sheet W</div>
-              <div>Sheet H</div>
-            </div>
-            <div id="presetEditor"></div>
-            <div class="actions">
-              <button class="btn" id="savePresetsBtn">Save Presets</button>
-              <button class="btn secondary" id="resetPresetsBtn">Reset Defaults</button>
-            </div>
-            <div id="presetStatus" class="ok"></div>
-            <div class="mini" style="margin-top:10px;">
-              These saved values stay on this device and browser. “Custom / Manual” will never auto-fill.
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <aside class="summary">
-      <div class="summary-print">
-        <h2>Quote Summary</h2>
       </div>
-      <h3>Quote Summary</h3>
-      <p class="help">Build line items from the left. This panel is what you print or save as PDF.</p>
-      <div id="quoteItems"></div>
-      <div class="totals">
-        <div>Line Items: <strong id="lineItemCount">0</strong></div>
-        <div>Total Sell:</div>
-        <div class="grand" id="grandTotal">$0.00</div>
+      <div class="panel"><div class="panel-head"><h2>UV Preview</h2><p id="uvError" class="error"></p></div><div class="panel-body"><div class="metrics" id="uvPreview"></div></div></div>
+    </section>
+
+    <section class="tab-pane" id="tab-cnc">
+      <div class="panel">
+        <div class="panel-head"><h2>CNC Only</h2><p>Routed-only work.</p></div>
+        <div class="panel-body">
+          <div class="grid">
+            <div class="field"><label for="cncDescription">Description</label><input id="cncDescription" value="CNC routed panel" /></div>
+            <div class="field"><label for="cncQty">Quantity</label><input id="cncQty" type="number" min="1" step="1" value="1" /></div>
+
+            <div class="field"><label for="cncMaterialPreset">Material preset</label><select id="cncMaterialPreset"></select></div>
+            <div class="field"><label for="cncMaterialSheet">Material cost per sheet ($)</label><input id="cncMaterialSheet" type="number" min="0" step="0.01" value="63.24" /></div>
+
+            <div class="field"><label for="cncWidth">Width (in)</label><input id="cncWidth" type="number" min="0.01" step="0.01" value="48" /></div>
+            <div class="field"><label for="cncHeight">Height (in)</label><input id="cncHeight" type="number" min="0.01" step="0.01" value="96" /></div>
+
+            <div class="field"><label for="cncSheetWidth">Sheet width (in)</label><input id="cncSheetWidth" type="number" min="1" step="0.01" value="48" /></div>
+            <div class="field"><label for="cncSheetHeight">Sheet height (in)</label><input id="cncSheetHeight" type="number" min="1" step="0.01" value="96" /></div>
+
+            <div class="field"><label for="cncPartGap">Part gap (in)</label><input id="cncPartGap" type="number" min="0" step="0.01" value="0.25" /></div>
+            <div class="field"><label for="cncEdgeMargin">Edge margin (in)</label><input id="cncEdgeMargin" type="number" min="0" step="0.01" value="0.50" /></div>
+
+            <div class="field">
+              <label for="cncComplexity">Cut complexity</label>
+              <select id="cncComplexity">
+                <option value="0">No cut</option>
+                <option value="50" selected>Simple $50 / sheet</option>
+                <option value="75">Medium $75 / sheet</option>
+                <option value="125">Heavy $125 / sheet</option>
+                <option value="175">Extreme $175 / sheet</option>
+              </select>
+            </div>
+            <div class="field"><label for="cncMarkupPercent">Markup (%)</label><input id="cncMarkupPercent" type="number" min="0" step="0.01" value="0" /></div>
+
+            <div class="field"><label for="cncOverhead">Setup / overhead add ($)</label><input id="cncOverhead" type="number" min="0" step="0.01" value="0" /></div>
+            <div class="field"><label for="cncMinimum">Minimum job ($)</label><input id="cncMinimum" type="number" min="0" step="0.01" value="50" /></div>
+
+            <div class="field">
+              <label for="cncMaterialMode">Material mode</label>
+              <select id="cncMaterialMode">
+                <option value="exclude" selected>Do not include material here</option>
+                <option value="include">Include material in CNC line item</option>
+              </select>
+            </div>
+            <div class="field"><label for="cncNotes">Internal notes</label><textarea id="cncNotes" placeholder="Optional internal notes..."></textarea></div>
+          </div>
+          <div class="actions"><button class="btn" id="addCncBtn">Add CNC Line Item</button></div>
+        </div>
       </div>
-    </aside>
-  </div>
+      <div class="panel"><div class="panel-head"><h2>CNC Preview</h2><p id="cncError" class="error"></p></div><div class="panel-body"><div class="metrics" id="cncPreview"></div></div></div>
+    </section>
 
-  <script>
-    const STORAGE_KEY = "iconic_material_presets_v1";
-    const quoteItems = [];
+    <section class="tab-pane" id="tab-ada">
+      <div class="panel">
+        <div class="panel-head"><h2>ADA Sign</h2><p>Direct cost plus markup model for tactile / braille signs.</p></div>
+        <div class="panel-body">
+          <div class="grid">
+            <div class="field"><label for="adaDescription">Description</label><input id="adaDescription" value="ADA sign" /></div>
+            <div class="field"><label for="adaQty">Quantity</label><input id="adaQty" type="number" min="1" step="1" value="10" /></div>
+            <div class="field"><label for="adaWidth">Width (in)</label><input id="adaWidth" type="number" min="0.01" step="0.01" value="6" /></div>
+            <div class="field"><label for="adaHeight">Height (in)</label><input id="adaHeight" type="number" min="0.01" step="0.01" value="9" /></div>
+            <div class="field"><label for="adaBaseMaterialEach">Base material cost each ($)</label><input id="adaBaseMaterialEach" type="number" min="0" step="0.01" value="4.50" /></div>
+            <div class="field"><label for="adaTactileEach">Raised / tactile add each ($)</label><input id="adaTactileEach" type="number" min="0" step="0.01" value="2.50" /></div>
+            <div class="field"><label for="adaBrailleEach">Braille add each ($)</label><input id="adaBrailleEach" type="number" min="0" step="0.01" value="1.25" /></div>
+            <div class="field"><label for="adaPaintFinishEach">Paint / finish each ($)</label><input id="adaPaintFinishEach" type="number" min="0" step="0.01" value="0.75" /></div>
+            <div class="field"><label for="adaSetup">Setup / file prep ($)</label><input id="adaSetup" type="number" min="0" step="0.01" value="35" /></div>
+            <div class="field"><label for="adaOverhead">Overhead add ($)</label><input id="adaOverhead" type="number" min="0" step="0.01" value="0" /></div>
+            <div class="field"><label for="adaMarkupPercent">Markup (%)</label><input id="adaMarkupPercent" type="number" min="0" step="0.01" value="30" /></div>
+            <div class="field"><label for="adaMinimum">Minimum job ($)</label><input id="adaMinimum" type="number" min="0" step="0.01" value="75" /></div>
+            <div class="field" style="grid-column:1 / -1;"><label for="adaNotes">Internal notes</label><textarea id="adaNotes" placeholder="Optional internal notes..."></textarea></div>
+          </div>
+          <div class="actions"><button class="btn" id="addAdaBtn">Add ADA Line Item</button></div>
+        </div>
+      </div>
+      <div class="panel"><div class="panel-head"><h2>ADA Preview</h2><p id="adaError" class="error"></p></div><div class="panel-body"><div class="metrics" id="adaPreview"></div></div></div>
+    </section>
 
-    const defaultMaterialPresets = [
-      { id: "acm3_4x8", name: "3mm ACM 4x8", cost: 63.24, w: 48, h: 96 },
-      { id: "acm3_5x10", name: "3mm ACM 5x10", cost: 107.24, w: 60, h: 120 },
-      { id: "acm6_4x8", name: "6mm ACM 4x8", cost: 98.58, w: 48, h: 96 },
-      { id: "acm6_5x10", name: "6mm ACM 5x10", cost: 175.50, w: 60, h: 120 },
-      { id: "al063_4x8", name: ".063 Aluminum 4x8", cost: 192.14, w: 48, h: 96 },
-      { id: "al063_5x10", name: ".063 Aluminum 5x10", cost: 337.62, w: 60, h: 120 },
-      { id: "mdo_primed_4x8", name: "MDO Primed 4x8", cost: 134.00, w: 48, h: 96 },
-      { id: "mdo_prefinished_4x8", name: "MDO Pre-finished 4x8", cost: 165.00, w: 48, h: 96 },
-      { id: "custom", name: "Custom / Manual", cost: 0, w: 48, h: 96 }
-    ];
+    <section class="tab-pane" id="tab-letters">
+      <div class="panel">
+        <div class="panel-head"><h2>Dimensional Letters</h2><p>Material + fabrication + finish + setup.</p></div>
+        <div class="panel-body">
+          <div class="grid">
+            <div class="field"><label for="letterDescription">Description</label><input id="letterDescription" value="Dimensional letters" /></div>
+            <div class="field"><label for="letterQty">Quantity</label><input id="letterQty" type="number" min="1" step="1" value="6" /></div>
+            <div class="field"><label for="letterAvgHeight">Average letter height (in)</label><input id="letterAvgHeight" type="number" min="0.01" step="0.01" value="11.5" /></div>
+            <div class="field"><label for="letterAvgWidth">Average letter width (in)</label><input id="letterAvgWidth" type="number" min="0.01" step="0.01" value="8" /></div>
+            <div class="field"><label for="letterMaterialEach">Material cost each ($)</label><input id="letterMaterialEach" type="number" min="0" step="0.01" value="8" /></div>
+            <div class="field"><label for="letterCutEach">Cut / fabrication each ($)</label><input id="letterCutEach" type="number" min="0" step="0.01" value="12" /></div>
+            <div class="field"><label for="letterFinishEach">Paint / finish each ($)</label><input id="letterFinishEach" type="number" min="0" step="0.01" value="4" /></div>
+            <div class="field"><label for="letterInstallPattern">Pattern / layout / setup ($)</label><input id="letterInstallPattern" type="number" min="0" step="0.01" value="35" /></div>
+            <div class="field"><label for="letterOverhead">Overhead add ($)</label><input id="letterOverhead" type="number" min="0" step="0.01" value="0" /></div>
+            <div class="field"><label for="letterMarkupPercent">Markup (%)</label><input id="letterMarkupPercent" type="number" min="0" step="0.01" value="30" /></div>
+            <div class="field"><label for="letterMinimum">Minimum job ($)</label><input id="letterMinimum" type="number" min="0" step="0.01" value="100" /></div>
+            <div class="field">
+              <label for="letterMaterialType">Material type</label>
+              <select id="letterMaterialType">
+                <option value="PVC">PVC</option>
+                <option value="Acrylic">Acrylic</option>
+                <option value="ACM">ACM</option>
+                <option value="Aluminum">Aluminum</option>
+              </select>
+            </div>
+            <div class="field" style="grid-column:1 / -1;"><label for="letterNotes">Internal notes</label><textarea id="letterNotes" placeholder="Optional internal notes..."></textarea></div>
+          </div>
+          <div class="actions"><button class="btn" id="addLetterBtn">Add Letter Line Item</button></div>
+        </div>
+      </div>
+      <div class="panel"><div class="panel-head"><h2>Dimensional Letters Preview</h2><p id="letterError" class="error"></p></div><div class="panel-body"><div class="metrics" id="letterPreview"></div></div></div>
+    </section>
 
-    let materialPresets = loadPresets();
+    <section class="tab-pane" id="tab-presets">
+      <div class="panel">
+        <div class="panel-head"><h2>Material Presets</h2><p>Edit costs from the front end. Changes save in this browser.</p></div>
+        <div class="panel-body">
+          <div class="preset-editor-head preset-editor-row"><div>Name</div><div>Cost / Sheet</div><div>Sheet W</div><div>Sheet H</div></div>
+          <div id="presetEditor"></div>
+          <div class="actions"><button class="btn" id="savePresetsBtn">Save Presets</button><button class="btn secondary" id="resetPresetsBtn">Reset Defaults</button></div>
+          <div id="presetStatus" class="ok"></div>
+          <div class="mini" style="margin-top:10px;">Saved values stay on this device and browser.</div>
+        </div>
+      </div>
+    </section>
 
-    function loadPresets() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return JSON.parse(JSON.stringify(defaultMaterialPresets));
-        const parsed = JSON.parse(raw);
-        return parsed && Array.isArray(parsed) ? parsed : JSON.parse(JSON.stringify(defaultMaterialPresets));
-      } catch {
-        return JSON.parse(JSON.stringify(defaultMaterialPresets));
-      }
-    }
+    <section class="tab-pane" id="tab-jobs">
+      <div class="panel">
+        <div class="panel-head"><h2>Job Tracking</h2><p>Save the current quote as a job record. Add actual cost and actual sell later to compare estimate vs real.</p></div>
+        <div class="panel-body">
+          <div class="actions"><button class="btn secondary" id="exportJobsCsvBtn">Export Job Log CSV</button><button class="btn secondary" id="clearJobsBtn">Clear Job Log</button></div>
+          <div id="jobsWrap" style="margin-top:14px;"></div>
+        </div>
+      </div>
+    </section>
+  </main>
 
-    function savePresets() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(materialPresets));
-    }
+  <aside class="summary">
+    <div class="summary-print"><h2>Iconic Signs FL</h2><div id="printHeader"></div></div>
+    <h3>Quote Summary</h3>
+    <p class="help">Build line items from the left. This panel is what you print or save as PDF.</p>
+    <div id="quoteHeaderLive" class="quote-card hide-print"></div>
+    <div id="quoteItems"></div>
+    <div class="totals"><div>Line Items: <strong id="lineItemCount">0</strong></div><div>Total Sell:</div><div class="grand" id="grandTotal">$0.00</div></div>
+  </aside>
+</div>
 
-    const money = (v) => Number(v || 0).toLocaleString("en-US", { style: "currency", currency: "USD" });
-    const num = (v, d = 2) => Number(v || 0).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
+<script>
+const PRESET_STORAGE_KEY = "iconic_material_presets_v2";
+const JOBS_STORAGE_KEY = "iconic_job_log_v1";
 
-    const val = (id) => {
-      const el = document.getElementById(id);
-      return el ? el.value : "";
+const defaultMaterialPresets = [
+  { id: "acm3_4x8", name: "3mm ACM 4x8", cost: 63.24, w: 48, h: 96 },
+  { id: "acm3_5x10", name: "3mm ACM 5x10", cost: 107.24, w: 60, h: 120 },
+  { id: "acm6_4x8", name: "6mm ACM 4x8", cost: 98.58, w: 48, h: 96 },
+  { id: "acm6_5x10", name: "6mm ACM 5x10", cost: 175.50, w: 60, h: 120 },
+  { id: "al063_4x8", name: ".063 Aluminum 4x8", cost: 192.14, w: 48, h: 96 },
+  { id: "al063_5x10", name: ".063 Aluminum 5x10", cost: 337.62, w: 60, h: 120 },
+  { id: "mdo_primed_4x8", name: "MDO Primed 4x8", cost: 134.00, w: 48, h: 96 },
+  { id: "mdo_prefinished_4x8", name: "MDO Pre-finished 4x8", cost: 165.00, w: 48, h: 96 },
+  { id: "custom", name: "Custom / Manual", cost: 0, w: 48, h: 96 }
+];
+
+let materialPresets = loadJson(PRESET_STORAGE_KEY, defaultMaterialPresets);
+let quoteItems = [];
+let jobLog = loadJson(JOBS_STORAGE_KEY, []);
+
+function loadJson(key, fallback){
+  try{
+    const raw = localStorage.getItem(key);
+    if(!raw) return JSON.parse(JSON.stringify(fallback));
+    return JSON.parse(raw);
+  }catch(e){
+    return JSON.parse(JSON.stringify(fallback));
+  }
+}
+function saveJson(key, value){
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+const money = (v) => Number(v || 0).toLocaleString("en-US", { style: "currency", currency: "USD" });
+const num = (v, d = 2) => Number(v || 0).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
+const val = (id) => document.getElementById(id)?.value || "";
+const numVal = (id) => Number(val(id) || 0);
+
+function escapeHtml(str){
+  return String(str || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+function metric(label, value, cls=""){
+  return `<div class="metric ${cls}"><strong>${label}:</strong> ${value}</div>`;
+}
+
+function getQuoteHeader(){
+  return {
+    quoteNumber: val("quoteNumber"),
+    quoteDate: val("quoteDate"),
+    customer: val("quoteCustomer"),
+    company: val("quoteCompany"),
+    project: val("quoteProject"),
+    salesRep: val("quoteSalesRep"),
+    notes: val("quoteNotes")
+  };
+}
+function buildPrintHeader(){
+  const h = getQuoteHeader();
+  document.getElementById("printHeader").innerHTML = `
+    <div><strong>Quote #:</strong> ${escapeHtml(h.quoteNumber)}</div>
+    <div><strong>Date:</strong> ${escapeHtml(h.quoteDate)}</div>
+    <div><strong>Customer:</strong> ${escapeHtml(h.customer)}</div>
+    <div><strong>Company:</strong> ${escapeHtml(h.company)}</div>
+    <div><strong>Project:</strong> ${escapeHtml(h.project)}</div>
+    <div><strong>Sales Rep:</strong> ${escapeHtml(h.salesRep)}</div>
+    ${h.notes ? `<div><strong>Notes:</strong> ${escapeHtml(h.notes)}</div>` : ""}
+  `;
+}
+function updateHeaderLive(){
+  const h = getQuoteHeader();
+  document.getElementById("quoteHeaderLive").innerHTML = `
+    <div class="quote-card-title">Quote ${escapeHtml(h.quoteNumber || "")}</div>
+    <div class="quote-card-sub">${escapeHtml(h.quoteDate || "")}</div>
+    ${h.customer || h.company ? `<div class="quote-card-sub">${escapeHtml(h.customer)}${h.customer && h.company ? " - " : ""}${escapeHtml(h.company)}</div>` : ""}
+    ${h.project ? `<div class="quote-card-sub">Project: ${escapeHtml(h.project)}</div>` : ""}
+    ${h.notes ? `<div class="quote-card-sub">Notes: ${escapeHtml(h.notes)}</div>` : ""}
+  `;
+}
+
+function populateMaterialSelects(){
+  ["comboMaterialPreset","uvMaterialPreset","cncMaterialPreset"].forEach(id => {
+    const sel = document.getElementById(id);
+    if(!sel) return;
+    const current = sel.value;
+    sel.innerHTML = materialPresets.map(p => `<option value="${p.id}">${escapeHtml(p.name)}</option>`).join("");
+    if(materialPresets.some(p => p.id === current)) sel.value = current;
+  });
+}
+function getPresetById(id){
+  return materialPresets.find(p => p.id === id) || materialPresets[0];
+}
+function applyPreset(prefix){
+  const preset = getPresetById(val(`${prefix}MaterialPreset`));
+  if(!preset || preset.id === "custom") return;
+  const costEl = document.getElementById(`${prefix}MaterialSheet`);
+  const wEl = document.getElementById(`${prefix}SheetWidth`);
+  const hEl = document.getElementById(`${prefix}SheetHeight`);
+  if(costEl) costEl.value = Number(preset.cost).toFixed(2);
+  if(wEl) wEl.value = preset.w;
+  if(hEl) hEl.value = preset.h;
+}
+function renderPresetEditor(){
+  const wrap = document.getElementById("presetEditor");
+  wrap.innerHTML = "";
+  materialPresets.forEach((p, idx) => {
+    if(p.id === "custom") return;
+    const row = document.createElement("div");
+    row.className = "preset-editor-row";
+    row.innerHTML = `
+      <input type="text" value="${escapeHtml(p.name)}" data-field="name" data-index="${idx}">
+      <input type="number" min="0" step="0.01" value="${p.cost}" data-field="cost" data-index="${idx}">
+      <input type="number" min="1" step="0.01" value="${p.w}" data-field="w" data-index="${idx}">
+      <input type="number" min="1" step="0.01" value="${p.h}" data-field="h" data-index="${idx}">
+    `;
+    wrap.appendChild(row);
+  });
+  wrap.querySelectorAll("input").forEach(input => {
+    input.addEventListener("input", () => {
+      const idx = Number(input.dataset.index);
+      const field = input.dataset.field;
+      materialPresets[idx][field] = field === "name" ? input.value : Number(input.value || 0);
+    });
+  });
+}
+
+function calcSheetUsage({ qty, widthIn, heightIn, sheetWidthIn, sheetHeightIn, partGapIn, edgeMarginIn, bleedIn }){
+  const usableW = sheetWidthIn - (edgeMarginIn * 2);
+  const usableH = sheetHeightIn - (edgeMarginIn * 2);
+  if(usableW <= 0 || usableH <= 0) throw new Error("Edge margins leave no usable sheet area.");
+
+  const effectiveW = widthIn + bleedIn;
+  const effectiveH = heightIn + bleedIn;
+  if(effectiveW <= 0 || effectiveH <= 0) throw new Error("Effective part size must be greater than 0.");
+
+  const pitchX = effectiveW + partGapIn;
+  const pitchY = effectiveH + partGapIn;
+  const piecesPerRow = Math.floor((usableW + partGapIn) / pitchX);
+  const piecesPerCol = Math.floor((usableH + partGapIn) / pitchY);
+  const piecesPerSheet = piecesPerRow * piecesPerCol;
+
+  if(piecesPerSheet <= 0) throw new Error("Piece size plus margins/gaps will not fit on the selected sheet.");
+
+  const sheetsUsed = Math.ceil(qty / piecesPerSheet);
+  return { usableW, usableH, effectiveW, effectiveH, piecesPerRow, piecesPerCol, piecesPerSheet, sheetsUsed };
+}
+
+function calcPrintedPanelBase(prefix, includeCnc=false){
+  const description = val(`${prefix}Description`).trim() || "Printed panel";
+  const qty = numVal(`${prefix}Qty`);
+  const widthIn = numVal(`${prefix}Width`);
+  const heightIn = numVal(`${prefix}Height`);
+  const materialSheet = numVal(`${prefix}MaterialSheet`);
+  const markupPercent = numVal(`${prefix}MarkupPercent`);
+  const sheetWidthIn = numVal(`${prefix}SheetWidth`);
+  const sheetHeightIn = numVal(`${prefix}SheetHeight`);
+  const partGapIn = numVal(`${prefix}PartGap`);
+  const edgeMarginIn = numVal(`${prefix}EdgeMargin`);
+  const bleedIn = numVal(`${prefix}Bleed`);
+  const basePrintRate = numVal(`${prefix}BasePrintRate`);
+  const lamRate = Number(val(`${prefix}Lamination`));
+  const whiteRate = Number(val(`${prefix}WhiteInk`));
+  const overhead = numVal(`${prefix}Overhead`);
+  const minimum = numVal(`${prefix}Minimum`);
+  const notes = val(`${prefix}Notes`).trim();
+  const cncRate = includeCnc ? Number(val(`${prefix}CncRate`)) : 0;
+  const presetName = getPresetById(val(`${prefix}MaterialPreset`))?.name || "Custom / Manual";
+
+  if(qty <= 0 || widthIn <= 0 || heightIn <= 0 || sheetWidthIn <= 0 || sheetHeightIn <= 0){
+    throw new Error("Enter valid quantity, size, and sheet dimensions.");
+  }
+
+  const pieceSqFt = (widthIn * heightIn) / 144;
+  const totalSqFt = pieceSqFt * qty;
+  const nesting = calcSheetUsage({ qty, widthIn, heightIn, sheetWidthIn, sheetHeightIn, partGapIn, edgeMarginIn, bleedIn });
+
+  const materialCost = nesting.sheetsUsed * materialSheet;
+  const printCost = totalSqFt * basePrintRate;
+  const lamCost = totalSqFt * lamRate;
+  const whiteCost = totalSqFt * whiteRate;
+  const cncCost = nesting.sheetsUsed * cncRate;
+  const totalCost = materialCost + printCost + lamCost + whiteCost + cncCost + overhead;
+  const sell = Math.max(totalCost * (1 + (markupPercent / 100)), minimum);
+  const each = sell / qty;
+
+  return { description, qty, widthIn, heightIn, pieceSqFt, totalSqFt, nesting, materialCost, printCost, lamCost, whiteCost, cncCost, overhead, totalCost, sell, each, notes, minimum, presetName };
+}
+
+function updateComboPreview(){
+  const target = document.getElementById("comboPreview");
+  const errorEl = document.getElementById("comboError");
+  errorEl.textContent = "";
+  try{
+    const r = calcPrintedPanelBase("combo", true);
+    const result = {
+      type: "Printed + Routed",
+      description: r.description,
+      qty: r.qty,
+      sell: r.sell,
+      notes: r.notes,
+      summary: `${r.presetName} | Qty ${r.qty} | ${num(r.totalSqFt)} ft² | sheets ${r.nesting.sheetsUsed} | material ${money(r.materialCost)} | CNC ${money(r.cncCost)}`
     };
-    const numVal = (id) => Number(val(id) || 0);
+    target.innerHTML =
+      metric("Material", r.presetName) +
+      metric("Qty", r.qty) +
+      metric("Finished Size", `${num(r.widthIn)}" × ${num(r.heightIn)}"`) +
+      metric("SqFt each", num(r.pieceSqFt)) +
+      metric("Total SqFt", num(r.totalSqFt)) +
+      metric("Pieces / sheet", r.nesting.piecesPerSheet) +
+      metric("Sheets used", r.nesting.sheetsUsed) +
+      metric("Material cost", money(r.materialCost)) +
+      metric("Print cost", money(r.printCost)) +
+      metric("Lamination", money(r.lamCost)) +
+      metric("White ink", money(r.whiteCost)) +
+      metric("CNC charge", money(r.cncCost)) +
+      metric("Overhead", money(r.overhead)) +
+      metric("Cost", money(r.totalCost), "warn") +
+      metric("Sell", money(r.sell), "money") +
+      metric("Price each", money(r.each), "money");
+    document.getElementById("addComboBtn").dataset.preview = JSON.stringify(result);
+  }catch(err){
+    target.innerHTML = "";
+    errorEl.textContent = err.message;
+    document.getElementById("addComboBtn").dataset.preview = "";
+  }
+}
 
-    function metric(label, value, extraClass = "") {
-      return `<div class="metric ${extraClass}"><strong>${label}:</strong> ${value}</div>`;
+function updateUvPreview(){
+  const target = document.getElementById("uvPreview");
+  const errorEl = document.getElementById("uvError");
+  errorEl.textContent = "";
+  try{
+    const r = calcPrintedPanelBase("uv", false);
+    const result = {
+      type: "UV",
+      description: r.description,
+      qty: r.qty,
+      sell: r.sell,
+      notes: r.notes,
+      summary: `${r.presetName} | Qty ${r.qty} | ${num(r.totalSqFt)} ft² | sheets ${r.nesting.sheetsUsed} | material ${money(r.materialCost)}`
+    };
+    target.innerHTML =
+      metric("Material", r.presetName) +
+      metric("Qty", r.qty) +
+      metric("Finished Size", `${num(r.widthIn)}" × ${num(r.heightIn)}"`) +
+      metric("SqFt each", num(r.pieceSqFt)) +
+      metric("Total SqFt", num(r.totalSqFt)) +
+      metric("Pieces / sheet", r.nesting.piecesPerSheet) +
+      metric("Sheets used", r.nesting.sheetsUsed) +
+      metric("Material cost", money(r.materialCost)) +
+      metric("Print cost", money(r.printCost)) +
+      metric("Lamination", money(r.lamCost)) +
+      metric("White ink", money(r.whiteCost)) +
+      metric("Overhead", money(r.overhead)) +
+      metric("Cost", money(r.totalCost), "warn") +
+      metric("Sell", money(r.sell), "money") +
+      metric("Price each", money(r.each), "money");
+    document.getElementById("addUvBtn").dataset.preview = JSON.stringify(result);
+  }catch(err){
+    target.innerHTML = "";
+    errorEl.textContent = err.message;
+    document.getElementById("addUvBtn").dataset.preview = "";
+  }
+}
+
+function updateCncPreview(){
+  const target = document.getElementById("cncPreview");
+  const errorEl = document.getElementById("cncError");
+  errorEl.textContent = "";
+  try{
+    const description = val("cncDescription").trim() || "CNC routed panel";
+    const qty = numVal("cncQty");
+    const widthIn = numVal("cncWidth");
+    const heightIn = numVal("cncHeight");
+    const sheetWidthIn = numVal("cncSheetWidth");
+    const sheetHeightIn = numVal("cncSheetHeight");
+    const partGapIn = numVal("cncPartGap");
+    const edgeMarginIn = numVal("cncEdgeMargin");
+    const materialSheet = numVal("cncMaterialSheet");
+    const cncRatePerSheet = Number(val("cncComplexity"));
+    const markupPercent = numVal("cncMarkupPercent");
+    const overhead = numVal("cncOverhead");
+    const minimum = numVal("cncMinimum");
+    const materialMode = val("cncMaterialMode");
+    const notes = val("cncNotes").trim();
+    const presetName = getPresetById(val("cncMaterialPreset"))?.name || "Custom / Manual";
+
+    if(qty <= 0 || widthIn <= 0 || heightIn <= 0 || sheetWidthIn <= 0 || sheetHeightIn <= 0){
+      throw new Error("Enter valid quantity, size, and sheet dimensions.");
     }
 
-    function escapeHtml(str) {
-      return String(str || "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#39;");
-    }
+    const pieceSqFt = (widthIn * heightIn) / 144;
+    const totalSqFt = pieceSqFt * qty;
+    const nesting = calcSheetUsage({ qty, widthIn, heightIn, sheetWidthIn, sheetHeightIn, partGapIn, edgeMarginIn, bleedIn:0 });
 
-    function populateMaterialSelects() {
-      const selectIds = ["comboMaterialPreset", "uvMaterialPreset", "cncMaterialPreset"];
-      selectIds.forEach(id => {
-        const sel = document.getElementById(id);
-        if (!sel) return;
-        const current = sel.value;
-        sel.innerHTML = materialPresets.map(p => `<option value="${p.id}">${escapeHtml(p.name)}</option>`).join("");
-        if ([...materialPresets].some(p => p.id === current)) sel.value = current;
-      });
-    }
+    const materialCost = materialMode === "include" ? (nesting.sheetsUsed * materialSheet) : 0;
+    const cncCost = nesting.sheetsUsed * cncRatePerSheet;
+    const totalCost = materialCost + cncCost + overhead;
+    const sell = Math.max(totalCost * (1 + (markupPercent / 100)), minimum);
+    const each = sell / qty;
 
-    function getPresetById(id) {
-      return materialPresets.find(p => p.id === id) || materialPresets[0];
-    }
+    const result = {
+      type: "CNC",
+      description,
+      qty,
+      sell,
+      notes,
+      summary: `${presetName} | Qty ${qty} | sheets ${nesting.sheetsUsed} | CNC ${money(cncCost)}${materialMode === "include" ? ` | material ${money(materialCost)}` : ""}`
+    };
 
-    function applyPreset(prefix) {
-      const presetId = val(`${prefix}MaterialPreset`);
-      const preset = getPresetById(presetId);
-      if (!preset || preset.id === "custom") return;
+    target.innerHTML =
+      metric("Material", presetName) +
+      metric("Qty", qty) +
+      metric("Finished Size", `${num(widthIn)}" × ${num(heightIn)}"`) +
+      metric("Pieces / sheet", nesting.piecesPerSheet) +
+      metric("Sheets used", nesting.sheetsUsed) +
+      metric("Material mode", materialMode === "include" ? "Include material" : "Do not include material") +
+      metric("Material cost", money(materialCost)) +
+      metric("CNC charge", money(cncCost)) +
+      metric("Overhead", money(overhead)) +
+      metric("Cost", money(totalCost), "warn") +
+      metric("Sell", money(sell), "money") +
+      metric("Price each", money(each), "money");
 
-      const costEl = document.getElementById(`${prefix}MaterialSheet`);
-      const wEl = document.getElementById(`${prefix}SheetWidth`);
-      const hEl = document.getElementById(`${prefix}SheetHeight`);
+    document.getElementById("addCncBtn").dataset.preview = JSON.stringify(result);
+  }catch(err){
+    target.innerHTML = "";
+    errorEl.textContent = err.message;
+    document.getElementById("addCncBtn").dataset.preview = "";
+  }
+}
 
-      if (costEl) costEl.value = Number(preset.cost).toFixed(2);
-      if (wEl) wEl.value = preset.w;
-      if (hEl) hEl.value = preset.h;
-    }
+function updateAdaPreview(){
+  const target = document.getElementById("adaPreview");
+  const errorEl = document.getElementById("adaError");
+  errorEl.textContent = "";
+  try{
+    const description = val("adaDescription").trim() || "ADA sign";
+    const qty = numVal("adaQty");
+    const widthIn = numVal("adaWidth");
+    const heightIn = numVal("adaHeight");
+    const baseEach = numVal("adaBaseMaterialEach");
+    const tactileEach = numVal("adaTactileEach");
+    const brailleEach = numVal("adaBrailleEach");
+    const finishEach = numVal("adaPaintFinishEach");
+    const setup = numVal("adaSetup");
+    const overhead = numVal("adaOverhead");
+    const markupPercent = numVal("adaMarkupPercent");
+    const minimum = numVal("adaMinimum");
+    const notes = val("adaNotes").trim();
 
-    function renderPresetEditor() {
-      const wrap = document.getElementById("presetEditor");
-      wrap.innerHTML = "";
+    if(qty <= 0 || widthIn <= 0 || heightIn <= 0) throw new Error("Enter valid quantity and sign size.");
 
-      materialPresets.forEach((p, idx) => {
-        if (p.id === "custom") return;
-        const row = document.createElement("div");
-        row.className = "preset-editor-row";
-        row.innerHTML = `
-          <input type="text" value="${escapeHtml(p.name)}" data-field="name" data-index="${idx}">
-          <input type="number" min="0" step="0.01" value="${p.cost}" data-field="cost" data-index="${idx}">
-          <input type="number" min="1" step="0.01" value="${p.w}" data-field="w" data-index="${idx}">
-          <input type="number" min="1" step="0.01" value="${p.h}" data-field="h" data-index="${idx}">
-        `;
-        wrap.appendChild(row);
-      });
+    const eachCost = baseEach + tactileEach + brailleEach + finishEach;
+    const productionCost = eachCost * qty;
+    const totalCost = productionCost + setup + overhead;
+    const sell = Math.max(totalCost * (1 + (markupPercent / 100)), minimum);
+    const eachSell = sell / qty;
 
-      wrap.querySelectorAll("input").forEach(input => {
-        input.addEventListener("input", () => {
-          const idx = Number(input.dataset.index);
-          const field = input.dataset.field;
-          materialPresets[idx][field] = field === "name" ? input.value : Number(input.value || 0);
-        });
-      });
-    }
+    const result = {
+      type: "ADA",
+      description,
+      qty,
+      sell,
+      notes,
+      summary: `Qty ${qty} | ${num(widthIn)}" × ${num(heightIn)}" | cost/ea ${money(eachCost)} | setup ${money(setup)}`
+    };
 
-    function calcSheetUsage({ qty, widthIn, heightIn, sheetWidthIn, sheetHeightIn, partGapIn, edgeMarginIn, bleedIn }) {
-      const usableW = sheetWidthIn - (edgeMarginIn * 2);
-      const usableH = sheetHeightIn - (edgeMarginIn * 2);
-      if (usableW <= 0 || usableH <= 0) throw new Error("Edge margins leave no usable sheet area.");
+    target.innerHTML =
+      metric("Qty", qty) +
+      metric("Finished Size", `${num(widthIn)}" × ${num(heightIn)}"`) +
+      metric("Base material each", money(baseEach)) +
+      metric("Tactile each", money(tactileEach)) +
+      metric("Braille each", money(brailleEach)) +
+      metric("Finish each", money(finishEach)) +
+      metric("Cost each", money(eachCost)) +
+      metric("Production cost", money(productionCost)) +
+      metric("Setup", money(setup)) +
+      metric("Overhead", money(overhead)) +
+      metric("Cost", money(totalCost), "warn") +
+      metric("Sell", money(sell), "money") +
+      metric("Price each", money(eachSell), "money");
 
-      const effectiveW = widthIn + bleedIn;
-      const effectiveH = heightIn + bleedIn;
-      if (effectiveW <= 0 || effectiveH <= 0) throw new Error("Effective part size must be greater than 0.");
+    document.getElementById("addAdaBtn").dataset.preview = JSON.stringify(result);
+  }catch(err){
+    target.innerHTML = "";
+    errorEl.textContent = err.message;
+    document.getElementById("addAdaBtn").dataset.preview = "";
+  }
+}
 
-      const pitchX = effectiveW + partGapIn;
-      const pitchY = effectiveH + partGapIn;
-      const piecesPerRow = Math.floor((usableW + partGapIn) / pitchX);
-      const piecesPerCol = Math.floor((usableH + partGapIn) / pitchY);
-      const piecesPerSheet = piecesPerRow * piecesPerCol;
-      if (piecesPerSheet <= 0) throw new Error("Piece size plus margins/gaps will not fit on the selected sheet.");
+function updateLetterPreview(){
+  const target = document.getElementById("letterPreview");
+  const errorEl = document.getElementById("letterError");
+  errorEl.textContent = "";
+  try{
+    const description = val("letterDescription").trim() || "Dimensional letters";
+    const qty = numVal("letterQty");
+    const avgHeight = numVal("letterAvgHeight");
+    const avgWidth = numVal("letterAvgWidth");
+    const materialEach = numVal("letterMaterialEach");
+    const cutEach = numVal("letterCutEach");
+    const finishEach = numVal("letterFinishEach");
+    const pattern = numVal("letterInstallPattern");
+    const overhead = numVal("letterOverhead");
+    const markupPercent = numVal("letterMarkupPercent");
+    const minimum = numVal("letterMinimum");
+    const materialType = val("letterMaterialType");
+    const notes = val("letterNotes").trim();
 
-      const sheetsUsed = Math.ceil(qty / piecesPerSheet);
-      return { usableW, usableH, effectiveW, effectiveH, piecesPerRow, piecesPerCol, piecesPerSheet, sheetsUsed };
-    }
+    if(qty <= 0 || avgHeight <= 0 || avgWidth <= 0) throw new Error("Enter valid quantity and average letter size.");
 
-    function calcPrintedPanelBase(prefix, includeCnc = false) {
-      const description = val(`${prefix}Description`).trim() || "Printed panel";
-      const qty = numVal(`${prefix}Qty`);
-      const widthIn = numVal(`${prefix}Width`);
-      const heightIn = numVal(`${prefix}Height`);
-      const materialSheet = numVal(`${prefix}MaterialSheet`);
-      const markupPercent = numVal(`${prefix}MarkupPercent`);
-      const sheetWidthIn = numVal(`${prefix}SheetWidth`);
-      const sheetHeightIn = numVal(`${prefix}SheetHeight`);
-      const partGapIn = numVal(`${prefix}PartGap`);
-      const edgeMarginIn = numVal(`${prefix}EdgeMargin`);
-      const bleedIn = numVal(`${prefix}Bleed`);
-      const basePrintRate = numVal(`${prefix}BasePrintRate`);
-      const lamRate = Number(val(`${prefix}Lamination`));
-      const whiteRate = Number(val(`${prefix}WhiteInk`));
-      const overhead = numVal(`${prefix}Overhead`);
-      const minimum = numVal(`${prefix}Minimum`);
-      const notes = val(`${prefix}Notes`).trim();
-      const cncRate = includeCnc ? Number(val(`${prefix}CncRate`)) : 0;
-      const presetName = getPresetById(val(`${prefix}MaterialPreset`))?.name || "Custom / Manual";
+    const eachCost = materialEach + cutEach + finishEach;
+    const productionCost = eachCost * qty;
+    const totalCost = productionCost + pattern + overhead;
+    const sell = Math.max(totalCost * (1 + (markupPercent / 100)), minimum);
+    const eachSell = sell / qty;
 
-      if (qty <= 0 || widthIn <= 0 || heightIn <= 0 || sheetWidthIn <= 0 || sheetHeightIn <= 0) {
-        throw new Error("Enter valid quantity, size, and sheet dimensions.");
-      }
+    const result = {
+      type: "Letters",
+      description,
+      qty,
+      sell,
+      notes,
+      summary: `Qty ${qty} | avg ${num(avgWidth)}" × ${num(avgHeight)}" | ${materialType} | cost/ea ${money(eachCost)}`
+    };
 
-      const pieceSqFt = (widthIn * heightIn) / 144;
-      const totalSqFt = pieceSqFt * qty;
-      const nesting = calcSheetUsage({ qty, widthIn, heightIn, sheetWidthIn, sheetHeightIn, partGapIn, edgeMarginIn, bleedIn });
+    target.innerHTML =
+      metric("Qty", qty) +
+      metric("Average size", `${num(avgWidth)}" × ${num(avgHeight)}"`) +
+      metric("Material type", materialType) +
+      metric("Material each", money(materialEach)) +
+      metric("Cut each", money(cutEach)) +
+      metric("Finish each", money(finishEach)) +
+      metric("Cost each", money(eachCost)) +
+      metric("Production cost", money(productionCost)) +
+      metric("Pattern / setup", money(pattern)) +
+      metric("Overhead", money(overhead)) +
+      metric("Cost", money(totalCost), "warn") +
+      metric("Sell", money(sell), "money") +
+      metric("Price each", money(eachSell), "money");
 
-      const materialCost = nesting.sheetsUsed * materialSheet;
-      const printCost = totalSqFt * basePrintRate;
-      const lamCost = totalSqFt * lamRate;
-      const whiteCost = totalSqFt * whiteRate;
-      const cncCost = nesting.sheetsUsed * cncRate;
-      const totalCost = materialCost + printCost + lamCost + whiteCost + cncCost + overhead;
-      const sell = Math.max(totalCost * (1 + (markupPercent / 100)), minimum);
-      const each = sell / qty;
+    document.getElementById("addLetterBtn").dataset.preview = JSON.stringify(result);
+  }catch(err){
+    target.innerHTML = "";
+    errorEl.textContent = err.message;
+    document.getElementById("addLetterBtn").dataset.preview = "";
+  }
+}
 
-      return {
-        description, qty, widthIn, heightIn, pieceSqFt, totalSqFt, nesting, materialCost,
-        printCost, lamCost, whiteCost, cncCost, overhead, totalCost, sell, each, notes, minimum, presetName
-      };
-    }
+function refreshQuoteSummary(){
+  const wrap = document.getElementById("quoteItems");
+  const countEl = document.getElementById("lineItemCount");
+  const grandEl = document.getElementById("grandTotal");
 
-    function updateComboPreview() {
-      const target = document.getElementById("comboPreview");
-      const errorEl = document.getElementById("comboError");
-      errorEl.textContent = "";
-      try {
-        const r = calcPrintedPanelBase("combo", true);
-        const result = {
-          type: "Printed + Routed",
-          description: r.description,
-          qty: r.qty,
-          sell: r.sell,
-          notes: r.notes,
-          summary: `${r.presetName} | Qty ${r.qty} | ${num(r.totalSqFt)} ft² | sheets ${r.nesting.sheetsUsed} | material ${money(r.materialCost)} | CNC ${money(r.cncCost)}`
-        };
-        target.innerHTML =
-          metric("Material", r.presetName) +
-          metric("Qty", r.qty) +
-          metric("Finished Size", `${num(r.widthIn)}" × ${num(r.heightIn)}"`) +
-          metric("SqFt each", num(r.pieceSqFt)) +
-          metric("Total SqFt", num(r.totalSqFt)) +
-          metric("Pieces / sheet", r.nesting.piecesPerSheet) +
-          metric("Sheets used", r.nesting.sheetsUsed) +
-          metric("Material cost", money(r.materialCost)) +
-          metric("Print cost", money(r.printCost)) +
-          metric("Lamination", money(r.lamCost)) +
-          metric("White ink", money(r.whiteCost)) +
-          metric("CNC charge", money(r.cncCost)) +
-          metric("Overhead", money(r.overhead)) +
-          metric("Cost", money(r.totalCost), "warn") +
-          metric("Sell", money(r.sell), "money") +
-          metric("Price each", money(r.each), "money");
-        document.getElementById("addComboBtn").dataset.preview = JSON.stringify(result);
-      } catch (err) {
-        target.innerHTML = "";
-        errorEl.textContent = err.message;
-        document.getElementById("addComboBtn").dataset.preview = "";
-      }
-    }
+  wrap.innerHTML = "";
+  let total = 0;
 
-    function updateUvPreview() {
-      const target = document.getElementById("uvPreview");
-      const errorEl = document.getElementById("uvError");
-      errorEl.textContent = "";
-      try {
-        const r = calcPrintedPanelBase("uv", false);
-        const result = {
-          type: "UV",
-          description: r.description,
-          qty: r.qty,
-          sell: r.sell,
-          notes: r.notes,
-          summary: `${r.presetName} | Qty ${r.qty} | ${num(r.totalSqFt)} ft² | sheets ${r.nesting.sheetsUsed} | material ${money(r.materialCost)}`
-        };
-        target.innerHTML =
-          metric("Material", r.presetName) +
-          metric("Qty", r.qty) +
-          metric("Finished Size", `${num(r.widthIn)}" × ${num(r.heightIn)}"`) +
-          metric("SqFt each", num(r.pieceSqFt)) +
-          metric("Total SqFt", num(r.totalSqFt)) +
-          metric("Pieces / sheet", r.nesting.piecesPerSheet) +
-          metric("Sheets used", r.nesting.sheetsUsed) +
-          metric("Material cost", money(r.materialCost)) +
-          metric("Print cost", money(r.printCost)) +
-          metric("Lamination", money(r.lamCost)) +
-          metric("White ink", money(r.whiteCost)) +
-          metric("Overhead", money(r.overhead)) +
-          metric("Cost", money(r.totalCost), "warn") +
-          metric("Sell", money(r.sell), "money") +
-          metric("Price each", money(r.each), "money");
-        document.getElementById("addUvBtn").dataset.preview = JSON.stringify(result);
-      } catch (err) {
-        target.innerHTML = "";
-        errorEl.textContent = err.message;
-        document.getElementById("addUvBtn").dataset.preview = "";
-      }
-    }
+  quoteItems.forEach((item, idx) => {
+    total += Number(item.sell || 0);
+    const card = document.createElement("div");
+    card.className = "quote-card";
+    card.innerHTML = `
+      <div class="quote-card-head">
+        <div>
+          <div class="quote-card-title">${escapeHtml(item.type)} - ${escapeHtml(item.description)}</div>
+          <div class="quote-card-sub">${escapeHtml(item.summary || "")}</div>
+          ${item.notes ? `<div class="quote-card-sub">Notes: ${escapeHtml(item.notes)}</div>` : ""}
+        </div>
+        <button class="link-btn" data-remove="${idx}">Remove</button>
+      </div>
+      <div class="quote-card-price">${money(item.sell)}</div>
+    `;
+    wrap.appendChild(card);
+  });
 
-    function updateCncPreview() {
-      const target = document.getElementById("cncPreview");
-      const errorEl = document.getElementById("cncError");
-      errorEl.textContent = "";
-      try {
-        const description = val("cncDescription").trim() || "CNC routed panel";
-        const qty = numVal("cncQty");
-        const widthIn = numVal("cncWidth");
-        const heightIn = numVal("cncHeight");
-        const sheetWidthIn = numVal("cncSheetWidth");
-        const sheetHeightIn = numVal("cncSheetHeight");
-        const partGapIn = numVal("cncPartGap");
-        const edgeMarginIn = numVal("cncEdgeMargin");
-        const materialSheet = numVal("cncMaterialSheet");
-        const cncRatePerSheet = Number(val("cncComplexity"));
-        const markupPercent = numVal("cncMarkupPercent");
-        const overhead = numVal("cncOverhead");
-        const minimum = numVal("cncMinimum");
-        const materialMode = val("cncMaterialMode");
-        const notes = val("cncNotes").trim();
-        const presetName = getPresetById(val("cncMaterialPreset"))?.name || "Custom / Manual";
+  countEl.textContent = quoteItems.length;
+  grandEl.textContent = money(total);
 
-        if (qty <= 0 || widthIn <= 0 || heightIn <= 0 || sheetWidthIn <= 0 || sheetHeightIn <= 0) {
-          throw new Error("Enter valid quantity, size, and sheet dimensions.");
-        }
-
-        const pieceSqFt = (widthIn * heightIn) / 144;
-        const totalSqFt = pieceSqFt * qty;
-        const nesting = calcSheetUsage({ qty, widthIn, heightIn, sheetWidthIn, sheetHeightIn, partGapIn, edgeMarginIn, bleedIn: 0 });
-
-        const materialCost = materialMode === "include" ? (nesting.sheetsUsed * materialSheet) : 0;
-        const cncCost = nesting.sheetsUsed * cncRatePerSheet;
-        const totalCost = materialCost + cncCost + overhead;
-        const sell = Math.max(totalCost * (1 + (markupPercent / 100)), minimum);
-        const each = sell / qty;
-
-        const result = {
-          type: "CNC",
-          description,
-          qty,
-          sell,
-          notes,
-          summary: `${presetName} | Qty ${qty} | sheets ${nesting.sheetsUsed} | CNC ${money(cncCost)}${materialMode === "include" ? ` | material ${money(materialCost)}` : ""}`
-        };
-
-        target.innerHTML =
-          metric("Material", presetName) +
-          metric("Qty", qty) +
-          metric("Finished Size", `${num(widthIn)}" × ${num(heightIn)}"`) +
-          metric("Pieces / sheet", nesting.piecesPerSheet) +
-          metric("Sheets used", nesting.sheetsUsed) +
-          metric("Material mode", materialMode === "include" ? "Include material" : "Do not include material") +
-          metric("Material cost", money(materialCost)) +
-          metric("CNC charge", money(cncCost)) +
-          metric("Overhead", money(overhead)) +
-          metric("Cost", money(totalCost), "warn") +
-          metric("Sell", money(sell), "money") +
-          metric("Price each", money(each), "money");
-
-        document.getElementById("addCncBtn").dataset.preview = JSON.stringify(result);
-      } catch (err) {
-        target.innerHTML = "";
-        errorEl.textContent = err.message;
-        document.getElementById("addCncBtn").dataset.preview = "";
-      }
-    }
-
-    function updateAdaPreview() {
-      const target = document.getElementById("adaPreview");
-      const errorEl = document.getElementById("adaError");
-      errorEl.textContent = "";
-      try {
-        const description = val("adaDescription").trim() || "ADA sign";
-        const qty = numVal("adaQty");
-        const widthIn = numVal("adaWidth");
-        const heightIn = numVal("adaHeight");
-        const baseEach = numVal("adaBaseMaterialEach");
-        const tactileEach = numVal("adaTactileEach");
-        const brailleEach = numVal("adaBrailleEach");
-        const finishEach = numVal("adaPaintFinishEach");
-        const setup = numVal("adaSetup");
-        const overhead = numVal("adaOverhead");
-        const markupPercent = numVal("adaMarkupPercent");
-        const minimum = numVal("adaMinimum");
-        const notes = val("adaNotes").trim();
-
-        if (qty <= 0 || widthIn <= 0 || heightIn <= 0) throw new Error("Enter valid quantity and sign size.");
-
-        const eachCost = baseEach + tactileEach + brailleEach + finishEach;
-        const productionCost = eachCost * qty;
-        const totalCost = productionCost + setup + overhead;
-        const sell = Math.max(totalCost * (1 + (markupPercent / 100)), minimum);
-        const eachSell = sell / qty;
-
-        const result = {
-          type: "ADA",
-          description,
-          qty,
-          sell,
-          notes,
-          summary: `Qty ${qty} | ${num(widthIn)}" × ${num(heightIn)}" | cost/ea ${money(eachCost)} | setup ${money(setup)}`
-        };
-
-        target.innerHTML =
-          metric("Qty", qty) +
-          metric("Finished Size", `${num(widthIn)}" × ${num(heightIn)}"`) +
-          metric("Base material each", money(baseEach)) +
-          metric("Tactile each", money(tactileEach)) +
-          metric("Braille each", money(brailleEach)) +
-          metric("Finish each", money(finishEach)) +
-          metric("Cost each", money(eachCost)) +
-          metric("Production cost", money(productionCost)) +
-          metric("Setup", money(setup)) +
-          metric("Overhead", money(overhead)) +
-          metric("Cost", money(totalCost), "warn") +
-          metric("Sell", money(sell), "money") +
-          metric("Price each", money(eachSell), "money");
-
-        document.getElementById("addAdaBtn").dataset.preview = JSON.stringify(result);
-      } catch (err) {
-        target.innerHTML = "";
-        errorEl.textContent = err.message;
-        document.getElementById("addAdaBtn").dataset.preview = "";
-      }
-    }
-
-    function updateLetterPreview() {
-      const target = document.getElementById("letterPreview");
-      const errorEl = document.getElementById("letterError");
-      errorEl.textContent = "";
-      try {
-        const description = val("letterDescription").trim() || "Dimensional letters";
-        const qty = numVal("letterQty");
-        const avgHeight = numVal("letterAvgHeight");
-        const avgWidth = numVal("letterAvgWidth");
-        const materialEach = numVal("letterMaterialEach");
-        const cutEach = numVal("letterCutEach");
-        const finishEach = numVal("letterFinishEach");
-        const pattern = numVal("letterInstallPattern");
-        const overhead = numVal("letterOverhead");
-        const markupPercent = numVal("letterMarkupPercent");
-        const minimum = numVal("letterMinimum");
-        const materialType = val("letterMaterialType");
-        const notes = val("letterNotes").trim();
-
-        if (qty <= 0 || avgHeight <= 0 || avgWidth <= 0) throw new Error("Enter valid quantity and average letter size.");
-
-        const eachCost = materialEach + cutEach + finishEach;
-        const productionCost = eachCost * qty;
-        const totalCost = productionCost + pattern + overhead;
-        const sell = Math.max(totalCost * (1 + (markupPercent / 100)), minimum);
-        const eachSell = sell / qty;
-
-        const result = {
-          type: "Letters",
-          description,
-          qty,
-          sell,
-          notes,
-          summary: `Qty ${qty} | avg ${num(avgWidth)}" × ${num(avgHeight)}" | ${materialType} | cost/ea ${money(eachCost)}`
-        };
-
-        target.innerHTML =
-          metric("Qty", qty) +
-          metric("Average size", `${num(avgWidth)}" × ${num(avgHeight)}"`) +
-          metric("Material type", materialType) +
-          metric("Material each", money(materialEach)) +
-          metric("Cut each", money(cutEach)) +
-          metric("Finish each", money(finishEach)) +
-          metric("Cost each", money(eachCost)) +
-          metric("Production cost", money(productionCost)) +
-          metric("Pattern / setup", money(pattern)) +
-          metric("Overhead", money(overhead)) +
-          metric("Cost", money(totalCost), "warn") +
-          metric("Sell", money(sell), "money") +
-          metric("Price each", money(eachSell), "money");
-
-        document.getElementById("addLetterBtn").dataset.preview = JSON.stringify(result);
-      } catch (err) {
-        target.innerHTML = "";
-        errorEl.textContent = err.message;
-        document.getElementById("addLetterBtn").dataset.preview = "";
-      }
-    }
-
-    function refreshQuoteSummary() {
-      const wrap = document.getElementById("quoteItems");
-      const countEl = document.getElementById("lineItemCount");
-      const grandEl = document.getElementById("grandTotal");
-      wrap.innerHTML = "";
-      let total = 0;
-
-      quoteItems.forEach((item, idx) => {
-        total += Number(item.sell || 0);
-        const card = document.createElement("div");
-        card.className = "quote-card";
-        card.innerHTML = `
-          <div class="quote-card-head">
-            <div>
-              <div class="quote-card-title">${escapeHtml(item.type)} - ${escapeHtml(item.description)}</div>
-              <div class="quote-card-sub">${escapeHtml(item.summary || "")}</div>
-              ${item.notes ? `<div class="quote-card-sub">Notes: ${escapeHtml(item.notes)}</div>` : ""}
-            </div>
-            <button class="link-btn" data-remove="${idx}">Remove</button>
-          </div>
-          <div class="quote-card-price">${money(item.sell)}</div>
-        `;
-        wrap.appendChild(card);
-      });
-
-      countEl.textContent = quoteItems.length;
-      grandEl.textContent = money(total);
-
-      wrap.querySelectorAll("[data-remove]").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const i = Number(btn.dataset.remove);
-          quoteItems.splice(i, 1);
-          refreshQuoteSummary();
-        });
-      });
-    }
-
-    function addPreviewToQuote(buttonId) {
-      const raw = document.getElementById(buttonId).dataset.preview;
-      if (!raw) return;
-      quoteItems.push(JSON.parse(raw));
-      refreshQuoteSummary();
-    }
-
-    function bindLiveUpdates(ids, fn) {
-      ids.forEach(id => {
-        const el = document.getElementById(id);
-        if (!el) return;
-        el.addEventListener("input", fn);
-        el.addEventListener("change", fn);
-      });
-    }
-
-    function bindPresetSelect(prefix, previewFn) {
-      const sel = document.getElementById(`${prefix}MaterialPreset`);
-      if (!sel) return;
-      sel.addEventListener("change", () => {
-        applyPreset(prefix);
-        previewFn();
-      });
-    }
-
-    document.querySelectorAll(".tab-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-        document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
-        btn.classList.add("active");
-        document.getElementById(`tab-${btn.dataset.tab}`).classList.add("active");
-      });
-    });
-
-    document.getElementById("addComboBtn").addEventListener("click", () => addPreviewToQuote("addComboBtn"));
-    document.getElementById("addUvBtn").addEventListener("click", () => addPreviewToQuote("addUvBtn"));
-    document.getElementById("addCncBtn").addEventListener("click", () => addPreviewToQuote("addCncBtn"));
-    document.getElementById("addAdaBtn").addEventListener("click", () => addPreviewToQuote("addAdaBtn"));
-    document.getElementById("addLetterBtn").addEventListener("click", () => addPreviewToQuote("addLetterBtn"));
-
-    document.getElementById("clearQuoteBtn").addEventListener("click", () => {
-      quoteItems.length = 0;
+  wrap.querySelectorAll("[data-remove]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const i = Number(btn.dataset.remove);
+      quoteItems.splice(i,1);
       refreshQuoteSummary();
     });
+  });
+}
 
-    document.getElementById("printPdfBtn").addEventListener("click", () => window.print());
+function addPreviewToQuote(buttonId){
+  const raw = document.getElementById(buttonId).dataset.preview;
+  if(!raw) return;
+  quoteItems.push(JSON.parse(raw));
+  refreshQuoteSummary();
+}
 
-    document.getElementById("savePresetsBtn").addEventListener("click", () => {
-      savePresets();
-      populateMaterialSelects();
-      renderPresetEditor();
-      const status = document.getElementById("presetStatus");
-      status.textContent = "Presets saved.";
-      setTimeout(() => status.textContent = "", 2000);
-      ["combo","uv","cnc"].forEach(prefix => {
-        const currentId = val(`${prefix}MaterialPreset`);
-        if (currentId !== "custom") applyPreset(prefix);
-      });
-      updateComboPreview();
-      updateUvPreview();
-      updateCncPreview();
+function exportCsv(filename, rows){
+  const csv = rows.map(r => r.map(cell => {
+    const s = String(cell ?? "");
+    return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  }).join(",")).join("\n");
+
+  const blob = new Blob([csv], {type:"text/csv"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportQuoteCsv(){
+  const h = getQuoteHeader();
+  const rows = [["Quote #","Date","Customer","Company","Project","Sales Rep","Type","Description","Summary","Sell"]];
+  quoteItems.forEach(item => {
+    rows.push([h.quoteNumber,h.quoteDate,h.customer,h.company,h.project,h.salesRep,item.type,item.description,item.summary || "",Number(item.sell || 0).toFixed(2)]);
+  });
+  rows.push(["","","","","","","","","Total", quoteItems.reduce((a,b)=>a+Number(b.sell||0),0).toFixed(2)]);
+  exportCsv(`quote_${h.quoteNumber || "untitled"}.csv`, rows);
+}
+
+function renderJobs(){
+  const wrap = document.getElementById("jobsWrap");
+  wrap.innerHTML = "";
+
+  if(!jobLog.length){
+    wrap.innerHTML = '<div class="mini">No jobs saved yet.</div>';
+    return;
+  }
+
+  const table = document.createElement("table");
+  table.innerHTML = `
+    <thead>
+      <tr>
+        <th>Quote #</th>
+        <th>Date</th>
+        <th>Customer</th>
+        <th>Project</th>
+        <th>Estimated</th>
+        <th>Actual Cost</th>
+        <th>Actual Sell</th>
+        <th>Margin $</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      ${jobLog.map((job, idx)=>`
+        <tr>
+          <td>${escapeHtml(job.header.quoteNumber || "")}</td>
+          <td>${escapeHtml(job.header.quoteDate || "")}</td>
+          <td>${escapeHtml(job.header.customer || "")}</td>
+          <td>${escapeHtml(job.header.project || "")}</td>
+          <td>${money(job.estimatedTotal)}</td>
+          <td><input type="number" min="0" step="0.01" value="${job.actualCost ?? ""}" data-job-index="${idx}" data-job-field="actualCost"></td>
+          <td><input type="number" min="0" step="0.01" value="${job.actualSell ?? ""}" data-job-index="${idx}" data-job-field="actualSell"></td>
+          <td>${job.actualSell !== "" && job.actualCost !== "" && job.actualSell != null && job.actualCost != null ? money((Number(job.actualSell)||0) - (Number(job.actualCost)||0)) : ""}</td>
+          <td><button class="link-btn" data-job-remove="${idx}">Remove</button></td>
+        </tr>
+      `).join("")}
+    </tbody>
+  `;
+  wrap.appendChild(table);
+
+  const detailWrap = document.createElement("div");
+  detailWrap.style.marginTop = "14px";
+  detailWrap.innerHTML = jobLog.map(job => `
+    <div class="job-card">
+      <div class="job-card-head">
+        <div>
+          <div class="job-card-title">Quote ${escapeHtml(job.header.quoteNumber || "")} - ${escapeHtml(job.header.project || "")}</div>
+          <div class="job-card-sub">${escapeHtml(job.header.customer || "")}${job.header.company ? " - " + escapeHtml(job.header.company) : ""}</div>
+        </div>
+        <span class="badge">${job.items.length} item(s)</span>
+      </div>
+      <div class="job-card-sub">${job.items.map(i => `${i.type}: ${i.description}`).join(" | ")}</div>
+      <div class="job-card-sub">Estimated total: ${money(job.estimatedTotal)}</div>
+    </div>
+  `).join("");
+  wrap.appendChild(detailWrap);
+
+  wrap.querySelectorAll("[data-job-remove]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const idx = Number(btn.dataset.jobRemove);
+      jobLog.splice(idx,1);
+      saveJson(JOBS_STORAGE_KEY, jobLog);
+      renderJobs();
     });
+  });
 
-    document.getElementById("resetPresetsBtn").addEventListener("click", () => {
-      materialPresets = JSON.parse(JSON.stringify(defaultMaterialPresets));
-      savePresets();
-      populateMaterialSelects();
-      renderPresetEditor();
-      ["combo","uv","cnc"].forEach(prefix => {
-        document.getElementById(`${prefix}MaterialPreset`).value = "acm3_4x8";
-        applyPreset(prefix);
-      });
-      updateComboPreview();
-      updateUvPreview();
-      updateCncPreview();
-      const status = document.getElementById("presetStatus");
-      status.textContent = "Defaults restored.";
-      setTimeout(() => status.textContent = "", 2000);
+  wrap.querySelectorAll("[data-job-index]").forEach(input => {
+    input.addEventListener("input", () => {
+      const idx = Number(input.dataset.jobIndex);
+      const field = input.dataset.jobField;
+      jobLog[idx][field] = input.value;
+      saveJson(JOBS_STORAGE_KEY, jobLog);
+      renderJobs();
     });
+  });
+}
 
-    bindLiveUpdates([
-      "comboDescription","comboQty","comboMaterialSheet","comboWidth","comboHeight","comboSheetWidth","comboSheetHeight",
-      "comboMarkupPercent","comboBasePrintRate","comboLamination","comboWhiteInk",
-      "comboPartGap","comboEdgeMargin","comboBleed","comboCncRate","comboOverhead","comboMinimum","comboNotes"
-    ], updateComboPreview);
+function addQuoteToJobLog(){
+  if(!quoteItems.length) return;
+  const entry = {
+    header: getQuoteHeader(),
+    items: JSON.parse(JSON.stringify(quoteItems)),
+    estimatedTotal: quoteItems.reduce((a,b)=>a+Number(b.sell||0),0),
+    actualCost: "",
+    actualSell: ""
+  };
+  jobLog.unshift(entry);
+  saveJson(JOBS_STORAGE_KEY, jobLog);
+  renderJobs();
+}
 
-    bindLiveUpdates([
-      "uvDescription","uvQty","uvMaterialSheet","uvWidth","uvHeight","uvSheetWidth","uvSheetHeight",
-      "uvMarkupPercent","uvBasePrintRate","uvLamination","uvWhiteInk",
-      "uvPartGap","uvEdgeMargin","uvBleed","uvOverhead","uvMinimum","uvNotes"
-    ], updateUvPreview);
+function exportJobsCsv(){
+  const rows = [["Quote #","Date","Customer","Company","Project","Estimated Total","Actual Cost","Actual Sell","Margin"]];
+  jobLog.forEach(job => {
+    const margin = (job.actualSell !== "" && job.actualCost !== "") ? (Number(job.actualSell||0)-Number(job.actualCost||0)) : "";
+    rows.push([
+      job.header.quoteNumber || "",
+      job.header.quoteDate || "",
+      job.header.customer || "",
+      job.header.company || "",
+      job.header.project || "",
+      Number(job.estimatedTotal || 0).toFixed(2),
+      job.actualCost,
+      job.actualSell,
+      margin === "" ? "" : Number(margin).toFixed(2)
+    ]);
+  });
+  exportCsv("job_log.csv", rows);
+}
 
-    bindLiveUpdates([
-      "cncDescription","cncQty","cncMaterialSheet","cncWidth","cncHeight","cncSheetWidth","cncSheetHeight",
-      "cncPartGap","cncEdgeMargin","cncComplexity","cncMarkupPercent","cncOverhead",
-      "cncMinimum","cncMaterialMode","cncNotes"
-    ], updateCncPreview);
+function bindLiveUpdates(ids, fn){
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.addEventListener("input", fn);
+    el.addEventListener("change", fn);
+  });
+}
+function bindPresetSelect(prefix, previewFn){
+  const sel = document.getElementById(`${prefix}MaterialPreset`);
+  if(!sel) return;
+  sel.addEventListener("change", () => {
+    applyPreset(prefix);
+    previewFn();
+  });
+}
 
-    bindLiveUpdates([
-      "adaDescription","adaQty","adaWidth","adaHeight","adaBaseMaterialEach","adaTactileEach",
-      "adaBrailleEach","adaPaintFinishEach","adaSetup","adaOverhead","adaMarkupPercent","adaMinimum","adaNotes"
-    ], updateAdaPreview);
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById(`tab-${btn.dataset.tab}`).classList.add("active");
+  });
+});
 
-    bindLiveUpdates([
-      "letterDescription","letterQty","letterAvgHeight","letterAvgWidth","letterMaterialEach",
-      "letterCutEach","letterFinishEach","letterInstallPattern","letterOverhead",
-      "letterMarkupPercent","letterMinimum","letterMaterialType","letterNotes"
-    ], updateLetterPreview);
+document.getElementById("addComboBtn").addEventListener("click", ()=>addPreviewToQuote("addComboBtn"));
+document.getElementById("addUvBtn").addEventListener("click", ()=>addPreviewToQuote("addUvBtn"));
+document.getElementById("addCncBtn").addEventListener("click", ()=>addPreviewToQuote("addCncBtn"));
+document.getElementById("addAdaBtn").addEventListener("click", ()=>addPreviewToQuote("addAdaBtn"));
+document.getElementById("addLetterBtn").addEventListener("click", ()=>addPreviewToQuote("addLetterBtn"));
 
-    populateMaterialSelects();
-    renderPresetEditor();
+document.getElementById("clearQuoteBtn").addEventListener("click", ()=>{
+  quoteItems = [];
+  refreshQuoteSummary();
+});
+document.getElementById("printPdfBtn").addEventListener("click", ()=>{
+  buildPrintHeader();
+  window.print();
+});
+document.getElementById("exportQuoteCsvBtn").addEventListener("click", exportQuoteCsv);
+document.getElementById("addQuoteToJobsBtn").addEventListener("click", addQuoteToJobLog);
+document.getElementById("exportJobsCsvBtn").addEventListener("click", exportJobsCsv);
+document.getElementById("clearJobsBtn").addEventListener("click", ()=>{
+  jobLog = [];
+  saveJson(JOBS_STORAGE_KEY, jobLog);
+  renderJobs();
+});
 
-    document.getElementById("comboMaterialPreset").value = "acm3_4x8";
-    document.getElementById("uvMaterialPreset").value = "acm3_4x8";
-    document.getElementById("cncMaterialPreset").value = "acm3_4x8";
+document.getElementById("savePresetsBtn").addEventListener("click", ()=>{
+  saveJson(PRESET_STORAGE_KEY, materialPresets);
+  populateMaterialSelects();
+  renderPresetEditor();
+  const status = document.getElementById("presetStatus");
+  status.textContent = "Presets saved.";
+  setTimeout(()=>status.textContent = "", 2000);
+  ["combo","uv","cnc"].forEach(prefix => {
+    if(val(`${prefix}MaterialPreset`) !== "custom") applyPreset(prefix);
+  });
+  updateComboPreview();
+  updateUvPreview();
+  updateCncPreview();
+});
 
-    bindPresetSelect("combo", updateComboPreview);
-    bindPresetSelect("uv", updateUvPreview);
-    bindPresetSelect("cnc", updateCncPreview);
+document.getElementById("resetPresetsBtn").addEventListener("click", ()=>{
+  materialPresets = JSON.parse(JSON.stringify(defaultMaterialPresets));
+  saveJson(PRESET_STORAGE_KEY, materialPresets);
+  populateMaterialSelects();
+  renderPresetEditor();
+  ["combo","uv","cnc"].forEach(prefix => {
+    document.getElementById(`${prefix}MaterialPreset`).value = "acm3_4x8";
+    applyPreset(prefix);
+  });
+  updateComboPreview();
+  updateUvPreview();
+  updateCncPreview();
+  const status = document.getElementById("presetStatus");
+  status.textContent = "Defaults restored.";
+  setTimeout(()=>status.textContent = "", 2000);
+});
 
-    applyPreset("combo");
-    applyPreset("uv");
-    applyPreset("cnc");
+bindLiveUpdates(["quoteNumber","quoteDate","quoteCustomer","quoteCompany","quoteProject","quoteSalesRep","quoteNotes"], updateHeaderLive);
 
-    updateComboPreview();
-    updateUvPreview();
-    updateCncPreview();
-    updateAdaPreview();
-    updateLetterPreview();
-    refreshQuoteSummary();
-  </script>
+bindLiveUpdates([
+  "comboDescription","comboQty","comboMaterialSheet","comboWidth","comboHeight","comboSheetWidth","comboSheetHeight",
+  "comboMarkupPercent","comboBasePrintRate","comboLamination","comboWhiteInk","comboPartGap","comboEdgeMargin",
+  "comboBleed","comboCncRate","comboOverhead","comboMinimum","comboNotes"
+], updateComboPreview);
+
+bindLiveUpdates([
+  "uvDescription","uvQty","uvMaterialSheet","uvWidth","uvHeight","uvSheetWidth","uvSheetHeight",
+  "uvMarkupPercent","uvBasePrintRate","uvLamination","uvWhiteInk","uvPartGap","uvEdgeMargin",
+  "uvBleed","uvOverhead","uvMinimum","uvNotes"
+], updateUvPreview);
+
+bindLiveUpdates([
+  "cncDescription","cncQty","cncMaterialSheet","cncWidth","cncHeight","cncSheetWidth","cncSheetHeight",
+  "cncPartGap","cncEdgeMargin","cncComplexity","cncMarkupPercent","cncOverhead","cncMinimum",
+  "cncMaterialMode","cncNotes"
+], updateCncPreview);
+
+bindLiveUpdates([
+  "adaDescription","adaQty","adaWidth","adaHeight","adaBaseMaterialEach","adaTactileEach",
+  "adaBrailleEach","adaPaintFinishEach","adaSetup","adaOverhead","adaMarkupPercent",
+  "adaMinimum","adaNotes"
+], updateAdaPreview);
+
+bindLiveUpdates([
+  "letterDescription","letterQty","letterAvgHeight","letterAvgWidth","letterMaterialEach",
+  "letterCutEach","letterFinishEach","letterInstallPattern","letterOverhead",
+  "letterMarkupPercent","letterMinimum","letterMaterialType","letterNotes"
+], updateLetterPreview);
+
+populateMaterialSelects();
+renderPresetEditor();
+
+document.getElementById("comboMaterialPreset").value = "acm3_4x8";
+document.getElementById("uvMaterialPreset").value = "acm3_4x8";
+document.getElementById("cncMaterialPreset").value = "acm3_4x8";
+
+bindPresetSelect("combo", updateComboPreview);
+bindPresetSelect("uv", updateUvPreview);
+bindPresetSelect("cnc", updateCncPreview);
+
+applyPreset("combo");
+applyPreset("uv");
+applyPreset("cnc");
+
+document.getElementById("quoteDate").value = new Date().toISOString().slice(0,10);
+
+updateHeaderLive();
+updateComboPreview();
+updateUvPreview();
+updateCncPreview();
+updateAdaPreview();
+updateLetterPreview();
+refreshQuoteSummary();
+renderJobs();
+</script>
 </body>
 </html>
