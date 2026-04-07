@@ -103,7 +103,7 @@
   <aside class="sidebar">
     <div class="brand">
       <h1>Iconic Signs FL Quote Builder</h1>
-      <p>Presets, live preview, printable quotes, CSV export, and job tracking saved in this browser.</p>
+      <p>Presets, live preview, printable quotes, reusable drafts, CSV export, and job tracking saved in this browser.</p>
     </div>
     <div class="nav-title">Sections</div>
     <nav class="nav">
@@ -114,12 +114,16 @@
       <button class="tab-btn" data-tab="ada">ADA Sign</button>
       <button class="tab-btn" data-tab="letters">Dimensional Letters</button>
       <button class="tab-btn" data-tab="presets">Material Presets</button>
+      <button class="tab-btn" data-tab="drafts">Quote Drafts</button>
       <button class="tab-btn" data-tab="jobs">Job Tracking</button>
     </nav>
   </aside>
 
   <main class="main">
     <div class="topbar non-print">
+      <button class="btn secondary" id="saveDraftBtn">Save New Draft</button>
+      <button class="btn secondary" id="updateDraftBtn" disabled>Update Loaded Draft</button>
+      <span class="badge" id="activeDraftBadge" style="display:none;align-self:center;">Editing draft</span>
       <button class="btn secondary" id="exportQuoteCsvBtn">Export Quote CSV</button>
       <button class="btn secondary" id="addQuoteToJobsBtn">Add Quote to Job Log</button>
       <button class="btn secondary" id="clearQuoteBtn">Clear Quote</button>
@@ -388,6 +392,25 @@
       </div>
     </section>
 
+    <section class="tab-pane" id="tab-drafts">
+      <div class="panel">
+        <div class="panel-head"><h2>Quote Drafts</h2><p>Save complete quotes as reusable drafts. Load a draft into the builder, or edit a saved draft and update it.</p></div>
+        <div class="panel-body">
+          <div class="grid">
+            <div class="field"><label for="draftNameInput">Draft name</label><input id="draftNameInput" placeholder="Example: Hotel room IDs v1" /></div>
+            <div class="field"><label for="draftNoteInput">Draft note</label><input id="draftNoteInput" placeholder="Optional internal reminder" /></div>
+          </div>
+          <div class="actions">
+            <button class="btn" id="saveDraftFromTabBtn">Save New Draft</button>
+            <button class="btn secondary" id="updateDraftFromTabBtn" disabled>Update Loaded Draft</button>
+            <button class="btn secondary" id="clearDraftLinkBtn" disabled>Clear Loaded Draft Link</button>
+          </div>
+          <div id="draftStatus" class="ok"></div>
+          <div id="draftsWrap" style="margin-top:14px;"></div>
+        </div>
+      </div>
+    </section>
+
     <section class="tab-pane" id="tab-jobs">
       <div class="panel">
         <div class="panel-head"><h2>Job Tracking</h2><p>Save the current quote as a job record. Add actual cost and actual sell later to compare estimate vs real.</p></div>
@@ -412,6 +435,7 @@
 <script>
 const PRESET_STORAGE_KEY = "iconic_material_presets_v2";
 const JOBS_STORAGE_KEY = "iconic_job_log_v1";
+const DRAFTS_STORAGE_KEY = "iconic_quote_drafts_v1";
 
 const defaultMaterialPresets = [
   { id: "acm3_4x8", name: "3mm ACM 4x8", cost: 63.24, w: 48, h: 96 },
@@ -428,6 +452,8 @@ const defaultMaterialPresets = [
 let materialPresets = loadJson(PRESET_STORAGE_KEY, defaultMaterialPresets);
 let quoteItems = [];
 let jobLog = loadJson(JOBS_STORAGE_KEY, []);
+let draftLog = loadJson(DRAFTS_STORAGE_KEY, []);
+let activeDraftId = null;
 
 function loadJson(key, fallback){
   try{
@@ -863,6 +889,191 @@ function updateLetterPreview(){
   }
 }
 
+function getAllFormState(){
+  const state = {};
+  document.querySelectorAll('input[id], select[id], textarea[id]').forEach(el => {
+    if(el.id.startsWith('draftsWrap')) return;
+    if(el.dataset && (el.dataset.jobIndex !== undefined || el.dataset.jobField !== undefined)) return;
+    if(el.type === 'button' || el.type === 'submit') return;
+    if(el.id === 'draftNameInput' || el.id === 'draftNoteInput') return;
+    state[el.id] = el.value;
+  });
+  return state;
+}
+
+function setAllFormState(state){
+  Object.entries(state || {}).forEach(([id, value]) => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.value = value;
+  });
+}
+
+function getSuggestedDraftName(){
+  const h = getQuoteHeader();
+  return [h.quoteNumber ? `Quote ${h.quoteNumber}` : '', h.customer || h.company || '', h.project || '']
+    .filter(Boolean)
+    .join(' - ') || 'Untitled Quote Draft';
+}
+
+function setDraftStatus(message){
+  const el = document.getElementById('draftStatus');
+  if(!el) return;
+  el.textContent = message || '';
+  if(message){
+    setTimeout(() => {
+      if(el.textContent === message) el.textContent = '';
+    }, 2500);
+  }
+}
+
+function syncDraftUi(){
+  const isEditing = !!activeDraftId;
+  const badge = document.getElementById('activeDraftBadge');
+  const updateTop = document.getElementById('updateDraftBtn');
+  const updateTab = document.getElementById('updateDraftFromTabBtn');
+  const clearBtn = document.getElementById('clearDraftLinkBtn');
+  if(badge){
+    if(isEditing){
+      const active = draftLog.find(d => d.id === activeDraftId);
+      badge.style.display = 'inline-block';
+      badge.textContent = `Editing draft: ${active?.name || 'Untitled'}`;
+    }else{
+      badge.style.display = 'none';
+      badge.textContent = 'Editing draft';
+    }
+  }
+  if(updateTop) updateTop.disabled = !isEditing;
+  if(updateTab) updateTab.disabled = !isEditing;
+  if(clearBtn) clearBtn.disabled = !isEditing;
+}
+
+function buildDraftPayload(existingId = null){
+  return {
+    id: existingId || `draft_${Date.now()}_${Math.random().toString(36).slice(2,8)}`,
+    name: (val('draftNameInput').trim() || getSuggestedDraftName()),
+    note: val('draftNoteInput').trim(),
+    header: getQuoteHeader(),
+    items: JSON.parse(JSON.stringify(quoteItems)),
+    formState: getAllFormState(),
+    estimatedTotal: quoteItems.reduce((a,b)=>a+Number(b.sell||0),0),
+    updatedAt: new Date().toISOString()
+  };
+}
+
+function saveNewDraft(){
+  const payload = buildDraftPayload();
+  draftLog.unshift(payload);
+  saveJson(DRAFTS_STORAGE_KEY, draftLog);
+  activeDraftId = payload.id;
+  document.getElementById('draftNameInput').value = payload.name;
+  document.getElementById('draftNoteInput').value = payload.note || '';
+  renderDrafts();
+  syncDraftUi();
+  setDraftStatus('Draft saved.');
+}
+
+function updateActiveDraft(){
+  if(!activeDraftId) return;
+  const idx = draftLog.findIndex(d => d.id === activeDraftId);
+  if(idx < 0) return;
+  draftLog[idx] = buildDraftPayload(activeDraftId);
+  saveJson(DRAFTS_STORAGE_KEY, draftLog);
+  renderDrafts();
+  syncDraftUi();
+  setDraftStatus('Draft updated.');
+}
+
+function clearActiveDraftLink(){
+  activeDraftId = null;
+  syncDraftUi();
+  setDraftStatus('Draft link cleared.');
+}
+
+function loadDraftToQuote(draftId, editMode=false){
+  const draft = draftLog.find(d => d.id === draftId);
+  if(!draft) return;
+  setAllFormState(draft.formState || {});
+  quoteItems = JSON.parse(JSON.stringify(draft.items || []));
+  document.getElementById('draftNameInput').value = draft.name || '';
+  document.getElementById('draftNoteInput').value = draft.note || '';
+  activeDraftId = editMode ? draft.id : null;
+  updateHeaderLive();
+  updateComboPreview();
+  updateUvPreview();
+  updateCncPreview();
+  updateAdaPreview();
+  updateLetterPreview();
+  refreshQuoteSummary();
+  syncDraftUi();
+  setDraftStatus(editMode ? 'Draft loaded for editing.' : 'Draft loaded.');
+  if(editMode){
+    const headerTab = document.querySelector('.tab-btn[data-tab="header"]');
+    if(headerTab) headerTab.click();
+  }
+}
+
+function renderDrafts(){
+  const wrap = document.getElementById('draftsWrap');
+  if(!wrap) return;
+  wrap.innerHTML = '';
+  if(!draftLog.length){
+    wrap.innerHTML = '<div class="mini">No drafts saved yet.</div>';
+    return;
+  }
+
+  draftLog.forEach(draft => {
+    const card = document.createElement('div');
+    card.className = 'quote-card';
+    const isActive = draft.id === activeDraftId;
+    const itemCount = Array.isArray(draft.items) ? draft.items.length : 0;
+    card.innerHTML = `
+      <div class="quote-card-head">
+        <div>
+          <div class="quote-card-title">${escapeHtml(draft.name || 'Untitled Draft')}</div>
+          <div class="quote-card-sub">${escapeHtml(draft.header?.customer || '')}${draft.header?.project ? ' - ' + escapeHtml(draft.header.project) : ''}</div>
+          <div class="quote-card-sub">Updated ${escapeHtml(new Date(draft.updatedAt).toLocaleString())}</div>
+          ${draft.note ? `<div class="quote-card-sub">Draft note: ${escapeHtml(draft.note)}</div>` : ''}
+          <div class="quote-card-sub">${itemCount} item(s)${isActive ? ' - currently linked for editing' : ''}</div>
+        </div>
+        <div class="actions" style="margin-top:0;justify-content:flex-end;">
+          <button class="link-btn" data-draft-load="${draft.id}">Load</button>
+          <button class="link-btn" data-draft-edit="${draft.id}">Edit</button>
+          <button class="link-btn" data-draft-rename="${draft.id}">Rename</button>
+          <button class="link-btn" data-draft-delete="${draft.id}">Delete</button>
+        </div>
+      </div>
+      <div class="quote-card-sub">Quote # ${escapeHtml(draft.header?.quoteNumber || '')} | ${escapeHtml(draft.header?.quoteDate || '')}</div>
+      <div class="quote-card-price">${money(draft.estimatedTotal || 0)}</div>
+    `;
+    wrap.appendChild(card);
+  });
+
+  wrap.querySelectorAll('[data-draft-load]').forEach(btn => btn.addEventListener('click', () => loadDraftToQuote(btn.dataset.draftLoad, false)));
+  wrap.querySelectorAll('[data-draft-edit]').forEach(btn => btn.addEventListener('click', () => loadDraftToQuote(btn.dataset.draftEdit, true)));
+  wrap.querySelectorAll('[data-draft-rename]').forEach(btn => btn.addEventListener('click', () => {
+    const draft = draftLog.find(d => d.id === btn.dataset.draftRename);
+    if(!draft) return;
+    const name = window.prompt('Rename draft', draft.name || '');
+    if(name == null) return;
+    draft.name = name.trim() || 'Untitled Quote Draft';
+    saveJson(DRAFTS_STORAGE_KEY, draftLog);
+    if(activeDraftId === draft.id) document.getElementById('draftNameInput').value = draft.name;
+    renderDrafts();
+    syncDraftUi();
+    setDraftStatus('Draft renamed.');
+  }));
+  wrap.querySelectorAll('[data-draft-delete]').forEach(btn => btn.addEventListener('click', () => {
+    const id = btn.dataset.draftDelete;
+    draftLog = draftLog.filter(d => d.id !== id);
+    if(activeDraftId === id) activeDraftId = null;
+    saveJson(DRAFTS_STORAGE_KEY, draftLog);
+    renderDrafts();
+    syncDraftUi();
+    setDraftStatus('Draft deleted.');
+  }));
+}
+
 function refreshQuoteSummary(){
   const wrap = document.getElementById("quoteItems");
   const countEl = document.getElementById("lineItemCount");
@@ -1079,7 +1290,9 @@ document.getElementById("addLetterBtn").addEventListener("click", ()=>addPreview
 
 document.getElementById("clearQuoteBtn").addEventListener("click", ()=>{
   quoteItems = [];
+  activeDraftId = null;
   refreshQuoteSummary();
+  syncDraftUi();
 });
 document.getElementById("printPdfBtn").addEventListener("click", ()=>{
   buildPrintHeader();
@@ -1093,6 +1306,12 @@ document.getElementById("clearJobsBtn").addEventListener("click", ()=>{
   saveJson(JOBS_STORAGE_KEY, jobLog);
   renderJobs();
 });
+
+document.getElementById("saveDraftBtn").addEventListener("click", saveNewDraft);
+document.getElementById("saveDraftFromTabBtn").addEventListener("click", saveNewDraft);
+document.getElementById("updateDraftBtn").addEventListener("click", updateActiveDraft);
+document.getElementById("updateDraftFromTabBtn").addEventListener("click", updateActiveDraft);
+document.getElementById("clearDraftLinkBtn").addEventListener("click", clearActiveDraftLink);
 
 document.getElementById("savePresetsBtn").addEventListener("click", ()=>{
   saveJson(PRESET_STORAGE_KEY, materialPresets);
@@ -1182,6 +1401,8 @@ updateCncPreview();
 updateAdaPreview();
 updateLetterPreview();
 refreshQuoteSummary();
+renderDrafts();
+syncDraftUi();
 renderJobs();
 </script>
 </body>
